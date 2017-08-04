@@ -4,10 +4,15 @@ from __future__ import unicode_literals
 from django.db import models
 
 
+class EncodingProvider(models.Model):
+    name = models.CharField(max_length=200, null=False, default='unknown')
+
+
 class Media(models.Model):
     name = models.CharField(max_length=200, null=True)
     file_path = models.CharField(max_length=200)
     date_added = models.DateTimeField('added to library date', null=True)
+    encoding_provider = models.ForeignKey(EncodingProvider, null=True, on_delete=models.SET_NULL)
 
     def __str__(self):              # __unicode__ on Python 2
         return self.name
