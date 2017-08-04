@@ -1,0 +1,50 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		
+		<meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Expires" content="-1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0">
+		<!-- Force latest IE rendering engine & Chrome Frame -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<!-- Make IE recognise HTML5 elements for styling -->
+		<!--[if lte IE 8]>
+		<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<noscript>
+		<strong>Warning!</strong>
+		Your browser does not support HTML5 so some elements on this page are simulated using JScript. Unfortunately your browser has JScript disabled. Please enable it in order to display this page.
+		</noscript>
+		<![endif]-->
+		<!-- Disable image toolbar in IE6 -->
+		<!--[if lte IE 6]><meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+
+		<title>pixelwalker {% block title %}{% endblock %}</title>
+
+		<meta name="theme-color" content="#141414">
+	
+	{% block css_requirements %}
+		<link href="{% static 'bower_components/normalize-css/normalize.css' %}" rel="stylesheet">
+		<link href="{% static 'bower_components/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
+		<link href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+		<link href="{% static 'css/base.css' %}" rel="stylesheet">
+	{% endblock %}
+	</head>
+	<body>
+		<div class='container-fluid'>
+			<div class='row'>
+			{% block body %}
+				<div class='col-md-12'>
+					{% block content %}{% endblock %}
+				</div>
+			{% endblock %}
+			</div>
+		</div>	
+		{% block js_requirements %}
+			<script src="{% static 'bower_components/jquery/dist/jquery.min.js' %}"></script>
+			<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+		{% endblock %}
+		{% block javascript %}{% endblock %}
+	</body>
+</html>
