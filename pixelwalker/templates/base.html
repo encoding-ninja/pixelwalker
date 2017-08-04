@@ -20,7 +20,7 @@
 		<!-- Disable image toolbar in IE6 -->
 		<!--[if lte IE 6]><meta http-equiv="imagetoolbar" content="no" /><![endif]-->
 
-		<title>pixelwalker {% block title %}{% endblock %}</title>
+		<title>{% block tab_title %}pixelwalker{% endblock %}</title>
 
 		<meta name="theme-color" content="#141414">
 	
@@ -36,6 +36,9 @@
 			<div class='row'>
 			{% block body %}
 				<div class='col-md-12'>
+					<h1>{% block header_title %}pixelwalker{% endblock %}</h1>
+					{% block general_nav %}<nav>general_nav</nav>{% endblock %}
+					{% block options %}{% endblock %}
 					{% block content %}{% endblock %}
 				</div>
 			{% endblock %}

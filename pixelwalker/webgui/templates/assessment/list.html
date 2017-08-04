@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }} - assessments{% endblock %}
+
+{% block header_title %}{{ block.super }} - assessments{% endblock %}
+
+{% block options %}
+    <div>options</div>
+{% endblock %}
+
+{% block content %}       
+
+    content
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+    <link href="{% static 'bower_components/datatables/media/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bower_components/datatables/media/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/datatables/media/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables/media/js/dataTables.bootstrap.min.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function(){
+            $('.datatable').DataTable();
+        }); 
+    </script>
+{% endblock %}
