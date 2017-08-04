@@ -1,2 +1,2 @@
 # pixelwalker
-Video quality assessment plateform
+Video quality assessment platform
