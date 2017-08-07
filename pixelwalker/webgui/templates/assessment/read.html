@@ -7,7 +7,7 @@
     <ul>
         <li><a href="{% url 'webgui:assessment_list' %}" class='active'>Assessments</a></li>
         <li><a href="#">Media</a></li>
-        <li><a href="#">Encoding providers</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
         <li><a href="#">Tasks</a></li>
     </ul>
 {% endblock %}
@@ -40,8 +40,4 @@
 
 {% block js_requirements %}
     {{ block.super }}
-{% endblock %}
-
-{% block javascript %}
-
 {% endblock %}

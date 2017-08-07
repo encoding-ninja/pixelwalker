@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: New encoding provider{% endblock %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui:assessment_list' %}">Assessments</a></li>
+        <li><a href="#">Media</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}" class='active'>Encoding providers</a></li>
+        <li><a href="#">Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}">< Back</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+
+    <h4><span class='info'>New:</span> Encoding provider</h4>
+<form action="{% url 'webgui:encoding_provider_create' %}" method="post" class="form-horizontal">
+    {% csrf_token %}
+    
+
+    <div class="form-group col-sm-7">
+        <label for="name">Name</label>
+        <input class="form-control" type="text" name="name" id="name" placeholder="Encoding provider name" required/>
+    </div>
+    
+    <div class="form-group col-sm-7">
+        <button type="submit" class="btn btn-default">Create</button>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+{% endblock %}

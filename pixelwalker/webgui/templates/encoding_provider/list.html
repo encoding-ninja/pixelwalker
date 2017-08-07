@@ -1,49 +1,43 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block tab_title %}{{ block.super }}: Assessments{% endblock %}
+{% block tab_title %}{{ block.super }}: Encoding providers{% endblock %}
 
 {% block nav %}
     <ul>
-        <li><a href="{% url 'webgui:assessment_list' %}" class='active'>Assessments</a></li>
+        <li><a href="{% url 'webgui:assessment_list' %}">Assessments</a></li>
         <li><a href="#">Media</a></li>
-        <li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}" class='active'>Encoding providers</a></li>
         <li><a href="#">Tasks</a></li>
     </ul>
 {% endblock %}
 
 {% block options %}
     <ul>
-        <li><a href="{% url 'webgui:assessment_create' %}">New</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_create' %}">New</a></li>
     </ul>
 {% endblock %}
 
 {% block content %}       
-    {% if assessment_list %}
+    {% if encoding_provider_list %}
         <table class='table datatable table-striped table-hover table-condensed' data-page-length='50'>
         <thead>
             <tr>
                 <th><i class='fa fa-info'></i>Name </th>
-                <th><i class='fa fa-tag'></i> Description</th>
             </tr>
         </thead>
         <tbody>
-            {% for assessment in assessment_list %}
+            {% for encoding_provider in encoding_provider_list %}
             <tr>
                 <td>
-                    <a href="{% url 'webgui:assessment_read' assessment.id %}"><strong>{{ assessment.name }}</strong></a>
+                    <a href="{% url 'webgui:encoding_provider_read' encoding_provider.id %}"><strong>{{ encoding_provider.name }}</strong></a>
                 </td>
-                <td>
-                     {% if assessment.description %}
-                        {{ assessment.description }}
-                    {% endif %}
-                </td> 
             </tr>
             {% endfor %}
         </tbody>
     </table>
     {% else %}
-        <p>No assessment project to display.</p>
+        <p>No encoding provider to display.</p>
     {% endif %}
 
 {% endblock %}

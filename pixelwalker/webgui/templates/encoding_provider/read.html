@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: {{ encoding_provider.name }}{% endblock %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui:assessment_list' %}">Assessments</a></li>
+        <li><a href="#">Media</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}" class='active'>Encoding providers</a></li>
+        <li><a href="#">Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}">< Back</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_update' encoding_provider.id %}">Edit</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_delete' encoding_provider.id %}" class='warning'>Delete</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+<h4><span class='info'>Encoding provider:</span> {{ encoding_provider.name }}</h4>
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+{% endblock %}
