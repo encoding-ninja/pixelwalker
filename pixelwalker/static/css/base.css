@@ -106,12 +106,12 @@ div#options{
 	height: 30px;
 	border-bottom:1px solid #eee;
 }
-div#options ul{
+div#options ul, ul.actions{
 	height: 30px;
 	margin-left:-8px;
 	list-style-type: none;
 }
-div#options ul li{
+div#options ul li, ul.actions li{
 	display:inline-block;
 	height:30px;
 	line-height:30px;
@@ -128,4 +128,18 @@ div#content{
 	position:absolute;
 	left:2%;
 	top:40px;
+}
+
+ul.actions {
+	height:auto;
+}
+ul.actions li{
+	display:block;
+	padding:none;
+	height:20px;
+	float:none;
+}
+
+.objectName{
+	font-size:18px;
 }

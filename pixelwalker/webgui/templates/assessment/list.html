@@ -14,7 +14,7 @@
 
 {% block options %}
     <ul>
-        <li><a href="{% url 'webgui:assessment_create' %}">New</a></li>
+        <li><a href="{% url 'webgui:assessment_create' %}"><i class='fa fa-plus'></i> New</a></li>
     </ul>
 {% endblock %}
 
@@ -23,21 +23,29 @@
         <table class='table datatable table-striped table-hover table-condensed' data-page-length='50'>
         <thead>
             <tr>
-                <th><i class='fa fa-info'></i>Name </th>
-                <th><i class='fa fa-tag'></i> Description</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for assessment in assessment_list %}
             <tr>
                 <td>
-                    <a href="{% url 'webgui:assessment_read' assessment.id %}"><strong>{{ assessment.name }}</strong></a>
+                    <a href="{% url 'webgui:assessment_read' assessment.id %}"><span class='objectName'>{{ assessment.name }}</span></a>
                 </td>
                 <td>
-                     {% if assessment.description %}
+                    {% if assessment.description %}
                         {{ assessment.description }}
                     {% endif %}
                 </td> 
+                <td>
+                    <ul class='actions'>
+                        <li><a href="{% url 'webgui:assessment_read'  assessment.id %}"><i class='fa fa-eye'></i> View</a></li>
+                        <li><a href="{% url 'webgui:assessment_update' assessment.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                        <li><a href="{% url 'webgui:assessment_delete' assessment.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                    </ul>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
@@ -61,6 +69,7 @@
 {% endblock %}
 
 {% block javascript %}
+    {{ block.super }}
     <script>
         $(document).ready(function(){
             $('.datatable').DataTable();

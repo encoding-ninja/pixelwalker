@@ -14,7 +14,7 @@
 
 {% block options %}
     <ul>
-        <li><a href="{% url 'webgui:encoding_provider_create' %}">New</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_create' %}"><i class='fa fa-plus'></i> New</a></li>
     </ul>
 {% endblock %}
 
@@ -23,14 +23,22 @@
         <table class='table datatable table-striped table-hover table-condensed' data-page-length='50'>
         <thead>
             <tr>
-                <th><i class='fa fa-info'></i>Name </th>
+                <th>Name</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for encoding_provider in encoding_provider_list %}
             <tr>
                 <td>
-                    <a href="{% url 'webgui:encoding_provider_read' encoding_provider.id %}"><strong>{{ encoding_provider.name }}</strong></a>
+                    <a href="{% url 'webgui:encoding_provider_read' encoding_provider.id %}"><span class='objectName'>{{ encoding_provider.name }}</span></a>
+                </td>
+                <td>
+                    <ul class='actions'>
+                        <li><a href="{% url 'webgui:encoding_provider_read'  encoding_provider.id %}"><i class='fa fa-eye'></i> View</a></li>
+                        <li><a href="{% url 'webgui:encoding_provider_update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                        <li><a href="{% url 'webgui:encoding_provider_delete' encoding_provider.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                    </ul>
                 </td>
             </tr>
             {% endfor %}
@@ -55,6 +63,7 @@
 {% endblock %}
 
 {% block javascript %}
+    {{ block.super }}
     <script>
         $(document).ready(function(){
             $('.datatable').DataTable();

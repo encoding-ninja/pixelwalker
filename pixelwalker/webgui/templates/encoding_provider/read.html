@@ -14,9 +14,9 @@
 
 {% block options %}
     <ul>
-        <li><a href="{% url 'webgui:encoding_provider_list' %}">< Back</a></li>
-        <li><a href="{% url 'webgui:encoding_provider_update' encoding_provider.id %}">Edit</a></li>
-        <li><a href="{% url 'webgui:encoding_provider_delete' encoding_provider.id %}" class='warning'>Delete</a></li>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_delete' encoding_provider.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
     </ul>
 {% endblock %}
 
