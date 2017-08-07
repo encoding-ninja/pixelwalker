@@ -94,3 +94,5 @@ ENV/
 # Bower installed components
 #  you should install them from the /static/bower.json dependency list
 bower_components/
+#  don't publish proxy settings on public repo
+.bowerrc
