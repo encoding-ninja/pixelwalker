@@ -3,15 +3,47 @@
 
 {% block tab_title %}{{ block.super }} - assessments{% endblock %}
 
-{% block header_title %}{{ block.super }} - assessments{% endblock %}
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui:assessment_list' %}" class='active'>Assessments</a></li>
+        <li><a href="#">Media</a></li>
+        <li><a href="#">Tasks</a></li>
+    </ul>
+{% endblock %}
 
 {% block options %}
-    <div>options</div>
+    <ul>
+        <li><a href="{% url 'webgui:assessment_create' %}">Add project</a></li>
+    </ul>
 {% endblock %}
 
 {% block content %}       
-
-    content
+    {% if assessment_list %}
+        <table class='table datatable table-striped table-hover table-condensed' data-page-length='50'>
+        <thead>
+            <tr>
+                <th><i class='fa fa-info'></i>Name </th>
+                <th><i class='fa fa-tag'></i> Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for assessment in assessment_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'webgui:assessment_read' assessment.id %}"><strong>{{ assessment.name }}</strong></a>
+                </td>
+                <td>
+                     {% if assessment.description %}
+                        {{ assessment.description }}
+                    {% endif %}
+                </td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No assessment project to display.</p>
+    {% endif %}
 
 {% endblock %}
 

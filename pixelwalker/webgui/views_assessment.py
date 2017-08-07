@@ -23,8 +23,10 @@ def create(request):
     if request.POST:
         new_assessment = Assessment()
         # set values
+        new_assessment.name = request.POST.get('name')
+        new_assessment.description = request.POST.get('description')
         new_assessment.save()
-        return HttpResponseRedirect(reverse('assessment:assessment_read', args=(new_assessment.id,)))
+        return HttpResponseRedirect(reverse('webgui:assessment_read', args=(new_assessment.id,)))
 
     # Asking for the new assessment form
     else:
@@ -44,16 +46,18 @@ def update(request, assessment_id):
     # Submitting values for updating assessment
     if request.POST:
         # update values
+        assessment.name = request.POST.get('name')
+        assessment.description = request.POST.get('description')
         assessment.save()
-        return HttpResponseRedirect(reverse('assessment:assessment_read', args=(assessment.id,)))
+        return HttpResponseRedirect(reverse('webgui:assessment_read', args=(assessment.id,)))
 
     # Asking for the new assessment form
     else:
-        return render(request, 'assessment/create.html')
+        return render(request, 'assessment/update.html', {'assessment': assessment})
 
 
 #cruD
 def delete(request, assessment_id):
     assessment = Assessment.objects.filter(id=assessment_id)[0]
     assessment.delete()
-    return HttpResponseRedirect(reverse('assessment:assessment_list'))
+    return HttpResponseRedirect(reverse('webgui:assessment_list'))

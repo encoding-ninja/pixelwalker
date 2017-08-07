@@ -23,6 +23,7 @@ class Media(models.Model):
 
 class Assessment(models.Model):
     name = models.CharField(max_length=200, null=True)
+    description = models.CharField(max_length=500, null=True)
     encoded_media_list = models.ManyToManyField(Media, related_name='encoded_media_list')
     reference_media = models.ForeignKey(Media, null=True, on_delete=models.SET_NULL)
     date_created = models.DateTimeField('create assessment date', null=True)
