@@ -88,4 +88,9 @@ ENV/
 # Rope project settings
 .ropeproject
 
+# Django dev database
 *.sqlite3
+
+# Bower installed components
+#  you should install them from the /static/bower.json dependency list
+bower_components/
