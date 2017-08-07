@@ -1,19 +1,20 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block tab_title %}{{ block.super }} - assessments{% endblock %}
+{% block tab_title %}{{ block.super }}: Assessments{% endblock %}
 
 {% block nav %}
     <ul>
         <li><a href="{% url 'webgui:assessment_list' %}" class='active'>Assessments</a></li>
         <li><a href="#">Media</a></li>
+        <li><a href="#">Encoding providers</a></li>
         <li><a href="#">Tasks</a></li>
     </ul>
 {% endblock %}
 
 {% block options %}
     <ul>
-        <li><a href="{% url 'webgui:assessment_create' %}">Add project</a></li>
+        <li><a href="{% url 'webgui:assessment_create' %}">New</a></li>
     </ul>
 {% endblock %}
 

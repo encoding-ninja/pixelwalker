@@ -59,5 +59,16 @@ def update(request, assessment_id):
 #cruD
 def delete(request, assessment_id):
     assessment = Assessment.objects.filter(id=assessment_id)[0]
-    assessment.delete()
-    return HttpResponseRedirect(reverse('webgui:assessment_list'))
+
+    # If delete confirm
+    if request.POST:
+        # delete the assessment object
+        if assessment_id == request.POST.get('delete_id'):
+            assessment.delete()
+            return HttpResponseRedirect(reverse('webgui:assessment_list'))
+        else:
+            return render(request, 'assessment/read.html', {'assessment': assessment})
+
+    # Asking for the delete confirmation form
+    else:
+        return render(request, 'assessment/delete.html', {'assessment': assessment})

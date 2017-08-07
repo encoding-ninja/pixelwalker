@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block tab_title %}{{ block.super }} - assessments - {{ assessment.name }}{% endblock %}
+{% block tab_title %}{{ block.super }}: {{ assessment.name }}{% endblock %}
 
 {% block nav %}
     <ul>
         <li><a href="{% url 'webgui:assessment_list' %}" class='active'>Assessments</a></li>
         <li><a href="#">Media</a></li>
+        <li><a href="#">Encoding providers</a></li>
         <li><a href="#">Tasks</a></li>
     </ul>
 {% endblock %}
@@ -15,13 +16,14 @@
     <ul>
         <li><a href="{% url 'webgui:assessment_list' %}">< Back</a></li>
         <li><a href="{% url 'webgui:assessment_update' assessment.id %}">Edit</a></li>
-        <li><a href="{% url 'webgui:assessment_delete' assessment.id %}">Delete</a></li>
+        <li><a href="{% url 'webgui:assessment_delete' assessment.id %}" class='warning'>Delete</a></li>
     </ul>
 {% endblock %}
 
 {% block content %}       
-<h4>{{ assessment.name }}</h4>
-<table class='table table-striped table-hover'>
+<h4><span class='info'>Project:</span> {{ assessment.name }}</h4>
+
+<table class='table table-striped'>
     <tbody>
         <tr>
             <td>Description</td>
