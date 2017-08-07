@@ -6,8 +6,8 @@
 {% block nav %}
     <ul>
         <li><a href="{% url 'webgui:assessment_list' %}">Assessments</a></li>
-        <li><a href="{% url 'webgui:media_list' %}">Media</a></li>
-        <li><a href="{% url 'webgui:encoding_provider_list' %}" class='active'>Encoding providers</a></li>
+        <li><a href="{% url 'webgui:media_list' %}" class='active'>Media</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
         <li><a href="#">Tasks</a></li>
     </ul>
 {% endblock %}
@@ -20,14 +20,19 @@
 
 {% block content %}       
 
-    <h4><span class='info'>New:</span> Encoding provider</h4>
-<form action="{% url 'webgui:encoding_provider_create' %}" method="post" class="form-horizontal">
+    <h4><span class='info'>New:</span> Media</h4>
+<form action="{% url 'webgui:media_create' %}" method="post" class="form-horizontal">
     {% csrf_token %}
     
 
     <div class="form-group col-sm-7">
         <label for="name">Name</label>
-        <input class="form-control" type="text" name="name" id="name" placeholder="Encoding provider name" required/>
+        <input class="form-control" type="text" name="name" id="name" placeholder="Media file name" required/>
+    </div>
+
+    <div class="form-group col-sm-7">
+        <label for="name">File path</label>
+        <input class="form-control" type="file" name="file_path" id="file_path" required/>
     </div>
     
     <div class="form-group col-sm-7">

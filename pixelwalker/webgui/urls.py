@@ -3,6 +3,7 @@ from django.conf.urls import url
 from . import views
 from . import views_assessment
 from . import views_encoding_provider
+from . import views_media
 
 urlpatterns = [
     url(r'^$', views.hello_world, name='index'),
@@ -18,4 +19,10 @@ urlpatterns = [
     url(r'^encoding_provider/(?P<encoding_provider_id>[0-9]+)/$', views_encoding_provider.read, name='encoding_provider_read'),
     url(r'^encoding_provider/(?P<encoding_provider_id>[0-9]+)/update/$', views_encoding_provider.update, name='encoding_provider_update'),
     url(r'^encoding_provider/(?P<encoding_provider_id>[0-9]+)/delete/$', views_encoding_provider.delete, name='encoding_provider_delete'),
+    # Media
+    url(r'^media/$', views_media.list, name='media_list'),
+    url(r'^media/create/$', views_media.create, name='media_create'),
+    url(r'^media/(?P<media_id>[0-9]+)/$', views_media.read, name='media_read'),
+    url(r'^media/(?P<media_id>[0-9]+)/update/$', views_media.update, name='media_update'),
+    url(r'^media/(?P<media_id>[0-9]+)/delete/$', views_media.delete, name='media_delete'),
 ]
