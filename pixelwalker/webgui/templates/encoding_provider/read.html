@@ -22,7 +22,21 @@
 
 {% block content %}       
 <h4><span class='info'>Encoding provider:</span> {{ encoding_provider.name }}</h4>
-
+{% if media_list %}
+<table class='table table-striped'>
+    <tbody>
+        <tr>
+            <td>{{ media_list|length }} associated media file(s)</td>
+            <td>
+            {% for media in media_list %}
+                <a href="{% url 'webgui:media_read' media.id %}">{{ media.name }}</a><br>
+            {% endfor %}
+            </td>
+        </tr>
+        
+    </tbody>
+</table>
+{% endif %}
 {% endblock %}
 
 {% block css_requirements %}

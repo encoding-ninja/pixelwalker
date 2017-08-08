@@ -33,12 +33,22 @@
             <td>Encoding provider</td>
             <td>
             {% if media.encoding_provider %}
-            {{ media.encoding_provider.name }}
+            <a href="{% url 'webgui:encoding_provider_read' media.encoding_provider.id %}">{{ media.encoding_provider.name }}</a>
             {% else %}
             <i>Undefined</i>
             {% endif %}
             </td>
         </tr>
+        {% if assessment_reference_list %}
+        <tr>
+            <td>Reference media for {{ assessment_reference_list|length }} assessment project(s)</td>
+            <td>
+            {% for assessment_reference in assessment_reference_list %}
+            <a href="{% url 'webgui:assessment_read' assessment_reference.id %}">{{ assessment_reference.name }}</a><br>
+            {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>
 

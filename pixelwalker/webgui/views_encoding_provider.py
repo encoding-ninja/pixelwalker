@@ -35,7 +35,8 @@ def create(request):
 #cRud
 def read(request, encoding_provider_id):
     encoding_provider = get_object_or_404(EncodingProvider, pk=encoding_provider_id)
-    return render(request, 'encoding_provider/read.html', {'encoding_provider': encoding_provider})
+    media_list = Media.objects.filter(encoding_provider=encoding_provider)
+    return render(request, 'encoding_provider/read.html', {'encoding_provider': encoding_provider, 'media_list':media_list})
 
 
 #crUd

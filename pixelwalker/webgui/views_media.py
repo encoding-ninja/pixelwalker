@@ -10,7 +10,7 @@ from django.utils import timezone
 import os
 
 # import db models
-from engine.models import EncodingProvider, Media, Media
+from engine.models import EncodingProvider, Media, Assessment
 
 
 # List all medias
@@ -50,7 +50,8 @@ def create(request):
 #cRud
 def read(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
-    return render(request, 'media/read.html', {'media': media})
+    assessment_reference_list = Assessment.objects.filter(reference_media=media)
+    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list})
 
 
 #crUd
