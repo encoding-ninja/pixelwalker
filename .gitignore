@@ -96,3 +96,6 @@ ENV/
 bower_components/
 #  don't publish proxy settings on public repo
 .bowerrc
+
+# Imported media files
+media_library/

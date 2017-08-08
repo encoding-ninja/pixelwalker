@@ -126,3 +126,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+
+# Media Files upload to
+MEDIA_ROOT = 'D:\GitHub\pixelwalker\media_library'

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block tab_title %}{{ block.super }}: Edit encoding provider{% endblock %}
+{% block tab_title %}{{ block.super }}: Edit media{% endblock %}
 
 {% block nav %}
     <ul>
         <li><a href="{% url 'webgui:assessment_list' %}">Assessments</a></li>
-        <li><a href="#">Media</a></li>
-        <li><a href="{% url 'webgui:encoding_provider_list' %}" class='active'>Encoding providers</a></li>
+        <li><a href="{% url 'webgui:media_list' %}" class='active'>Media</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
         <li><a href="#">Tasks</a></li>
     </ul>
 {% endblock %}
@@ -20,13 +20,25 @@
 
 {% block content %}       
 
-    <h4><span class='info'>Edit:</span> {{ encoding_provider.name }}</h4>
-<form action="{% url 'webgui:encoding_provider_update' encoding_provider.id %}" method="post" class="form-horizontal">
+    <h4><span class='info'>Edit:</span> {{ media.name }}</h4>
+<form action="{% url 'webgui:media_update' media.id %}" method="post" class="form-horizontal">
     {% csrf_token %}
 
     <div class="form-group col-sm-7">
         <label for="name">Name</label>
-            <input class="form-control" type="text" name="name" id="name" placeholder="Encoding provider name" value="{{ encoding_provider.name }}" required/>
+            <input class="form-control" type="text" name="name" id="name" placeholder="Media file name" value="{{ media.name }}" required/>
+    </div>
+
+    <div class="form-group col-sm-7">
+        <label for="name">Encoding provider</label>
+        <select class="form-control" name="encoding_provider" id="encoding_provider">
+            <option value='None'{% if media.encoding_provider == None %} selected{% endif %}>Undefined</option>
+            {% if encoding_provider_list %}
+            {% for encoding_provider in encoding_provider_list %}
+            <option value='{{ encoding_provider.id }}'{% if media.encoding_provider == encoding_provider %} selected{% endif %}>{{ encoding_provider.name }}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
     </div>
 
     <div class="form-group col-sm-7">

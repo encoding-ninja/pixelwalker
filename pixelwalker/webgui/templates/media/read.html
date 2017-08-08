@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block tab_title %}{{ block.super }}: {{ encoding_provider.name }}{% endblock %}
+{% block tab_title %}{{ block.super }}: {{ media.name }}{% endblock %}
 
 {% block nav %}
     <ul>
         <li><a href="{% url 'webgui:assessment_list' %}">Assessments</a></li>
-        <li><a href="#">Media</a></li>
-        <li><a href="{% url 'webgui:encoding_provider_list' %}" class='active'>Encoding providers</a></li>
+        <li><a href="{% url 'webgui:media_list' %}" class='active'>Media</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
         <li><a href="#">Tasks</a></li>
     </ul>
 {% endblock %}
@@ -15,13 +15,26 @@
 {% block options %}
     <ul>
         <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
-        <li><a href="{% url 'webgui:encoding_provider_update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
-        <li><a href="{% url 'webgui:encoding_provider_delete' encoding_provider.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+        <li><a href="{% url 'webgui:media_update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+        <li><a href="{% url 'webgui:media_delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
     </ul>
 {% endblock %}
 
 {% block content %}       
-<h4><span class='info'>Encoding provider:</span> {{ encoding_provider.name }}</h4>
+<h4><span class='info'>Media:</span> {{ media.name }}</h4>
+
+<table class='table table-striped'>
+    <tbody>
+        <tr>
+            <td>File path</td>
+            <td>{{ media.file.path }}</td>
+        </tr>
+        <tr>
+            <td>Encoding provider</td>
+            <td>{% if media.encoding_provider %}{{ media.encoding_provider.name }}{% else %}Undefined{% endif %}</td>
+        </tr>
+    </tbody>
+</table>
 
 {% endblock %}
 
