@@ -25,12 +25,19 @@ def create(request):
         # set values
         new_assessment.name = request.POST.get('name')
         new_assessment.description = request.POST.get('description')
+
+        if request.POST.get('reference_media') != "None":
+            new_assessment.reference_media = Media.objects.filter(id=request.POST.get('reference_media'))[0]
+        else:
+            new_assessment.reference_media = None
+
         new_assessment.save()
         return HttpResponseRedirect(reverse('webgui:assessment_read', args=(new_assessment.id,)))
 
     # Asking for the new assessment form
     else:
-        return render(request, 'assessment/create.html')
+        media_list = Media.objects.all().order_by('name')
+        return render(request, 'assessment/create.html', {'media_list':media_list})
 
 
 #cRud
@@ -48,12 +55,19 @@ def update(request, assessment_id):
         # update values
         assessment.name = request.POST.get('name')
         assessment.description = request.POST.get('description')
+
+        if request.POST.get('reference_media') != "None":
+            assessment.reference_media = Media.objects.filter(id=request.POST.get('reference_media'))[0]
+        else:
+            assessment.reference_media = None
+
         assessment.save()
         return HttpResponseRedirect(reverse('webgui:assessment_read', args=(assessment.id,)))
 
     # Asking for the new assessment form
     else:
-        return render(request, 'assessment/update.html', {'assessment': assessment})
+        media_list = Media.objects.all().order_by('name')
+        return render(request, 'assessment/update.html', {'assessment': assessment, 'media_list':media_list})
 
 
 #cruD

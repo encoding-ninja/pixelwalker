@@ -31,7 +31,7 @@
 
     <div class="form-group col-sm-7">
         <label for="name">Encoding provider</label>
-        <select class="form-control" name="encoding_provider" id="encoding_provider">
+        <select class="form-control selectpicker" data-live-search="true" name="encoding_provider" id="encoding_provider">
             <option value='None'>Undefined</option>
             {% if encoding_provider_list %}
             {% for encoding_provider in encoding_provider_list %}
@@ -52,8 +52,10 @@
 
 {% block css_requirements %}
     {{ block.super }}
+    <link href="{% static 'bower_components/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block js_requirements %}
     {{ block.super }}
+    <script src="{% static 'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
 {% endblock %}

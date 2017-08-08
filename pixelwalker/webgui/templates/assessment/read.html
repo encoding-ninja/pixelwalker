@@ -29,6 +29,16 @@
             <td>Description</td>
             <td>{{ assessment.description }}</td>
         </tr>
+        <tr>
+            <td>Reference</td>
+            <td>
+            {% if assessment.reference_media != None %}
+            <a href="{% url 'webgui:media_read' assessment.reference_media.id %}">{{ assessment.reference_media.name }}</a>
+            {% else %}
+            <i>Undefined</i>
+            {% endif %}
+            </td>
+        </tr>
     </tbody>
 </table>
 

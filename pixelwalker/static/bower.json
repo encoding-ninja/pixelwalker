@@ -22,6 +22,7 @@
     "normalize-css": "^7.0.0",
     "datatables": "^1.10.15",
     "bootstrap-toggle": "^2.2.2",
-    "chart.js": "^2.6.0"
+    "chart.js": "^2.6.0",
+    "bootstrap-select": "^1.12.4"
   }
 }
