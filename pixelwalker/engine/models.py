@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 import os
+import utils
 
 
 class EncodingProvider(models.Model):
@@ -11,7 +12,7 @@ class EncodingProvider(models.Model):
 
 class Media(models.Model):
     name = models.CharField(max_length=200, null=True)
-    file = models.FileField(null=True)
+    file = models.FileField(null=True, upload_to=utils.get_upload_path)
     date_added = models.DateTimeField('added to library date', null=True)
     encoding_provider = models.ForeignKey(EncodingProvider, null=True, on_delete=models.SET_NULL)
 
@@ -38,3 +39,8 @@ class Assessment(models.Model):
 
     class Meta:
         ordering = ('name',)
+
+
+class AppSettings(models.Model):
+    media_library_path = models.CharField(max_length=200, null=True)
+    

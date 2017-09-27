@@ -1,0 +1,23 @@
+[
+  {
+    "model": "worker.Metric",
+    "pk": 1,
+    "fields": {
+      "name": "SSIM"
+    }
+  },
+    {
+    "model": "worker.Metric",
+    "pk": 2,
+    "fields": {
+      "name": "PSNR"
+    }
+  },
+    {
+    "model": "worker.Metric",
+    "pk": 3,
+    "fields": {
+      "name": "VMAF"
+    }
+  }
+]

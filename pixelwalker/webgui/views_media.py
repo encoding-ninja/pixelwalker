@@ -8,6 +8,7 @@ from django.views import generic
 from django.utils import timezone
 
 import os
+import shutil
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
@@ -83,7 +84,7 @@ def delete(request, media_id):
     if request.POST:
         # delete the media object
         if media_id == request.POST.get('delete_id'):
-            os.remove(media.file.path)
+            #shutil.rmtree(os.path.dirname(media.file.path))
             media.delete()
             return HttpResponseRedirect(reverse('webgui:media_list'))
         else:

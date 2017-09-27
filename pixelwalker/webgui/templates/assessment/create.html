@@ -8,7 +8,7 @@
         <li><a href="{% url 'webgui:assessment_list' %}" class='active'>Assessments</a></li>
         <li><a href="{% url 'webgui:media_list' %}">Media</a></li>
         <li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
-        <li><a href="#">Tasks</a></li>
+        <li><a href="{% url 'webgui:task_list' %}">Tasks</a></li>
     </ul>
 {% endblock %}
 
@@ -39,6 +39,17 @@
         <label for="reference_media">Reference media</label>
         <select class="form-control selectpicker" data-live-search="true" name="reference_media" id="reference_media">
             <option value='None'>Undefined</option>
+            {% if media_list %}
+            {% for media in media_list %}
+            <option value='{{ media.id }}'>{{ media.name }}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+    
+    <div class="form-group col-sm-7">
+        <label for="encoded_media_list">Encoded media list</label>
+        <select class="form-control selectpicker" data-live-search="true" name="encoded_media_list" id="encoded_media_list" multiple>
             {% if media_list %}
             {% for media in media_list %}
             <option value='{{ media.id }}'>{{ media.name }}</option>

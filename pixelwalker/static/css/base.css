@@ -134,7 +134,7 @@ ul.actions {
 	height:auto;
 }
 ul.actions li{
-	display:block;
+	display:inline-block;
 	padding:none;
 	height:20px;
 	float:none;

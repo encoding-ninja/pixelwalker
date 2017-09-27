@@ -9,6 +9,7 @@ from django.views import generic
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
+from worker.models import Metric, Task, Result
 
 
 # List all assessments
@@ -27,11 +28,17 @@ def create(request):
         new_assessment.description = request.POST.get('description')
 
         if request.POST.get('reference_media') != "None":
-            new_assessment.reference_media = Media.objects.filter(id=request.POST.get('reference_media'))[0]
+            new_assessment.reference_media = Media.objects.get(id=request.POST.get('reference_media'))
         else:
             new_assessment.reference_media = None
 
         new_assessment.save()
+
+        if len(request.POST.getlist('encoded_media_list')) > 0:
+            for encoded_media in request.POST.getlist('encoded_media_list'):
+                new_assessment.encoded_media_list.add(Media.objects.get(id=encoded_media))
+            new_assessment.save()
+        
         return HttpResponseRedirect(reverse('webgui:assessment_read', args=(new_assessment.id,)))
 
     # Asking for the new assessment form
@@ -43,7 +50,8 @@ def create(request):
 #cRud
 def read(request, assessment_id):
     assessment = get_object_or_404(Assessment, pk=assessment_id)
-    return render(request, 'assessment/read.html', {'assessment': assessment})
+    metric_list = Metric.objects.all().order_by('name')
+    return render(request, 'assessment/read.html', {'assessment': assessment, 'metric_list': metric_list})
 
 
 #crUd
@@ -57,9 +65,16 @@ def update(request, assessment_id):
         assessment.description = request.POST.get('description')
 
         if request.POST.get('reference_media') != "None":
-            assessment.reference_media = Media.objects.filter(id=request.POST.get('reference_media'))[0]
+            assessment.reference_media = Media.objects.get(id=request.POST.get('reference_media'))
         else:
             assessment.reference_media = None
+
+        if len(request.POST.getlist('encoded_media_list')) > 0:
+            assessment.encoded_media_list.clear()
+            for encoded_media in request.POST.getlist('encoded_media_list'):
+                assessment.encoded_media_list.add(Media.objects.get(id=encoded_media))
+        else:
+            assessment.encoded_media_list.clear()
 
         assessment.save()
         return HttpResponseRedirect(reverse('webgui:assessment_read', args=(assessment.id,)))

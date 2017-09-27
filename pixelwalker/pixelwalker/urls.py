@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('webgui.urls', namespace='webgui')),
+    url(r'^', include('worker.urls', namespace='worker')),
 ]

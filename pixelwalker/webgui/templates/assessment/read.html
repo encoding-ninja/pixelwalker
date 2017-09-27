@@ -8,7 +8,7 @@
         <li><a href="{% url 'webgui:assessment_list' %}" class='active'>Assessments</a></li>
         <li><a href="{% url 'webgui:media_list' %}">Media</a></li>
         <li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
-        <li><a href="#">Tasks</a></li>
+        <li><a href="{% url 'webgui:task_list' %}">Tasks</a></li>
     </ul>
 {% endblock %}
 
@@ -23,12 +23,71 @@
 {% block content %}       
 <h4><span class='info'>Project:</span> {{ assessment.name }}</h4>
 
-<table class='table table-striped'>
+<table class='table'>
     <tbody>
         <tr>
             <td>Description</td>
             <td>{{ assessment.description }}</td>
         </tr>
+        {% if assessment.encoded_media_list.count > 0 %}
+        <tr>
+            <td colspan='2'>
+                <form action="{% url 'worker:task_create' %}" method="post">
+                {% csrf_token %}
+                    <input type='hidden' name='assessment_id' value='{{ assessment.id }}'/>
+                    <input type='hidden' name='reference_media_id' value='{{ assessment.reference_media.id }}'/>
+                    <table class='table table-hover table-condensed table-bordered'>
+                        <thead>
+                            <tr class='active'>
+                                <th>
+                                    {% if assessment.reference_media != None %}
+                                    Reference: <a href="{% url 'webgui:media_read' assessment.reference_media.id %}">{{ assessment.reference_media.name }}</a>
+                                    {% else %}
+                                    <i>Undefined</i>
+                                    {% endif %}
+                                </th>
+                                {% if metric_list.count > 0 %}
+                                {% for metric in metric_list %}
+                                <th class='text-center'>{{ metric.name }}</th>
+                                {% endfor %}
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class='info'>
+                                <th>
+                                    Encoded versions
+                                </th>
+                                {% if metric_list.count > 0 %}
+                                {% for metric in metric_list %}
+                                <th class='text-center'><input type="checkbox" class='select-all' name='{{ metric.name }}-select-all' id='{{ metric.name }}-select-all' data-metric="{{ metric.name }}"></th>
+                                {% endfor %}
+                                {% endif %}
+                            </tr>
+                            {% for encoded_media in assessment.encoded_media_list.all %}
+                            <tr>
+                                <td><a href="{% url 'webgui:media_read' encoded_media.id %}"><b>{{ encoded_media.name }}</b></a></td>
+                                {% if metric_list.count > 0 %}
+                                {% for metric in metric_list %}
+                                <td class='text-center'><input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}"></td>
+                                {% endfor %}
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        </tfoot>
+                            <tr class='active'>
+                                <td></td>
+                                <td {% if metric_list.count > 0 %}colspan='{{ metric_list.count }}' {% endif %}class='text-center'>
+                                    <button type="submit" class="btn btn-primary btn-block">Process</button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </form>
+            </td>
+        </tr>
+        {% else %}
         <tr>
             <td>Reference</td>
             <td>
@@ -39,6 +98,7 @@
             {% endif %}
             </td>
         </tr>
+        {% endif %}
     </tbody>
 </table>
 
@@ -50,4 +110,33 @@
 
 {% block js_requirements %}
     {{ block.super }}
+
+    <script>
+        $(document).ready(function(){
+
+            // Toggle All CheckBoxes by Metric
+            $('.select-all').click(function(event) {
+                var metric = $(this).data('metric');
+                if(this.checked) {
+                    $(':checkbox[data-metric="'+metric+'"]').each(function() {
+                        this.checked = true;
+                    });
+                }
+                else {
+                   $(':checkbox[data-metric="'+metric+'"]').each(function() {
+                        this.checked = false;
+                    });
+                }
+            });
+            $('.select-one').click(function(event) {
+                var metric = $(this).data('metric');
+                if(!this.checked) {
+                    $(':checkbox.select-all[data-metric="'+metric+'"]').each(function() {
+                        this.checked = false;
+                    });
+                }
+            });
+
+        });
+    </script>
 {% endblock %}

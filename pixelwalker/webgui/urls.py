@@ -4,6 +4,7 @@ from . import views
 from . import views_assessment
 from . import views_encoding_provider
 from . import views_media
+from . import views_task
 
 urlpatterns = [
     url(r'^$', views.hello_world, name='index'),
@@ -25,4 +26,6 @@ urlpatterns = [
     url(r'^media/(?P<media_id>[0-9]+)/$', views_media.read, name='media_read'),
     url(r'^media/(?P<media_id>[0-9]+)/update/$', views_media.update, name='media_update'),
     url(r'^media/(?P<media_id>[0-9]+)/delete/$', views_media.delete, name='media_delete'),
+    # Task
+     url(r'^task/$', views_task.list, name='task_list'),
 ]
