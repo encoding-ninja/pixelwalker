@@ -9,6 +9,8 @@ from django.utils import timezone
 
 import os
 import shutil
+import json
+import json2table
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
@@ -49,6 +51,13 @@ def create(request):
         new_task.metric = Metric.objects.get(name='PROBE')
         new_task.save()
 
+        #Ask for bitrate task
+        new_task2 = Task()
+        new_task2.assessment = None
+        new_task2.media = Media.objects.get(id=new_media.id)
+        new_task2.metric = Metric.objects.get(name='BITRATE')
+        new_task2.save()
+
         return HttpResponseRedirect(reverse('webgui:media_read', args=(new_media.id,)))
 
     # Asking for the new media form
@@ -64,12 +73,20 @@ def read(request, media_id):
 
     probe_data_path = Task.objects.get(media=media, metric=Metric.objects.get(name='PROBE')).output_data_path
     if probe_data_path:
-        with open (probe_data_path, "r") as f:
-            probe = f.readlines()
+        with open(probe_data_path) as f:
+            probe_json = json.load(f)
+        probe = json2table.convert(probe_json, build_direction="LEFT_TO_RIGHT", table_attributes={"class" : "table table-bordered table-hover table-condensed"})
     else:
         probe = None
 
-    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list, 'probe':probe})
+    bitrate_data_path = Task.objects.get(media=media, metric=Metric.objects.get(name='BITRATE')).output_data_path
+    if bitrate_data_path:
+        with open(bitrate_data_path) as f:
+            bitrate_chart_data = f.readlines()[0]
+    else:
+        bitrate_chart_data = None
+
+    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list, 'probe':probe, 'bitrate_chart_data':bitrate_chart_data})
 
 
 #crUd

@@ -20,7 +20,6 @@ def empty_slots():
 
 
 def start():
-	
 	while True:
 		time.sleep(10)
 		print 'worker pulling'
@@ -46,18 +45,27 @@ def start_task(task):
 		thr = threading.Thread(target=ffprobe.execute, args=(task, callback_task, task.media.file.path), kwargs={})
 		thr.start()
 
+	elif task.metric == Metric.objects.get(name='BITRATE'):
+		thr = threading.Thread(target=ffprobe.frame_bitrate_analysis, args=(task, callback_task, task.media.file.path), kwargs={})
+		thr.start()
+
 	else:
 		task.state = Task.ERROR
 		task.save()
 		current_tasks.remove(task)
 
 
-def callback_task(task, output_data):
-	task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+".json")
-	with open(task.output_data_path, "w") as json_file:
-		json_file.write(output_data)
+def callback_task(task, error, output_data):
+	if error:
+		task.state = Task.ERROR
+
+	else:
+		task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+".json")
+		with open(task.output_data_path, "w") as json_file:
+			json_file.write(output_data.replace('\n','').replace('\r',''))
 	
-	task.state = Task.SUCCESS
+		task.state = Task.SUCCESS
+	
 	task.save()
 	current_tasks.remove(task)
 

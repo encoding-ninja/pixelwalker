@@ -49,10 +49,31 @@
             </td>
         </tr>
         {% endif %}
+        {% if bitrate_chart_data or probe %}
         {% if probe %}
         <tr>
             <td colspan="2">
-                {{ probe }}
+                <div class="panel panel-info">
+                    <div class="panel-heading" data-toggle="collapse" href="#collapseProbe" aria-expanded="false" aria-controls="collapseProbe" style="cursor: pointer;">
+                        <h3 class="panel-title"><i class='fa fa-flask'></i> Probe</h3>
+                    </div>
+                    <div class="panel-body collapse" id="collapseProbe">
+                    {% autoescape off %}
+                        {{ probe }}
+                    {% endautoescape %}
+                    </div>
+                </div>
+                {% endif %}
+                {% if bitrate_chart_data %}
+                <div class="panel panel-success">
+                    <div class="panel-heading" data-toggle="collapse" href="#collapseBitrate" aria-expanded="false" aria-controls="collapseBitrate" style="cursor: pointer;">
+                        <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Bitrate and frame analysis</h3>
+                    </div>
+                    <div class="panel-body collapse" id="collapseBitrate">
+                        <canvas id="bitrateChart" style='width:100%;max-height: 450px;'></canvas>
+                    </div>
+                </div>
+                {% endif %}
             </td>
         </tr>
         {% endif %}
@@ -67,4 +88,42 @@
 
 {% block js_requirements %}
     {{ block.super }}
+
+    {% if bitrate_chart_data %}
+    <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
+    <script>
+        var bitrateCtx = document.getElementById("bitrateChart");
+        var bitrateChart = new Chart(bitrateCtx, {
+            type: 'bar',
+            data: {% autoescape off %}{{ bitrate_chart_data }}{% endautoescape %},
+            options: {
+                responsive:true,
+                maintainAspectRatio: false,
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        ticks: {
+                            callback: function(dataLabel, index) {
+                                // Hide the label of every N dataset. return null to hide the grid line too
+                                return index % 2 === 0 ? dataLabel : '';
+                            }
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Frames'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Size (bytes)'
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+    {% endif %}
+
 {% endblock %}

@@ -14,7 +14,7 @@
 
 {% block options %}
     <ul>
-        <li>...</li>
+        <li><a href="{% url 'webgui:task_list' %}"><i class='fa fa-refresh'></i> Refresh</a></li>
     </ul>
 {% endblock %}
 
@@ -27,7 +27,7 @@
                 <th>Metric</th>
                 <th>Assessment</th>
                 <th>Media</th>
-                <th>State</th>
+                <th class='text-center'>State</th>
                 <th class='text-right'>Actions</th>
             </tr>
         </thead>
@@ -50,17 +50,20 @@
                 <td>
                     <a href="{% url 'webgui:media_read'  task.media.id %}">{{ task.media.name }}</a>
                 </td>
-                <td>
-                    {% if task.state < 2 %}
-                    <span class="label label-default">
-                    {% elif task.state > 2 %}
-                    <span class="label label-danger">
-                    {% elif task.state == 2 %}
-                    <span class="label label-success">
+                <td class='text-center'>
+                    {% if task.get_state_display == 'Queued' %}
+                    <span class="label label-default"><i class="fa fa-clock-o"></i> {{ task.get_state_display }}</span>
+                    {% elif task.get_state_display == 'Processing' %}
+                    <span class="label label-default"><i class="fa fa-cog fa-spin fa-fw"></i> {{ task.get_state_display }}</span>
+                    {% elif task.get_state_display == 'Aborted' %}
+                    <span class="label label-warning"><i class="fa fa-times"></i> {{ task.get_state_display }}</span>
+                    {% elif task.get_state_display == 'Error' %}
+                    <span class="label label-danger"><i class="fa fa-warning"></i> {{ task.get_state_display }}</span>
+                    {% elif task.get_state_display == 'Success' %}
+                    <span class="label label-success"><i class="fa fa-check"></i> {{ task.get_state_display }}</span>
                     {% else %}
-                    <span class="label label-default">
+                    <span class="label label-default">{{ task.get_state_display }}</span>
                     {% endif %}
-                    {{ task.get_state_display }}</span>
                 </td>
                 <td class='text-right'>
                     <ul class='actions'>
