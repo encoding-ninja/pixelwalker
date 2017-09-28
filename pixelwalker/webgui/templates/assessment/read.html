@@ -66,10 +66,12 @@
                             </tr>
                             {% for encoded_media in assessment.encoded_media_list.all %}
                             <tr>
-                                <td><a href="{% url 'webgui:media_read' encoded_media.id %}"><b>{{ encoded_media.name }}</b></a></td>
+                                <td><i class='fa fa-film'></i> <a href="{% url 'webgui:media_read' encoded_media.id %}"><b>{{ encoded_media.name }}</b></a></td>
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
-                                <td class='text-center'><input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}"></td>
+                                <td class='text-center'>
+                                    <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}">
+                                </td>
                                 {% endfor %}
                                 {% endif %}
                             </tr>

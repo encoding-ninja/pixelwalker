@@ -9,7 +9,7 @@ from django.views import generic
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
-from worker.models import Metric, Task, Result
+from worker.models import Metric, Task
 
 
 # List all assessments
@@ -50,8 +50,9 @@ def create(request):
 #cRud
 def read(request, assessment_id):
     assessment = get_object_or_404(Assessment, pk=assessment_id)
-    metric_list = Metric.objects.all().order_by('name')
-    return render(request, 'assessment/read.html', {'assessment': assessment, 'metric_list': metric_list})
+    metric_list = Metric.objects.filter(hidden=False).order_by('id')
+    task_list = Task.objects.filter(assessment=assessment)
+    return render(request, 'assessment/read.html', {'assessment': assessment, 'metric_list': metric_list, 'task_list': task_list})
 
 
 #crUd

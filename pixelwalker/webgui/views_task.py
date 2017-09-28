@@ -9,7 +9,7 @@ from django.views import generic
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
-from worker.models import Metric, Task, Result
+from worker.models import Metric, Task
 
 
 # List all assessments

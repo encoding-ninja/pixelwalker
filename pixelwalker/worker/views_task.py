@@ -8,7 +8,7 @@ from django.views import generic
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
-from worker.models import Metric, Task, Provider, Result
+from worker.models import Metric, Task
 
 #Crud
 def create(request):
@@ -27,10 +27,25 @@ def create(request):
         			new_task.media = Media.objects.get(id=media_id)
         			new_task.metric = metric
         			new_task.save()
-        			print new_task.media.name +"-"+new_task.metric.name
         
         return HttpResponseRedirect(reverse('webgui:assessment_read', args=(request.POST.get('assessment_id'))))
 
     # Return to assessment list
     else:
         return render(request, 'assessment/list.html')
+
+
+#User abort
+def abort(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    task.state = Task.ABORTED
+    task.save()
+    return HttpResponseRedirect(reverse('webgui:task_list'))
+
+#User retry
+def retry(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    task.state = Task.QUEUED
+    task.progress = 0;
+    task.save()
+    return HttpResponseRedirect(reverse('webgui:task_list'))

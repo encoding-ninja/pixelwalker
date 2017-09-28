@@ -25,7 +25,7 @@
             <tr>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Actions</th>
+                <th class='text-right'>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +39,7 @@
                         {{ assessment.description }}
                     {% endif %}
                 </td> 
-                <td>
+                <td class='text-right'>
                     <ul class='actions'>
                         <li><a href="{% url 'webgui:assessment_read'  assessment.id %}"><i class='fa fa-eye'></i> View</a></li>
                         <li><a href="{% url 'webgui:assessment_update' assessment.id %}"><i class='fa fa-pencil'></i> Edit</a></li>

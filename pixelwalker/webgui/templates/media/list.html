@@ -24,16 +24,24 @@
         <thead>
             <tr>
                 <th>Name</th>
-                <th>Actions</th>
+                <th>Encoding provider</th>
+                <th class='text-right'>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for media in media_list %}
             <tr>
                 <td>
-                    <a href="{% url 'webgui:media_read' media.id %}"><span class='objectName'>{{ media.name }}</span></a>
+                    <a href="{% url 'webgui:media_read' media.id %}">{{ media.name }}</a>
                 </td>
                 <td>
+                    {% if media.encoding_provider %}
+                    <a href="{% url 'webgui:encoding_provider_read' media.encoding_provider.id %}">{{ media.encoding_provider.name }}</a>
+                    {% else %}
+                    <i>Undefined</i>
+                    {% endif %}
+                </td>
+                <td class='text-right'>
                     <ul class='actions'>
                         <li><a href="{% url 'webgui:media_read'  media.id %}"><i class='fa fa-eye'></i> View</a></li>
                         <li><a href="{% url 'webgui:media_update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>

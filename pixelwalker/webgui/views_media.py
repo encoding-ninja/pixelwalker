@@ -12,6 +12,7 @@ import shutil
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
+from worker.models import Metric, Task
 
 
 # List all medias
@@ -40,6 +41,14 @@ def create(request):
             new_media.encoding_provider = None
 
         new_media.save()
+
+        #Ask for probing task
+        new_task = Task()
+        new_task.assessment = None
+        new_task.media = Media.objects.get(id=new_media.id)
+        new_task.metric = Metric.objects.get(name='PROBE')
+        new_task.save()
+
         return HttpResponseRedirect(reverse('webgui:media_read', args=(new_media.id,)))
 
     # Asking for the new media form
@@ -52,7 +61,15 @@ def create(request):
 def read(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
     assessment_reference_list = Assessment.objects.filter(reference_media=media)
-    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list})
+
+    probe_data_path = Task.objects.get(media=media, metric=Metric.objects.get(name='PROBE')).output_data_path
+    if probe_data_path:
+        with open (probe_data_path, "r") as f:
+            probe = f.readlines()
+    else:
+        probe = None
+
+    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list, 'probe':probe})
 
 
 #crUd

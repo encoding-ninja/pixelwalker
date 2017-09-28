@@ -27,8 +27,8 @@
                 <th>Metric</th>
                 <th>Assessment</th>
                 <th>Media</th>
-                <th>Status</th>
-                <th>Actions</th>
+                <th>State</th>
+                <th class='text-right'>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -41,15 +41,36 @@
                     {{ task.metric.name }}
                 </td>
                 <td>
+                    {% if task.assessment %}
                     <a href="{% url 'webgui:assessment_read'  task.assessment.id %}">{{ task.assessment.name }}</a>
+                    {% else %}
+                    <i>None</i>
+                    {% endif %}
                 </td>
                 <td>
                     <a href="{% url 'webgui:media_read'  task.media.id %}">{{ task.media.name }}</a>
                 </td>
-                <td>...</td>
                 <td>
+                    {% if task.state < 2 %}
+                    <span class="label label-default">
+                    {% elif task.state > 2 %}
+                    <span class="label label-danger">
+                    {% elif task.state == 2 %}
+                    <span class="label label-success">
+                    {% else %}
+                    <span class="label label-default">
+                    {% endif %}
+                    {{ task.get_state_display }}</span>
+                </td>
+                <td class='text-right'>
                     <ul class='actions'>
-                        <li><a href="#"><i class='fa fa-times'></i> Abort</a></li>
+                        {% if task.state < 2 %}
+                        <li><a href="{% url 'worker:task_abort'  task.id %}" class='warning'><i class='fa fa-times'></i> Abort</a></li>
+                        {% elif task.state > 2 %}
+                        <li><a href="{% url 'worker:task_retry'  task.id %}"><i class='fa fa-undo'></i> Retry</a></li>
+                        {% else %}
+                        <li></li>
+                        {% endif %}
                     </ul>
                 </td>
             </tr>
@@ -78,7 +99,9 @@
     {{ block.super }}
     <script>
         $(document).ready(function(){
-            $('.datatable').DataTable();
+            $('.datatable').DataTable({
+                "order": [[ 0, "desc" ]]
+            });
         }); 
     </script>
 {% endblock %}
