@@ -14,7 +14,12 @@
 
 {% block options %}
     <ul>
-        <li><a href="{% url 'webgui:task_list' %}"><i class='fa fa-refresh'></i> Refresh</a></li>
+        <li>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="autorefresh" name='autorefresh' checked data-toggle="toggle" data-size="mini" data-on="<i class='fa fa-refresh'></i>" data-off="<i class='fa fa-times'></i>">
+                Auto-refresh
+            </label>
+        </li>
     </ul>
 {% endblock %}
 
@@ -69,6 +74,8 @@
                     <ul class='actions'>
                         {% if task.state < 2 %}
                         <li><a href="{% url 'worker:task_abort'  task.id %}" class='warning'><i class='fa fa-times'></i> Abort</a></li>
+                        {% elif task.state == 2 %}
+                        <li><a href="{% url 'worker:task_retry'  task.id %}"><i class='fa fa-undo'></i> Redo</a></li>
                         {% elif task.state > 2 %}
                         <li><a href="{% url 'worker:task_retry'  task.id %}"><i class='fa fa-undo'></i> Retry</a></li>
                         {% else %}
@@ -90,12 +97,14 @@
     {{ block.super }}
     <link href="{% static 'bower_components/datatables/media/css/jquery.dataTables.min.css' %}" rel="stylesheet">
     <link href="{% static 'bower_components/datatables/media/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block js_requirements %}
     {{ block.super }}
     <script src="{% static 'bower_components/datatables/media/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'bower_components/datatables/media/js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js' %}"></script>
 {% endblock %}
 
 {% block javascript %}
@@ -105,6 +114,14 @@
             $('.datatable').DataTable({
                 "order": [[ 0, "desc" ]]
             });
+
+            setInterval(function(){
+                console.log($("#autorefresh").prop('checked'))
+                if($("#autorefresh").prop('checked'))
+                {
+                    window.location.reload(1);
+                }
+            }, 5000);
         }); 
     </script>
 {% endblock %}
