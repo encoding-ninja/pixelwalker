@@ -40,13 +40,27 @@
                     <table class='table table-hover table-condensed table-bordered'>
                         <thead>
                             <tr class='active'>
-                                <th>
+                                <th colspan='2'>
                                     {% if assessment.reference_media != None %}
                                     Reference: <a href="{% url 'webgui:media_read' assessment.reference_media.id %}">{{ assessment.reference_media.name }}</a>
                                     {% else %}
                                     <i>Undefined</i>
                                     {% endif %}
                                 </th>
+                                <td class='text-center'>
+                                    {% if  assessment.reference_media.width and  assessment.reference_media.height %}
+                                    {{  assessment.reference_media.width }}x{{  assessment.reference_media.height }}
+                                    {% else %}
+                                    <i>Unknown</i>
+                                    {% endif %}
+                                </td>
+                                <td class='text-center'>
+                                    {% if  assessment.reference_media.average_bitrate %}
+                                    {{  assessment.reference_media.average_bitrate }}
+                                    {% else %}
+                                    <i>Unknown</i>
+                                    {% endif %}
+                                </td>
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
                                 <th class='text-center'>{{ metric.name }}</th>
@@ -56,7 +70,7 @@
                         </thead>
                         <tbody>
                             <tr class='info'>
-                                <th>
+                                <th colspan='4'>
                                     Encoded versions
                                 </th>
                                 {% if metric_list.count > 0 %}
@@ -67,7 +81,26 @@
                             </tr>
                             {% for encoded_media in assessment.encoded_media_list.all %}
                             <tr>
-                                <td><i class='fa fa-film'></i> <a href="{% url 'webgui:media_read' encoded_media.id %}"><b>{{ encoded_media.name }}</b></a></td>
+                                <td {% if not encoded_media.encoding_provider %}colspan='2'{% endif%}><i class='fa fa-film'></i> <a href="{% url 'webgui:media_read' encoded_media.id %}"><b>{{ encoded_media.name }}</b></a></td>
+                                {% if encoded_media.encoding_provider %}
+                                <td class='text-center'>
+                                    {{ encoded_media.encoding_provider.name }}
+                                </td>
+                                {% endif %}
+                                <td class='text-center'>
+                                    {% if encoded_media.width and encoded_media.height %}
+                                    {{ encoded_media.width }}x{{ encoded_media.height }}
+                                    {% else %}
+                                    <i>Unknown</i>
+                                    {% endif %}
+                                </td>
+                                <td class='text-center'>
+                                    {% if encoded_media.average_bitrate %}
+                                    {{ encoded_media.average_bitrate }}
+                                    {% else %}
+                                    <i>Unknown</i>
+                                    {% endif %}
+                                </td>
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
                                 <td class='text-center'>
@@ -99,7 +132,7 @@
                         </tbody>
                         </tfoot>
                             <tr class='active'>
-                                <td></td>
+                                <td colspan='4'></td>
                                 <td {% if metric_list.count > 0 %}colspan='{{ metric_list.count }}' {% endif %}class='text-center'>
                                     <button type="submit" class="btn btn-primary btn-block">Process</button>
                                 </td>

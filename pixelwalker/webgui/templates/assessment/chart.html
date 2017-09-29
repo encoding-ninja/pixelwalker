@@ -1,1 +1,50 @@
-graph
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: {{ assessment.name }}{% endblock %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui:assessment_list' %}" class='active'>Assessments</a></li>
+        <li><a href="{% url 'webgui:media_list' %}">Media</a></li>
+        <li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
+        <li><a href="{% url 'webgui:task_list' %}">Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+<h4><span class='info'>Project:</span> {{ assessment.name }}</h4>
+
+<table class='table'>
+    <tbody>
+        <tr>
+        	<td>
+        		TO DO: display various charts
+        	</td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+
+    <script>
+        $(document).ready(function(){
+
+            
+
+        });
+    </script>
+{% endblock %}
