@@ -66,9 +66,14 @@ def update(request, assessment_id):
         assessment.description = request.POST.get('description')
 
         if request.POST.get('reference_media') != "None":
+            # Reference media changed => Delete previous assessment values
+            if assessment.reference_media != Media.objects.get(id=request.POST.get('reference_media')):
+                Task.objects.filter(assessment=assessment).delete()
+
             assessment.reference_media = Media.objects.get(id=request.POST.get('reference_media'))
         else:
             assessment.reference_media = None
+            Task.objects.filter(assessment=assessment).delete()
 
         if len(request.POST.getlist('encoded_media_list')) > 0:
             assessment.encoded_media_list.clear()
@@ -102,3 +107,9 @@ def delete(request, assessment_id):
     # Asking for the delete confirmation form
     else:
         return render(request, 'assessment/delete.html', {'assessment': assessment})
+
+
+# Show graphs for the assessment
+def chart(request, assessment_id):
+    assessment = Assessment.objects.get(id=assessment_id)
+    return render(request, 'assessment/chart.html', {'assessment':assessment})

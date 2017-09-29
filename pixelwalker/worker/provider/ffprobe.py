@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import subprocess
 import sys
 import os
@@ -5,12 +7,12 @@ import json
 
 FFPROBE_PATH = os.path.join(os.path.abspath(sys.path[0]), 'worker', 'provider', 'dependencies', 'ffprobe.exe')
 
-def execute(task, callback_task, input_file_path) :
+def execute(task, callback_task) :
     error = False
 
     command = [FFPROBE_PATH,
                 '-hide_banner',
-                '-i', input_file_path,
+                '-i', task.media.file.path,
                 '-show_format', '-show_streams', 
                 '-print_format', 'json', '-pretty']
 
@@ -20,15 +22,23 @@ def execute(task, callback_task, input_file_path) :
     if p.returncode > 0:
     	error = True
 
+    probe = json.loads(out)
+    for stream in probe['streams']:
+    	if stream['codec_type'] == 'video':
+    		task.media.width = int(stream['width'])
+    		task.media.height = int(stream['height'])
+    		task.media.average_bitrate = probe['format']['bit_rate']
+    		task.media.save()
+
     callback_task(task, error, out)
 
 
-def frame_bitrate_analysis(task, callback_task, input_file_path) :
+def frame_bitrate_analysis(task, callback_task) :
     error = False
 
     command = [FFPROBE_PATH,
                 '-hide_banner',
-                '-i', input_file_path,
+                '-i', task.media.file.path,
                 '-select_streams', 'v:0',
                 '-show_frames', 
                 '-print_format', 'json']

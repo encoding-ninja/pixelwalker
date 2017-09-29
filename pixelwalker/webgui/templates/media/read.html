@@ -50,9 +50,19 @@
         </tr>
         {% endif %}
         {% if bitrate_chart_data or probe %}
-        {% if probe %}
         <tr>
             <td colspan="2">
+                {% if bitrate_chart_data %}
+                <div class="panel panel-success">
+                    <div class="panel-heading" data-toggle="collapse" href="#collapseBitrate" aria-expanded="false" aria-controls="collapseBitrate" style="cursor: pointer;">
+                        <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Bitrate and frame analysis</h3>
+                    </div>
+                    <div class="panel-body collapse" id="collapseBitrate">
+                        <canvas id="bitrateChart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
+                    </div>
+                </div>
+                {% endif %}
+                {% if probe %}
                 <div class="panel panel-info">
                     <div class="panel-heading" data-toggle="collapse" href="#collapseProbe" aria-expanded="false" aria-controls="collapseProbe" style="cursor: pointer;">
                         <h3 class="panel-title"><i class='fa fa-flask'></i> Probe</h3>
@@ -61,16 +71,6 @@
                     {% autoescape off %}
                         {{ probe }}
                     {% endautoescape %}
-                    </div>
-                </div>
-                {% endif %}
-                {% if bitrate_chart_data %}
-                <div class="panel panel-success">
-                    <div class="panel-heading" data-toggle="collapse" href="#collapseBitrate" aria-expanded="false" aria-controls="collapseBitrate" style="cursor: pointer;">
-                        <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Bitrate and frame analysis</h3>
-                    </div>
-                    <div class="panel-body collapse" id="collapseBitrate">
-                        <canvas id="bitrateChart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
                     </div>
                 </div>
                 {% endif %}

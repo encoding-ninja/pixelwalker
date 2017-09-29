@@ -8,7 +8,7 @@ import threading
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
 from worker.models import Metric, Task
-from worker.provider import ffprobe
+from worker.provider import ffprobe, ffmpeg
 
 
 MAX_TASK = 1
@@ -20,6 +20,14 @@ def empty_slots():
 
 
 def start():
+
+	#Reset all tasks
+	processing_tasks = Task.objects.filter(state=Task.PROCESSING)
+	for task in processing_tasks:
+		task.state = Task.QUEUED
+		task.save()
+
+	# Start interval pulling tasks
 	while True:
 		time.sleep(10)
 		print 'worker pulling'
@@ -42,11 +50,19 @@ def start_task(task):
 	task.save()
 
 	if task.metric == Metric.objects.get(name='PROBE'):
-		thr = threading.Thread(target=ffprobe.execute, args=(task, callback_task, task.media.file.path), kwargs={})
+		thr = threading.Thread(target=ffprobe.execute, args=(task, callback_task), kwargs={})
 		thr.start()
 
 	elif task.metric == Metric.objects.get(name='BITRATE'):
-		thr = threading.Thread(target=ffprobe.frame_bitrate_analysis, args=(task, callback_task, task.media.file.path), kwargs={})
+		thr = threading.Thread(target=ffprobe.frame_bitrate_analysis, args=(task, callback_task), kwargs={})
+		thr.start()
+
+	elif task.metric == Metric.objects.get(name='SSIM'):
+		thr = threading.Thread(target=ffmpeg.process_ssim, args=(task, callback_task), kwargs={})
+		thr.start()
+
+	elif task.metric == Metric.objects.get(name='PSNR'):
+		thr = threading.Thread(target=ffmpeg.process_psnr, args=(task, callback_task), kwargs={})
 		thr.start()
 
 	else:

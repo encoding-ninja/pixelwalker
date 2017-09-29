@@ -17,6 +17,7 @@
         <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
         <li><a href="{% url 'webgui:assessment_update' assessment.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
         <li><a href="{% url 'webgui:assessment_delete' assessment.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+        {% if task_list %}<li><a href="{% url 'webgui:assessment_chart' assessment.id %}"><i class='fa fa-area-chart'></i> Charts</a></li>{% endif %}
     </ul>
 {% endblock %}
 
@@ -70,6 +71,25 @@
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
                                 <td class='text-center'>
+                                    {% for task in task_list %}
+                                        {% if task.metric == metric and task.media == encoded_media %}
+                                        <a href="{% url 'webgui:task_list' %}">
+                                            {% if task.get_state_display == 'Queued' %}
+                                            <span class="label label-default"><i class="fa fa-clock-o"></i> {{ task.get_state_display }}</span>
+                                            {% elif task.get_state_display == 'Processing' %}
+                                            <span class="label label-default"><i class="fa fa-cog fa-spin fa-fw"></i> {{ task.get_state_display }}</span>
+                                            {% elif task.get_state_display == 'Aborted' %}
+                                            <span class="label label-warning"><i class="fa fa-times"></i> {{ task.get_state_display }}</span>
+                                            {% elif task.get_state_display == 'Error' %}
+                                            <span class="label label-danger"><i class="fa fa-warning"></i> {{ task.get_state_display }}</span>
+                                            {% elif task.get_state_display == 'Success' %}
+                                            <span class="label label-success">{{ task.average_score }}</span>
+                                            {% else %}
+                                            <span class="label label-default">{{ task.get_state_display }}</span>
+                                            {% endif %}
+                                        </a>
+                                        {% endif %}
+                                    {% endfor %}
                                     <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}">
                                 </td>
                                 {% endfor %}

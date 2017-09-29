@@ -14,6 +14,7 @@ urlpatterns = [
     url(r'^assessment/(?P<assessment_id>[0-9]+)/$', views_assessment.read, name='assessment_read'),
     url(r'^assessment/(?P<assessment_id>[0-9]+)/update/$', views_assessment.update, name='assessment_update'),
     url(r'^assessment/(?P<assessment_id>[0-9]+)/delete/$', views_assessment.delete, name='assessment_delete'),
+    url(r'^assessment/(?P<assessment_id>[0-9]+)/chart/$', views_assessment.chart, name='assessment_chart'),
 	# EncodingProvider
     url(r'^encoding_provider/$', views_encoding_provider.list, name='encoding_provider_list'),
     url(r'^encoding_provider/create/$', views_encoding_provider.create, name='encoding_provider_create'),

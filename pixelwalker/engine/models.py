@@ -15,6 +15,9 @@ class Media(models.Model):
     file = models.FileField(null=True, upload_to=utils.get_upload_path)
     date_added = models.DateTimeField('added to library date', null=True)
     encoding_provider = models.ForeignKey(EncodingProvider, null=True, on_delete=models.SET_NULL)
+    width = models.IntegerField(null=True)
+    height = models.IntegerField(null=True)
+    average_bitrate = models.CharField(max_length=50, null=True)
 
     def __str__(self):              # __unicode__ on Python 2
         return self.name

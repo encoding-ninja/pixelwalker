@@ -25,6 +25,8 @@
             <tr>
                 <th>Name</th>
                 <th>Encoding provider</th>
+                <th>Definition</th>
+                <th>Bitrate</th>
                 <th class='text-right'>Actions</th>
             </tr>
         </thead>
@@ -39,6 +41,20 @@
                     <a href="{% url 'webgui:encoding_provider_read' media.encoding_provider.id %}">{{ media.encoding_provider.name }}</a>
                     {% else %}
                     <i>Undefined</i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if media.width and media.height %}
+                    {{ media.width }}x{{ media.height }}
+                    {% else %}
+                    <i>Unknown</i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if media.average_bitrate %}
+                    {{ media.average_bitrate }}
+                    {% else %}
+                    <i>Unknown</i>
                     {% endif %}
                 </td>
                 <td class='text-right'>

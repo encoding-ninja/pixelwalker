@@ -28,10 +28,6 @@ class Task(models.Model):
     metric = models.ForeignKey(Metric, null=True, on_delete=models.CASCADE)
     state = models.IntegerField(default=QUEUED, choices=STATE_CHOICES)
     progress = models.IntegerField(null=True)
+    message = models.CharField(max_length=200, null=True)
     output_data_path = models.CharField(max_length=200, null=True)
-    average_score = models.IntegerField(null=True)
-    date_queued = models.DateTimeField('date queued', null=True)
-    date_started = models.DateTimeField('date started', null=True)
-    date_last_update = models.DateTimeField('date last update', null=True)
-    date_complete = models.DateTimeField('date completed', null=True)
-
+    average_score = models.FloatField(null=True)
