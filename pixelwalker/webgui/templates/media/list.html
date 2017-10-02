@@ -25,7 +25,9 @@
             <tr>
                 <th>Name</th>
                 <th>Encoding provider</th>
+                <th>Codec</th>
                 <th>Definition</th>
+                <th>Framerate</th>
                 <th>Bitrate</th>
                 <th class='text-right'>Actions</th>
             </tr>
@@ -44,8 +46,22 @@
                     {% endif %}
                 </td>
                 <td>
+                    {% if media.video_codec %}
+                    {{ media.video_codec }}
+                    {% else %}
+                    <i>Unknown</i>
+                    {% endif %}
+                </td>
+                <td>
                     {% if media.width and media.height %}
                     {{ media.width }}x{{ media.height }}
+                    {% else %}
+                    <i>Unknown</i>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if media.framerate %}
+                    {{ media.framerate }}
                     {% else %}
                     <i>Unknown</i>
                     {% endif %}

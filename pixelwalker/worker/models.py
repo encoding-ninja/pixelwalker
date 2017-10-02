@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
+
 from django.db import models
 import engine.models
 
@@ -30,4 +32,34 @@ class Task(models.Model):
     progress = models.IntegerField(null=True)
     message = models.CharField(max_length=200, null=True)
     output_data_path = models.CharField(max_length=200, null=True)
+    chart_labels_path = models.CharField(max_length=200, null=True)
     average_score = models.FloatField(null=True)
+
+    def save_chart_dataset(self, dataset):
+        task = self
+
+        # string manipulations
+        dataset = str(dataset)
+        dataset = dataset.replace("u'","'")
+        dataset = dataset.replace('\n','').replace('\r','')
+        dataset = dataset.replace("'{borderColor}'", "getcolor("+str(task.id)+")")
+        dataset = dataset.replace("'{backgroundColor}'", "getcolor("+str(task.id)+")")
+        dataset = dataset.replace("'{true}'", "true")
+        dataset = dataset.replace("'{false}'", "false")
+
+        # save to file
+        task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+".json")
+        with open(task.output_data_path, "w") as f:
+            f.write(dataset)
+
+        task.save()
+
+    def save_chart_labels(self, labels):
+        task = self
+
+        # save to file
+        task.chart_labels_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+"_labels.json")
+        with open(task.chart_labels_path, "w") as f:
+            f.write(str(labels))
+
+        task.save()

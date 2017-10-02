@@ -71,15 +71,11 @@ def start_task(task):
 		current_tasks.remove(task)
 
 
-def callback_task(task, error, output_data):
+def callback_task(task, error):
 	if error:
 		task.state = Task.ERROR
 
 	else:
-		task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+".json")
-		with open(task.output_data_path, "w") as json_file:
-			json_file.write(output_data.replace('\n','').replace('\r',''))
-	
 		task.state = Task.SUCCESS
 	
 	task.save()

@@ -25,14 +25,22 @@ def process_ssim(task, callback_task) :
     if p.returncode > 0:
     	error = True
 
+    chart_labels = []
+
     dataset = {}
-    dataset['label'] = task.media.name +' SSIM'
+    dataset['label'] = task.media.name
+    dataset['backgroundColor'] = '{backgroundColor}'
+    dataset['borderColor'] = '{borderColor}'
+    dataset['fill'] = '{false}'
+    dataset['pointRadius'] = 1
+    dataset['pointHoverRadius'] = 5
     dataset['data'] = []
 
     raw_data = out.splitlines()
     sum_data = 0
     nb_data = 1
     for line in raw_data:
+        chart_labels.append(str(nb_data));
         value = float(line[line.find('All:')+4:line.find('(')].strip())
         dataset['data'].append(value)
         sum_data += value
@@ -41,7 +49,10 @@ def process_ssim(task, callback_task) :
     task.average_score = sum_data / nb_data
     task.save()
 
-    callback_task(task, error, str(dataset))
+    task.save_chart_dataset(dataset)
+    task.save_chart_labels(chart_labels)
+
+    callback_task(task, error)
 
 
 def process_psnr(task, callback_task) :
@@ -52,25 +63,34 @@ def process_psnr(task, callback_task) :
                 '-i', task.assessment.reference_media.file.path,
                 '-lavfi', '[0]scale='+str(task.assessment.reference_media.width)+':'+str(task.assessment.reference_media.height)+'[scaled];[scaled][1]psnr=stats_file=-',
                 '-f', 'null', '-']
-    print command
     p = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
     out, err = p.communicate()
-    print err
+
     task.message = err
     task.save()
 
     if p.returncode > 0:
         error = True
 
+    chart_labels = []
+
     dataset = {}
-    dataset['label'] = task.media.name +' PSNR'
+    dataset['label'] = task.media.name
+    dataset['backgroundColor'] = '{backgroundColor}'
+    dataset['borderColor'] = '{borderColor}'
+    dataset['fill'] = '{false}'
+    dataset['pointRadius'] = 1
+    dataset['pointHoverRadius'] = 5
     dataset['data'] = []
 
     raw_data = out.splitlines()
     sum_data = 0
     nb_data = 1
     for line in raw_data:
+        chart_labels.append(str(nb_data));
         value = float(line[line.find('psnr_avg:')+9:line.find('psnr_y:')].strip())
+        if str(value) == 'inf':
+            value = 100
         dataset['data'].append(value)
         sum_data += value
         nb_data+=1
@@ -78,4 +98,7 @@ def process_psnr(task, callback_task) :
     task.average_score = sum_data / nb_data
     task.save()
 
-    callback_task(task, error, str(dataset))
+    task.save_chart_dataset(dataset)
+    task.save_chart_labels(chart_labels)
+
+    callback_task(task, error)

@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 
+import json
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
@@ -112,4 +113,33 @@ def delete(request, assessment_id):
 # Show graphs for the assessment
 def chart(request, assessment_id):
     assessment = Assessment.objects.get(id=assessment_id)
-    return render(request, 'assessment/chart.html', {'assessment':assessment})
+
+    ssim_chart_data = []
+    ssim_chart_labels = None
+    for ssim_task in Task.objects.filter(assessment=assessment, metric=Metric.objects.get(name='SSIM')):
+
+        if ssim_task.output_data_path:
+            with open(ssim_task.output_data_path) as f:
+                ssim_chart_data.append(f.readlines()[0])
+
+        if ssim_task.chart_labels_path:
+             with open(ssim_task.chart_labels_path) as f:
+                ssim_chart_labels = f.readlines()[0]
+    
+    psnr_chart_data = []
+    psnr_chart_labels = None
+    for psnr_task in Task.objects.filter(assessment=assessment, metric=Metric.objects.get(name='PSNR')):
+
+        if psnr_task.output_data_path:
+            with open(psnr_task.output_data_path) as f:
+                psnr_chart_data.append(f.readlines()[0])
+
+        if psnr_task.chart_labels_path:
+             with open(psnr_task.chart_labels_path) as f:
+                psnr_chart_labels = f.readlines()[0]
+
+    return render(request, 'assessment/chart.html', 
+        {'assessment':assessment, 
+        'ssim_chart_data':ssim_chart_data, 'ssim_chart_labels':ssim_chart_labels,
+        'psnr_chart_data':psnr_chart_data, 'psnr_chart_labels':psnr_chart_labels,
+        })

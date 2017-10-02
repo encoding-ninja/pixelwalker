@@ -25,7 +25,12 @@
     <tbody>
         <tr>
         	<td>
-        		TO DO: display various charts
+        		{% if ssim_chart_labels != None %}
+        		<canvas id="ssimChart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
+        		{% endif %}
+        		{% if psnr_chart_labels != None %}
+        		<canvas id="psnrChart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
+        		{% endif %}
         	</td>
         </tr>
     </tbody>
@@ -40,11 +45,158 @@
 {% block js_requirements %}
     {{ block.super }}
 
+    {% if ssim_chart_labels != None or psnr_chart_labels != None %}
+    <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
+    
     <script>
-        $(document).ready(function(){
+    	var getcolor = function (num) {
+            if (num%6 == 0)
+                return "#F7464A";
+            else if (num%6 == 1)
+                return "#46BFBD";
+            else if (num%6 == 2)
+                return "#FDB45C";
+            else if (num%6 == 3)
+                return "#4674bf";
+            else if (num%6 == 4)
+                return "#949FB1";
+            else if (num%6 == 5)
+                return "#4D5360";
+        };
+        var gethighlight = function (num) {
+            if (num%6 == 0)
+                return "#FF5A5E";
+            else if (num%6 == 1)
+                return "#5AD3D1";
+            else if (num%6 == 2)
+                return "#FFC870";
+            else if (num%6 == 3)
+                return "#5a79d3";
+            else if (num%6 == 4)
+                return "#A8B3C5";
+            else if (num%6 == 5)
+                return "#616774";
+        };
+		var getfill = function (num) {
+            if (num%6 == 0)
+                return "rgba(255,90,94,0.08)";
+            else if (num%6 == 1)
+                return "rgba(90,211,209,0.08)";
+            else if (num%6 == 2)
+                return "rgba(255,200,112,0.08)";
+            else if (num%6 == 3)
+                return "rgba(90,121,211,0.08)";
+            else if (num%6 == 4)
+                return "rgba(168,179,197,0.08)";
+            else if (num%6 == 5)
+                return "rgba(97,103,116,0.08)";
+        };
 
-            
-
+        {% if ssim_chart_labels != None %}
+        var ssimCtx = document.getElementById("ssimChart");
+        var ssimChart = new Chart(ssimCtx, {
+            type: 'line',
+            data: {
+            	labels: {% autoescape off %}{{ ssim_chart_labels }}{% endautoescape %},
+            	datasets: [
+            		{% for ssim_dataset in ssim_chart_data %}
+            			{% autoescape off %}{{ ssim_dataset }}{% endautoescape %},
+            		{% endfor %}
+            	]
+       		},
+            options: {
+                responsive:true,
+                maintainAspectRatio: false,
+                title:{
+                    display:true,
+                    text:'SSIM'
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        ticks: {
+                            callback: function(dataLabel, index) {
+                                // Hide the label of every N dataset. return null to hide the grid line too
+                                return index % 2 === 0 ? dataLabel : '';
+                            }
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Frames'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'SSIM'
+                        }
+                    }]
+                },
+                animation: {
+		            duration: 0, // general animation time
+		        },
+		        hover: {
+		            animationDuration: 0, // duration of animations when hovering an item
+		        },
+		        responsiveAnimationDuration: 0, // animation duration after a resize
+            }
         });
+        {% endif %}
+
+        {% if psnr_chart_labels != None %}
+        var psnrCtx = document.getElementById("psnrChart");
+        var psnrChart = new Chart(psnrCtx, {
+            type: 'line',
+            data: {
+            	labels: {% autoescape off %}{{ psnr_chart_labels }}{% endautoescape %},
+            	datasets: [
+            		{% for psnr_dataset in psnr_chart_data %}
+            			{% autoescape off %}{{ psnr_dataset }}{% endautoescape %},
+            		{% endfor %}
+            	]
+       		},
+            options: {
+                responsive:true,
+                maintainAspectRatio: false,
+                title:{
+                    display:true,
+                    text:'PSNR'
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        ticks: {
+                            callback: function(dataLabel, index) {
+                                // Hide the label of every N dataset. return null to hide the grid line too
+                                return index % 2 === 0 ? dataLabel : '';
+                            }
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Frames'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'PSNR'
+                        }
+                    }]
+                },
+                animation: {
+		            duration: 0, // general animation time
+		        },
+		        hover: {
+		            animationDuration: 0, // duration of animations when hovering an item
+		        },
+		        responsiveAnimationDuration: 0, // animation duration after a resize
+            }
+        });
+        {% endif %}
+
     </script>
+    {% endif %}
+
 {% endblock %}

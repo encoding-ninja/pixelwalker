@@ -23,6 +23,7 @@
     "datatables": "^1.10.15",
     "bootstrap-toggle": "^2.2.2",
     "chart.js": "^2.6.0",
-    "bootstrap-select": "^1.12.4"
+    "bootstrap-select": "^1.12.4",
+    "awesome-bootstrap-checkbox": "^1.0.0"
   }
 }

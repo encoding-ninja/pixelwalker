@@ -25,12 +25,16 @@ def execute(task, callback_task) :
     probe = json.loads(out)
     for stream in probe['streams']:
     	if stream['codec_type'] == 'video':
-    		task.media.width = int(stream['width'])
-    		task.media.height = int(stream['height'])
-    		task.media.average_bitrate = probe['format']['bit_rate']
-    		task.media.save()
+            task.media.width = int(stream['width'])
+            task.media.height = int(stream['height'])
+            task.media.average_bitrate = probe['format']['bit_rate']
+            task.media.video_codec = stream['codec_name']
+            task.media.framerate = int(stream['r_frame_rate'].replace('/1',''))
+            task.media.save()
 
-    callback_task(task, error, out)
+    task.save_chart_dataset(out)
+
+    callback_task(task, error)
 
 
 def frame_bitrate_analysis(task, callback_task) :
@@ -91,4 +95,6 @@ def frame_bitrate_analysis(task, callback_task) :
     chart_data['datasets'].append(dataset_P)
     chart_data['datasets'].append(dataset_B)
 
-    callback_task(task, error, str(chart_data))
+    task.save_chart_dataset(chart_data)
+
+    callback_task(task, error)

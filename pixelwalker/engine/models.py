@@ -18,6 +18,8 @@ class Media(models.Model):
     width = models.IntegerField(null=True)
     height = models.IntegerField(null=True)
     average_bitrate = models.CharField(max_length=50, null=True)
+    video_codec = models.CharField(max_length=50, null=True)
+    framerate = models.IntegerField(null=True)
 
     def __str__(self):              # __unicode__ on Python 2
         return self.name

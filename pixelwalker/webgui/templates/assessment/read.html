@@ -48,17 +48,24 @@
                                     {% endif %}
                                 </th>
                                 <td class='text-center'>
+                                    {% if  assessment.reference_media.video_codec %}
+                                    {{  assessment.reference_media.video_codec }}
+                                    {% else %}
+                                    <i>Codec</i>
+                                    {% endif %}
+                                </td>
+                                <td class='text-center'>
                                     {% if  assessment.reference_media.width and  assessment.reference_media.height %}
                                     {{  assessment.reference_media.width }}x{{  assessment.reference_media.height }}
                                     {% else %}
-                                    <i>Unknown</i>
+                                    <i>Definition</i>
                                     {% endif %}
                                 </td>
                                 <td class='text-center'>
                                     {% if  assessment.reference_media.average_bitrate %}
                                     {{  assessment.reference_media.average_bitrate }}
                                     {% else %}
-                                    <i>Unknown</i>
+                                    <i>Bitrate</i>
                                     {% endif %}
                                 </td>
                                 {% if metric_list.count > 0 %}
@@ -70,12 +77,14 @@
                         </thead>
                         <tbody>
                             <tr class='info'>
-                                <th colspan='4'>
+                                <th colspan='5'>
                                     Encoded versions
                                 </th>
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
-                                <th class='text-center'><input type="checkbox" class='select-all' name='{{ metric.name }}-select-all' id='{{ metric.name }}-select-all' data-metric="{{ metric.name }}"></th>
+                                <th class='text-center'>
+                                    <input type="checkbox" class='select-all' name='{{ metric.name }}-select-all' id='{{ metric.name }}-select-all' data-metric="{{ metric.name }}">
+                                </th>
                                 {% endfor %}
                                 {% endif %}
                             </tr>
@@ -87,6 +96,13 @@
                                     {{ encoded_media.encoding_provider.name }}
                                 </td>
                                 {% endif %}
+                                <td class='text-center'>
+                                    {% if  assessment.reference_media.video_codec %}
+                                    {{  assessment.reference_media.video_codec }}
+                                    {% else %}
+                                    <i>Unknown</i>
+                                    {% endif %}
+                                </td>
                                 <td class='text-center'>
                                     {% if encoded_media.width and encoded_media.height %}
                                     {{ encoded_media.width }}x{{ encoded_media.height }}
@@ -132,7 +148,7 @@
                         </tbody>
                         </tfoot>
                             <tr class='active'>
-                                <td colspan='4'></td>
+                                <td colspan='5'></td>
                                 <td {% if metric_list.count > 0 %}colspan='{{ metric_list.count }}' {% endif %}class='text-center'>
                                     <button type="submit" class="btn btn-primary btn-block">Process</button>
                                 </td>
@@ -154,6 +170,20 @@
             </td>
         </tr>
         {% endif %}
+        {% if task_list.count > 0 %}
+        <tr>
+            <td colspan='2'>
+                <div class="panel panel-warning">
+                    <div class="panel-heading" data-toggle="collapse" href="#collapseAverageMetric" aria-expanded="false" aria-controls="collapseAverageMetric" style="cursor: pointer;">
+                        <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Average scores by metric</h3>
+                    </div>
+                    <div class="panel-body collapse" id="collapseAverageMetric">
+                        <canvas id="averageMetricChart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
+                    </div>
+                </div>
+            </td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>
 
@@ -161,6 +191,7 @@
 
 {% block css_requirements %}
     {{ block.super }}
+    <link href="{% static 'bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block js_requirements %}
@@ -194,4 +225,125 @@
 
         });
     </script>
+
+    {% if task_list.count > 0 %}
+    <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
+    
+    <script>
+        var getcolor = function (num) {
+            if (num%6 == 0)
+                return "#F7464A";
+            else if (num%6 == 1)
+                return "#46BFBD";
+            else if (num%6 == 2)
+                return "#FDB45C";
+            else if (num%6 == 3)
+                return "#4674bf";
+            else if (num%6 == 4)
+                return "#949FB1";
+            else if (num%6 == 5)
+                return "#4D5360";
+        };
+        var gethighlight = function (num) {
+            if (num%6 == 0)
+                return "#FF5A5E";
+            else if (num%6 == 1)
+                return "#5AD3D1";
+            else if (num%6 == 2)
+                return "#FFC870";
+            else if (num%6 == 3)
+                return "#5a79d3";
+            else if (num%6 == 4)
+                return "#A8B3C5";
+            else if (num%6 == 5)
+                return "#616774";
+        };
+        var getfill = function (num) {
+            if (num%6 == 0)
+                return "rgba(255,90,94,0.08)";
+            else if (num%6 == 1)
+                return "rgba(90,211,209,0.08)";
+            else if (num%6 == 2)
+                return "rgba(255,200,112,0.08)";
+            else if (num%6 == 3)
+                return "rgba(90,121,211,0.08)";
+            else if (num%6 == 4)
+                return "rgba(168,179,197,0.08)";
+            else if (num%6 == 5)
+                return "rgba(97,103,116,0.08)";
+        };
+
+        var averageMetricCtx = document.getElementById("averageMetricChart");
+        var averageMetricChart = new Chart(averageMetricCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for encoded_media in assessment.encoded_media_list.all %}'{{ encoded_media.name }}',{% endfor %}],
+                datasets: [
+                {% for metric in metric_list %}
+                {
+                    label: '{{ metric.name }}',
+                    yAxisID: "{{ metric.name }}",
+                    backgroundColor: getcolor({{ metric.id }}),
+                    data: [
+                    {% for encoded_media in assessment.encoded_media_list.all %}
+                        {% for task in task_list %}
+                            {% if task.metric == metric and task.media == encoded_media %}
+                            {{ task.average_score }},
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    ]
+                },
+                {% endfor %}
+                ]
+            },
+            options: {
+                responsive:true,
+                maintainAspectRatio: false,
+                title:{
+                    display:true,
+                    text:'Average scores'
+                },
+                scales: {
+                    yAxes: [
+                        {% for metric in metric_list %}
+                        {
+                            type: "linear", 
+                            display: true,
+                            {% if metric.id|divisibleby:2 %}
+                            position: "left",
+                            {% else %}
+                            position: "right",
+                            {% endif %}
+                            id: "{{ metric.name }}",
+                            scaleLabel: {
+                                display: true,
+                                labelString: '{{ metric.name }}'
+                            },
+                            {% if metric.name == "SSIM" %}
+                            ticks: {
+                                max: 1,
+                                min: 0
+                            },
+                            {% elif metric.name == "PSNR" %}
+                            ticks: {
+                                min: 0
+                            },
+                            {% endif %}
+                        },
+                        {% endfor %}
+                    ],
+                },
+                animation: {
+                    duration: 0, // general animation time
+                },
+                hover: {
+                    animationDuration: 0, // duration of animations when hovering an item
+                },
+                responsiveAnimationDuration: 0, // animation duration after a resize
+            }
+        });
+    </script>
+    {% endif %}
+
 {% endblock %}
