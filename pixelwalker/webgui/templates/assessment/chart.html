@@ -111,6 +111,11 @@
                     display:true,
                     text:'SSIM'
                 },
+                tooltips: {
+                        position: 'nearest',
+                        mode: 'index',
+                        intersect: false,
+                    },
                 scales: {
                     xAxes: [{
                         display: true,
@@ -137,7 +142,7 @@
 		            duration: 0, // general animation time
 		        },
 		        hover: {
-		            animationDuration: 0, // duration of animations when hovering an item
+		            animationDuration: 250, // duration of animations when hovering an item
 		        },
 		        responsiveAnimationDuration: 0, // animation duration after a resize
             }
@@ -163,6 +168,11 @@
                     display:true,
                     text:'PSNR'
                 },
+                tooltips: {
+                        position: 'nearest',
+                        mode: 'index',
+                        intersect: false,
+                    },
                 scales: {
                     xAxes: [{
                         display: true,
@@ -189,7 +199,7 @@
 		            duration: 0, // general animation time
 		        },
 		        hover: {
-		            animationDuration: 0, // duration of animations when hovering an item
+		            animationDuration: 250, // duration of animations when hovering an item
 		        },
 		        responsiveAnimationDuration: 0, // animation duration after a resize
             }

@@ -33,7 +33,25 @@
             {% endfor %}
             </td>
         </tr>
-        
+        {% if task_list %}
+        <tr>
+            <td colspan='2'>
+                {% regroup task_list by assessment as assessment_task_list %}
+                {% for assessment_task in assessment_task_list %}
+                    {% if assessment_task.grouper is not None %}
+                        {{ assessment_task.grouper }}
+                        {% regroup assessment_task.list by metric as metric_task_list %}
+                        {% for metric_task in metric_task_list %}
+                            {{ metric_task.grouper.name }}
+                            {% for task in metric_task.list %}
+                                {{ task.average_score }}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>
 {% endif %}

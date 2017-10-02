@@ -4,6 +4,7 @@ import subprocess
 import sys
 import os
 import json
+import datetime
 
 FFMPEG_PATH = os.path.join(os.path.abspath(sys.path[0]), 'worker', 'provider', 'dependencies', 'ffmpeg.exe')
 
@@ -32,15 +33,15 @@ def process_ssim(task, callback_task) :
     dataset['backgroundColor'] = '{backgroundColor}'
     dataset['borderColor'] = '{borderColor}'
     dataset['fill'] = '{false}'
-    dataset['pointRadius'] = 1
-    dataset['pointHoverRadius'] = 5
+    dataset['pointRadius'] = '{pointRadius}'
+    dataset['pointHoverRadius'] = '{pointHoverRadius}'
     dataset['data'] = []
 
     raw_data = out.splitlines()
     sum_data = 0
     nb_data = 1
     for line in raw_data:
-        chart_labels.append(str(nb_data));
+        chart_labels.append(str(datetime.timedelta(seconds=(nb_data/task.media.framerate))))
         value = float(line[line.find('All:')+4:line.find('(')].strip())
         dataset['data'].append(value)
         sum_data += value
@@ -79,15 +80,15 @@ def process_psnr(task, callback_task) :
     dataset['backgroundColor'] = '{backgroundColor}'
     dataset['borderColor'] = '{borderColor}'
     dataset['fill'] = '{false}'
-    dataset['pointRadius'] = 1
-    dataset['pointHoverRadius'] = 5
+    dataset['pointRadius'] = '{pointRadius}'
+    dataset['pointHoverRadius'] = '{pointHoverRadius}'
     dataset['data'] = []
 
     raw_data = out.splitlines()
     sum_data = 0
     nb_data = 1
     for line in raw_data:
-        chart_labels.append(str(nb_data));
+        chart_labels.append(str(datetime.timedelta(seconds=(nb_data/task.media.framerate))))
         value = float(line[line.find('psnr_avg:')+9:line.find('psnr_y:')].strip())
         if str(value) == 'inf':
             value = 100

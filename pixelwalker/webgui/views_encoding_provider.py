@@ -9,6 +9,7 @@ from django.views import generic
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
+from worker.models import Metric, Task
 
 
 # List all encoding providers
@@ -36,7 +37,8 @@ def create(request):
 def read(request, encoding_provider_id):
     encoding_provider = get_object_or_404(EncodingProvider, pk=encoding_provider_id)
     media_list = Media.objects.filter(encoding_provider=encoding_provider)
-    return render(request, 'encoding_provider/read.html', {'encoding_provider': encoding_provider, 'media_list':media_list})
+    task_list = Task.objects.filter(media__in=media_list)
+    return render(request, 'encoding_provider/read.html', {'encoding_provider': encoding_provider, 'media_list':media_list, 'task_list':task_list})
 
 
 #crUd

@@ -46,9 +46,14 @@ class Task(models.Model):
         dataset = dataset.replace("'{backgroundColor}'", "getcolor("+str(task.id)+")")
         dataset = dataset.replace("'{true}'", "true")
         dataset = dataset.replace("'{false}'", "false")
+        dataset = dataset.replace("'{pointRadius}'", "0")
+        dataset = dataset.replace("'{pointHoverRadius}'", "4")
 
         # save to file
-        task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+".json")
+        if task.assessment:
+            task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+".json")
+        else:
+            task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+".json")
         with open(task.output_data_path, "w") as f:
             f.write(dataset)
 
@@ -58,7 +63,10 @@ class Task(models.Model):
         task = self
 
         # save to file
-        task.chart_labels_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+"_labels.json")
+        if task.assessment:
+            task.chart_labels_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+"_labels.json")
+        else:
+            task.chart_labels_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+"_labels.json")
         with open(task.chart_labels_path, "w") as f:
             f.write(str(labels))
 
