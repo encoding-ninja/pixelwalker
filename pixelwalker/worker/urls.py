@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^task/create/$', views_task.create, name='task_create'),
     url(r'^task/(?P<task_id>[0-9]+)/abort/$', views_task.abort, name='task_abort'),
     url(r'^task/(?P<task_id>[0-9]+)/retry/$', views_task.retry, name='task_retry'),
+    url(r'^task/(?P<task_id>[0-9]+)/delete/$', views_task.delete, name='task_delete'),
 ]
 
 thr = threading.Thread(target=service.start, args=(), kwargs={})

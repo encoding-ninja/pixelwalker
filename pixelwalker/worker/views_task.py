@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 
+import os
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
@@ -28,7 +29,7 @@ def create(request):
         			new_task.metric = metric
         			new_task.save()
         
-        return HttpResponseRedirect(reverse('webgui:assessment_read', args=(request.POST.get('assessment_id'))))
+        return HttpResponseRedirect(reverse('webgui:assessment_read', args=(new_task.assessment.id,)))
 
     # Return to assessment list
     else:
@@ -48,4 +49,14 @@ def retry(request, task_id):
     task.state = Task.QUEUED
     task.progress = 0;
     task.save()
+    return HttpResponseRedirect(reverse('webgui:task_list'))
+
+#User delete
+def delete(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    if task.output_data_path is not None:
+        os.remove(task.output_data_path)
+    if task.chart_labels_path is not None:
+        os.remove(task.chart_labels_path)
+    task.delete()
     return HttpResponseRedirect(reverse('webgui:task_list'))
