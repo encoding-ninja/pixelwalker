@@ -35,6 +35,7 @@ def start():
 		print 'worker pulling'
 
 		for task in current_tasks:
+			task.refresh_from_db()
 			if task.state == Task.ABORTED:
 				current_tasks.remove(task)
 
