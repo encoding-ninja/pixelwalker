@@ -24,6 +24,7 @@
         <thead>
             <tr>
                 <th>Name</th>
+                <th class='text-center'>Media</th>
                 <th class='text-right'>Actions</th>
             </tr>
         </thead>
@@ -31,7 +32,17 @@
             {% for encoding_provider in encoding_provider_list %}
             <tr>
                 <td>
-                    <a href="{% url 'webgui:encoding_provider_read' encoding_provider.id %}"><span class='objectName'>{{ encoding_provider.name }}</span></a>
+                    <a href="{% url 'webgui:encoding_provider_read' encoding_provider.id %}"><b>{{ encoding_provider.name }}</b></a>
+                </td>
+                <td class='text-center'>
+                    {% regroup media_list by encoding_provider as provider_media_list %}
+                    {% for provider in provider_media_list %}
+                    {% if provider.grouper == encoding_provider %}
+                    {{ provider.list|length }}
+                    {% else %}
+                    0
+                    {% endif %}
+                    {% endfor %}
                 </td>
                 <td class='text-right'>
                     <ul class='actions'>

@@ -36,7 +36,7 @@
             {% for media in media_list %}
             <tr>
                 <td>
-                    <a href="{% url 'webgui:media_read' media.id %}">{{ media.name }}</a>
+                    <a href="{% url 'webgui:media_read' media.id %}"><b>{{ media.name }}</b></a>
                 </td>
                 <td>
                     {% if media.encoding_provider %}

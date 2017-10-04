@@ -22,7 +22,6 @@
 
     <h4><span class='danger'>Delete:</span> {{ encoding_provider.name }}</h4>
     <p class='col-sm-7 danger'>
-    - All metrics and score data associated will be lost.<br>
     - Media files associated with this encoding provider will still exist and will be set to a default/unknown provider.
     </p>
 <form action="{% url 'webgui:encoding_provider_delete' encoding_provider.id %}" method="post" class="form-horizontal">

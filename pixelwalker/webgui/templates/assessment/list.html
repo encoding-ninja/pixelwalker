@@ -32,7 +32,7 @@
             {% for assessment in assessment_list %}
             <tr>
                 <td>
-                    <a href="{% url 'webgui:assessment_read' assessment.id %}"><span class='objectName'>{{ assessment.name }}</span></a>
+                    <a href="{% url 'webgui:assessment_read' assessment.id %}"><b>{{ assessment.name }}</b></a>
                 </td>
                 <td>
                     {% if assessment.description %}

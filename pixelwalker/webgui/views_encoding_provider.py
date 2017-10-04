@@ -15,7 +15,8 @@ from worker.models import Metric, Task
 # List all encoding providers
 def list(request):
     encoding_provider_list = EncodingProvider.objects.all().order_by('name')
-    return render(request, 'encoding_provider/list.html', {'encoding_provider_list':encoding_provider_list})
+    media_list = Media.objects.all()
+    return render(request, 'encoding_provider/list.html', {'encoding_provider_list':encoding_provider_list, 'media_list':media_list})
 
 
 #Crud
