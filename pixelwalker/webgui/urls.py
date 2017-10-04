@@ -29,4 +29,5 @@ urlpatterns = [
     url(r'^media/(?P<media_id>[0-9]+)/delete/$', views_media.delete, name='media_delete'),
     # Task
      url(r'^task/$', views_task.list, name='task_list'),
+     url(r'^task/(?P<task_id>[0-9]+)/$', views_task.read, name='task_read'),
 ]

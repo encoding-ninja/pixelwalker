@@ -40,7 +40,7 @@
             {% for task in task_list %}
             <tr>
                 <td>
-                    {{ task.id }}
+                    <a href="{% url 'webgui:task_read'  task.id %}"><b>{{ task.id }}</b></a>
                 </td>
                 <td>
                     {{ task.metric.name }}
@@ -59,7 +59,7 @@
                     {% if task.get_state_display == 'Queued' %}
                     <span class="label label-default"><i class="fa fa-clock-o"></i> {{ task.get_state_display }}</span>
                     {% elif task.get_state_display == 'Processing' %}
-                    <span class="label label-default"><i class="fa fa-cog fa-spin fa-fw"></i> {{ task.get_state_display }}</span>
+                    <span class="label label-default"><i class="fa fa-cog"></i> {{ task.get_state_display }}</span>
                     {% elif task.get_state_display == 'Aborted' %}
                     <span class="label label-warning"><i class="fa fa-times"></i> {{ task.get_state_display }}</span>
                     {% elif task.get_state_display == 'Error' %}

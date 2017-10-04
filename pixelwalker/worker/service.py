@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.utils import timezone
+
 import os
 import time
 import threading
@@ -31,12 +33,19 @@ def start():
 	while True:
 		time.sleep(10)
 		print 'worker pulling'
+
+		for task in current_tasks:
+			if task.state == Task.ABORTED:
+				current_tasks.remove(task)
+
 		print "current tasks = " + str(len(current_tasks))
 		print "empty slots = " + str(empty_slots())
 
 		#Get new tasks
 		task_list = get_queued_tasks(empty_slots())
 		print "queued tasks retrieved = " + str(len(task_list))
+
+
 
 		if len(task_list) > 0:
 			for task in task_list:
@@ -47,6 +56,7 @@ def start():
 def start_task(task):
 	current_tasks.append(task)
 	task.state = Task.PROCESSING
+	task.date_started = timezone.now()
 	task.save()
 
 	if task.metric == Metric.objects.get(name='PROBE'):
@@ -78,9 +88,10 @@ def callback_task(task, error):
 	else:
 		task.state = Task.SUCCESS
 	
+	task.date_ended = timezone.now()
 	task.save()
 	current_tasks.remove(task)
 
 
 def get_queued_tasks(fetch_limit):
-	return Task.objects.filter(state=Task.QUEUED).order_by('id')[:fetch_limit]
+	return Task.objects.filter(state=Task.QUEUED).order_by('date_queued')[:fetch_limit]

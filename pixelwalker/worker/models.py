@@ -34,6 +34,10 @@ class Task(models.Model):
     output_data_path = models.CharField(max_length=200, null=True)
     chart_labels_path = models.CharField(max_length=200, null=True)
     average_score = models.FloatField(null=True)
+    date_created = models.DateTimeField('date created', null=True, auto_now_add=True)
+    date_queued = models.DateTimeField('date queued', null=True)
+    date_started = models.DateTimeField('date started', null=True)
+    date_ended = models.DateTimeField('date ended', null=True)
 
     def save_chart_dataset(self, dataset):
         task = self

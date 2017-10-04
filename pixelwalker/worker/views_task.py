@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
+from django.utils import timezone
 
 import os
 
@@ -19,15 +20,16 @@ def create(request):
         # list all possible metrics
         metric_list = Metric.objects.all()
         for metric in metric_list:
-        	requested_metric_list = request.POST.getlist(metric.name+'[]')
-        	if len(requested_metric_list) > 0:
-        		for media_id in requested_metric_list:
-        			# set simple task values
-        			new_task = Task()
-        			new_task.assessment = Assessment.objects.get(id=request.POST.get('assessment_id'))
-        			new_task.media = Media.objects.get(id=media_id)
-        			new_task.metric = metric
-        			new_task.save()
+            requested_metric_list = request.POST.getlist(metric.name+'[]')
+            if len(requested_metric_list) > 0:
+                for media_id in requested_metric_list:
+                    # set simple task values
+                    new_task = Task()
+                    new_task.assessment = Assessment.objects.get(id=request.POST.get('assessment_id'))
+                    new_task.media = Media.objects.get(id=media_id)
+                    new_task.metric = metric
+                    new_task.date_queued = timezone.now()
+                    new_task.save()
         
         return HttpResponseRedirect(reverse('webgui:assessment_read', args=(new_task.assessment.id,)))
 
@@ -40,6 +42,7 @@ def create(request):
 def abort(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     task.state = Task.ABORTED
+    task.date_ended = timezone.now()
     task.save()
     return HttpResponseRedirect(reverse('webgui:task_list'))
 
@@ -48,6 +51,9 @@ def retry(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     task.state = Task.QUEUED
     task.progress = 0;
+    task.date_queued = timezone.now()
+    task.date_started = None
+    task.date_ended = None
     task.save()
     return HttpResponseRedirect(reverse('webgui:task_list'))
 

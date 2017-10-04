@@ -12,7 +12,12 @@ from engine.models import EncodingProvider, Media, Assessment
 from worker.models import Metric, Task
 
 
-# List all assessments
+# List all taskss
 def list(request):
-    task_list = Task.objects.all().order_by('-id')
+    task_list = Task.objects.all().order_by('-date_queued')
     return render(request, 'task/list.html', {'task_list':task_list})
+
+# Read one task
+def read(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    return render(request, 'task/read.html', {'task': task})
