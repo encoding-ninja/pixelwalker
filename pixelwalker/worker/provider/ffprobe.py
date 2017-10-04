@@ -17,22 +17,28 @@ def execute(task, callback_task) :
                 '-print_format', 'json', '-pretty']
 
     p = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    out, err = p.communicate()
+    task.process_pid = p.pid
+    task.save()
 
+    out, err = p.communicate()
+    
     if p.returncode > 0:
     	error = True
 
-    probe = json.loads(out)
-    for stream in probe['streams']:
-    	if stream['codec_type'] == 'video':
-            task.media.width = int(stream['width'])
-            task.media.height = int(stream['height'])
-            task.media.average_bitrate = probe['format']['bit_rate']
-            task.media.video_codec = stream['codec_name']
-            task.media.framerate = int(stream['r_frame_rate'].replace('/1',''))
-            task.media.save()
+    try:
+        probe = json.loads(out)
+        for stream in probe['streams']:
+            if stream['codec_type'] == 'video':
+                task.media.width = int(stream['width'])
+                task.media.height = int(stream['height'])
+                task.media.average_bitrate = probe['format']['bit_rate']
+                task.media.video_codec = stream['codec_name']
+                task.media.framerate = int(stream['r_frame_rate'].replace('/1',''))
+                task.media.save()
 
-    task.save_chart_dataset(out)
+        task.save_chart_dataset(out)
+    except:
+        error = True
 
     callback_task(task, error)
 
@@ -48,53 +54,60 @@ def frame_bitrate_analysis(task, callback_task) :
                 '-print_format', 'json']
 
     p = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    out, err = p.communicate()
+    task.process_pid = p.pid
+    task.save()
 
+    out, err = p.communicate()
+    
     if p.returncode > 0:
     	error = True
 
-    #Get json results from ffprobe
-    data_json = json.loads(out)
+    try:
+        #Get json results from ffprobe
+        data_json = json.loads(out)
 
-    # create json file Chart.js enabled
-    chart_data = {}
-    chart_data['labels'] = []
-    chart_data['datasets'] = []
+        # create json file Chart.js enabled
+        chart_data = {}
+        chart_data['labels'] = []
+        chart_data['datasets'] = []
 
-    dataset_I = {}
-    dataset_I['label'] = 'I Frames'
-    dataset_I['backgroundColor'] = 'red'
-    dataset_I['data'] = []
+        dataset_I = {}
+        dataset_I['label'] = 'I Frames'
+        dataset_I['backgroundColor'] = 'red'
+        dataset_I['data'] = []
 
-    dataset_P = {}
-    dataset_P['label'] = 'P Frames'
-    dataset_P['backgroundColor'] = 'orange'
-    dataset_P['data'] = []
+        dataset_P = {}
+        dataset_P['label'] = 'P Frames'
+        dataset_P['backgroundColor'] = 'orange'
+        dataset_P['data'] = []
 
-    dataset_B = {}
-    dataset_B['label'] = 'B Frames'
-    dataset_B['backgroundColor'] = 'blue'
-    dataset_B['data'] = []
+        dataset_B = {}
+        dataset_B['label'] = 'B Frames'
+        dataset_B['backgroundColor'] = 'blue'
+        dataset_B['data'] = []
 
-    for frame in data_json['frames']:
-    	chart_data['labels'].append(int(frame['coded_picture_number']))
-    	if frame['pict_type'] == 'I':
-    		dataset_I['data'].append(int(frame['pkt_size']))
-    		dataset_P['data'].append(0)
-    		dataset_B['data'].append(0)
-    	elif frame['pict_type'] == 'P':
-    		dataset_I['data'].append(0)
-    		dataset_P['data'].append(int(frame['pkt_size']))
-    		dataset_B['data'].append(0)
-    	elif frame['pict_type'] == 'B':
-    		dataset_I['data'].append(0)
-    		dataset_P['data'].append(0)
-    		dataset_B['data'].append(int(frame['pkt_size']))
+        for frame in data_json['frames']:
+        	chart_data['labels'].append(int(frame['coded_picture_number']))
+        	if frame['pict_type'] == 'I':
+        		dataset_I['data'].append(int(frame['pkt_size']))
+        		dataset_P['data'].append(0)
+        		dataset_B['data'].append(0)
+        	elif frame['pict_type'] == 'P':
+        		dataset_I['data'].append(0)
+        		dataset_P['data'].append(int(frame['pkt_size']))
+        		dataset_B['data'].append(0)
+        	elif frame['pict_type'] == 'B':
+        		dataset_I['data'].append(0)
+        		dataset_P['data'].append(0)
+        		dataset_B['data'].append(int(frame['pkt_size']))
 
-    chart_data['datasets'].append(dataset_I)
-    chart_data['datasets'].append(dataset_P)
-    chart_data['datasets'].append(dataset_B)
+        chart_data['datasets'].append(dataset_I)
+        chart_data['datasets'].append(dataset_P)
+        chart_data['datasets'].append(dataset_B)
 
-    task.save_chart_dataset(chart_data)
+        task.save_chart_dataset(chart_data)
+
+    except:
+        error = True
 
     callback_task(task, error)

@@ -38,6 +38,7 @@ class Task(models.Model):
     date_queued = models.DateTimeField('date queued', null=True)
     date_started = models.DateTimeField('date started', null=True)
     date_ended = models.DateTimeField('date ended', null=True)
+    process_pid = models.IntegerField(null=True)
 
     def save_chart_dataset(self, dataset):
         task = self
@@ -75,3 +76,7 @@ class Task(models.Model):
             f.write(str(labels))
 
         task.save()
+
+    def reload(self):
+        new_self = self.__class__.objects.get(pk=self.pk)
+        self.__dict__.update(new_self.__dict__)

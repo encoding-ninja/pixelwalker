@@ -7,6 +7,7 @@ from django.views import generic
 from django.utils import timezone
 
 import os
+import signal
 
 # import db models
 from engine.models import EncodingProvider, Media, Assessment
@@ -41,16 +42,41 @@ def create(request):
 #User abort
 def abort(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
+    
     task.state = Task.ABORTED
+
+    if task.output_data_path is not None:
+        os.remove(task.output_data_path)
+        task.output_data_path = None
+    if task.chart_labels_path is not None:
+        os.remove(task.chart_labels_path)
+        task.chart_labels_path = None
+    
+    
     task.date_ended = timezone.now()
     task.save()
+
+    if task.process_pid is not None:
+        os.kill(task.process_pid, signal.SIGINT)
+    task.process_pid = None
+    task.save()
+
     return HttpResponseRedirect(reverse('webgui:task_list'))
 
 #User retry
 def retry(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     task.state = Task.QUEUED
-    task.progress = 0;
+    task.progress = 0
+
+    if task.output_data_path is not None:
+        os.remove(task.output_data_path)
+        task.output_data_path = None
+    if task.chart_labels_path is not None:
+        os.remove(task.chart_labels_path)
+        task.chart_labels_path = None
+        
+    task.process_pid = None
     task.date_queued = timezone.now()
     task.date_started = None
     task.date_ended = None
