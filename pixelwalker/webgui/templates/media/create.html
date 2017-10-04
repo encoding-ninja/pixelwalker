@@ -25,9 +25,14 @@
     {% csrf_token %}
 
     <div class="form-group col-sm-7">
-        <label for="name">File path</label>
-        <input class="form-control" type="file" name="file" id="file" required/>
+        <label for="name">File(s) path</label>
+        <div class="input-group input-group">
+            <span class="input-group-addon"><i class='fa fa-file'></i></span>
+            <input class="form-control" type="file" name="files" id="files" multiple="multiple" required/>
+        </div>
+        <p class="help-block">Select one or multiple files.</p>
     </div>
+
 
     <div class="form-group col-sm-7">
         <label for="name">Encoding provider</label>

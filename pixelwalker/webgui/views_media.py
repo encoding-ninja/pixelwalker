@@ -27,38 +27,42 @@ def list(request):
 def create(request):
     # Submitting values for new media
     if request.POST:
-        new_media = Media()
+        for f in request.FILES.getlist('files'):
+            new_media = Media()
 
-        # Updload the file
-        new_media.file = request.FILES['file']
+            # Updload the file
+            new_media.file = f
 
-        # Set default name
-        new_media.name = new_media.file.name
-        new_media.date_added = timezone.now()
+            # Set default name
+            new_media.name = new_media.file.name
+            new_media.date_added = timezone.now()
 
-        # Set encoding provider
-        if request.POST.get('encoding_provider') != "None":
-            new_media.encoding_provider = EncodingProvider.objects.filter(id=request.POST.get('encoding_provider'))[0]
+            # Set encoding provider
+            if request.POST.get('encoding_provider') != "None":
+                new_media.encoding_provider = EncodingProvider.objects.filter(id=request.POST.get('encoding_provider'))[0]
+            else:
+                new_media.encoding_provider = None
+
+            new_media.save()
+
+            #Ask for probing task
+            new_task = Task()
+            new_task.assessment = None
+            new_task.media = Media.objects.get(id=new_media.id)
+            new_task.metric = Metric.objects.get(name='PROBE')
+            new_task.save()
+
+            #Ask for bitrate task
+            new_task2 = Task()
+            new_task2.assessment = None
+            new_task2.media = Media.objects.get(id=new_media.id)
+            new_task2.metric = Metric.objects.get(name='BITRATE')
+            new_task2.save()
+
+        if len(request.FILES.getlist('files')) > 1:
+            return HttpResponseRedirect(reverse('webgui:media_list'))
         else:
-            new_media.encoding_provider = None
-
-        new_media.save()
-
-        #Ask for probing task
-        new_task = Task()
-        new_task.assessment = None
-        new_task.media = Media.objects.get(id=new_media.id)
-        new_task.metric = Metric.objects.get(name='PROBE')
-        new_task.save()
-
-        #Ask for bitrate task
-        new_task2 = Task()
-        new_task2.assessment = None
-        new_task2.media = Media.objects.get(id=new_media.id)
-        new_task2.metric = Metric.objects.get(name='BITRATE')
-        new_task2.save()
-
-        return HttpResponseRedirect(reverse('webgui:media_read', args=(new_media.id,)))
+            return HttpResponseRedirect(reverse('webgui:media_read', args=(new_media.id,)))
 
     # Asking for the new media form
     else:
