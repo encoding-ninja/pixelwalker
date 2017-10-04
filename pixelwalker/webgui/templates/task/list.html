@@ -76,10 +76,8 @@
                         <li><a href="{% url 'worker:task_abort'  task.id %}" class='warning'><i class='fa fa-times'></i> Abort</a></li>
                         {% elif task.state == 2 %}
                         <li><a href="{% url 'worker:task_retry'  task.id %}"><i class='fa fa-undo'></i> Redo</a></li>
-                        <li><a href="{% url 'worker:task_delete'  task.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
                         {% elif task.state > 2 %}
                         <li><a href="{% url 'worker:task_retry'  task.id %}"><i class='fa fa-undo'></i> Retry</a></li>
-                        <li><a href="{% url 'worker:task_delete'  task.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
                         {% else %}
                         <li></li>
                         {% endif %}

@@ -58,7 +58,7 @@ def retry(request, task_id):
     return HttpResponseRedirect(reverse('webgui:task_list'))
 
 #User delete
-def delete(request, task_id):
+def remove(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     if task.output_data_path is not None:
         os.remove(task.output_data_path)
