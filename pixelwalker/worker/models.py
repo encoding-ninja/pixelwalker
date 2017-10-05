@@ -56,9 +56,9 @@ class Task(models.Model):
 
         # save to file
         if task.assessment:
-            task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+".json")
+            task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+"_"+str(task.id)+".json")
         else:
-            task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+".json")
+            task.output_data_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+"_"+str(task.id)+".json")
         with open(task.output_data_path, "w") as f:
             f.write(dataset)
 
@@ -69,9 +69,9 @@ class Task(models.Model):
 
         # save to file
         if task.assessment:
-            task.chart_labels_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+"_labels.json")
+            task.chart_labels_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.assessment.name+"_"+task.metric.name+"_"+str(task.id)+"_labels.json")
         else:
-            task.chart_labels_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+"_labels.json")
+            task.chart_labels_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+"_"+str(task.id)+"_labels.json")
         with open(task.chart_labels_path, "w") as f:
             f.write(str(labels))
 

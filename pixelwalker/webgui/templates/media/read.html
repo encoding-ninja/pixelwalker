@@ -18,9 +18,11 @@
         <li><a href="{% url 'webgui:media_update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
         <li><a href="{% url 'webgui:media_delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
         <li></li>
+        {% if not bitrate_chart_data or not probe %}
         <li>New task:</li>
-        <li><a href="{% url 'webgui:media_probe' media.id %}"><i class='fa fa-flask'></i> Probe</a></li>
-        <li><a href="{% url 'webgui:media_bitrate' media.id %}"><i class='fa fa-bar-chart'></i> Bitrate</a></li>
+        {% if not probe %}<li><a href="{% url 'webgui:media_probe' media.id %}"><i class='fa fa-flask'></i> Probe</a></li>{% endif %}
+        {% if not bitrate_chart_data %}<li><a href="{% url 'webgui:media_bitrate' media.id %}"><i class='fa fa-bar-chart'></i> Bitrate</a></li>{% endif %}
+        {% endif %}
     </ul>
 {% endblock %}
 
@@ -32,6 +34,53 @@
         <tr>
             <td>File path</td>
             <td>{{ media.file.path }}</td>
+        </tr>
+        <tr>
+            <td>Basic informations</td>
+            <td>
+                <table class='table table-condensed'>
+                    <thead>
+                        <tr>
+                            <th>Codec</th>
+                            <th>Definition</th>
+                            <th>Framerate</th>
+                            <th>Bitrate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                {% if media.video_codec %}
+                                {{ media.video_codec }}
+                                {% else %}
+                                <i>Unknown</i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if media.width and media.height %}
+                                {{ media.width }}x{{ media.height }}
+                                {% else %}
+                                <i>Unknown</i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if media.framerate %}
+                                {{ media.framerate }}
+                                {% else %}
+                                <i>Unknown</i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if media.average_bitrate %}
+                                {{ media.average_bitrate }}
+                                {% else %}
+                                <i>Unknown</i>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
         </tr>
         <tr>
             <td>Encoding provider</td>
