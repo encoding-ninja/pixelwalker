@@ -38,5 +38,13 @@
       "name": "BITRATE",
       "hidden": "True"
     }
+  },
+    {
+    "model": "worker.Metric",
+    "pk": 6,
+    "fields": {
+      "name": "THUMBNAIL",
+      "hidden": "True"
+    }
   }
 ]

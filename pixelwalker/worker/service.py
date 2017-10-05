@@ -67,23 +67,33 @@ def start_task(task):
     task.date_started = timezone.now()
     task.save()
 
-    if task.metric == Metric.objects.get(name='PROBE'):
-        thr = threading.Thread(target=ffprobe.execute, args=(task, callback_task), kwargs={})
-        thr.start()
+    try:
+        if task.metric == Metric.objects.get(name='PROBE'):
+            thr = threading.Thread(target=ffprobe.execute, args=(task, callback_task), kwargs={})
+            thr.start()
 
-    elif task.metric == Metric.objects.get(name='BITRATE'):
-        thr = threading.Thread(target=ffprobe.frame_bitrate_analysis, args=(task, callback_task), kwargs={})
-        thr.start()
+        elif task.metric == Metric.objects.get(name='BITRATE'):
+            thr = threading.Thread(target=ffprobe.frame_bitrate_analysis, args=(task, callback_task), kwargs={})
+            thr.start()
 
-    elif task.metric == Metric.objects.get(name='SSIM'):
-        thr = threading.Thread(target=ffmpeg.process_ssim, args=(task, callback_task), kwargs={})
-        thr.start()
+        elif task.metric == Metric.objects.get(name='SSIM'):
+            thr = threading.Thread(target=ffmpeg.process_ssim, args=(task, callback_task), kwargs={})
+            thr.start()
 
-    elif task.metric == Metric.objects.get(name='PSNR'):
-        thr = threading.Thread(target=ffmpeg.process_psnr, args=(task, callback_task), kwargs={})
-        thr.start()
+        elif task.metric == Metric.objects.get(name='PSNR'):
+            thr = threading.Thread(target=ffmpeg.process_psnr, args=(task, callback_task), kwargs={})
+            thr.start()
 
-    else:
+        elif task.metric == Metric.objects.get(name='THUMBNAIL'):
+            thr = threading.Thread(target=ffmpeg.generate_thumbnail, args=(task, callback_task), kwargs={})
+            thr.start()
+
+        else:
+            task.state = Task.ERROR
+            task.save()
+            current_tasks.remove(task)
+
+    except:
         task.state = Task.ERROR
         task.save()
         current_tasks.remove(task)

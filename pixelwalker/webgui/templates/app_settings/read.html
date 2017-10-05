@@ -50,6 +50,13 @@
         	</td>
             <td></td>
         </tr>
+        <tr>
+            <td><b>Auto generate thumbnail on media creation</b></td>
+            <td class='text-center'>
+                <input type="checkbox" id="auto_generate_thumbnail" name='auto_generate_thumbnail' {% if app_settings.auto_generate_thumbnail %} checked {% endif %} data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" disabled>
+            </td>
+            <td></td>
+        </tr>
     </tbody>
 </table>
 

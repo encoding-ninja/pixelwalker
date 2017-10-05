@@ -18,10 +18,11 @@
         <li><a href="{% url 'webgui:media_update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
         <li><a href="{% url 'webgui:media_delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
         <li></li>
-        {% if not bitrate_chart_data or not probe %}
+        {% if not bitrate_chart_data or not probe or not thumb_url %}
         <li>New task:</li>
         {% if not probe %}<li><a href="{% url 'webgui:media_probe' media.id %}"><i class='fa fa-flask'></i> Probe</a></li>{% endif %}
         {% if not bitrate_chart_data %}<li><a href="{% url 'webgui:media_bitrate' media.id %}"><i class='fa fa-bar-chart'></i> Bitrate</a></li>{% endif %}
+        {% if not thumb_url %}<li><a href="{% url 'webgui:media_generate_thumbnail' media.id %}"><i class='fa fa-camera'></i> Thumbnail</a></li>{% endif %}
         {% endif %}
     </ul>
 {% endblock %}
@@ -36,19 +37,19 @@
             <td>{{ media.file.path }}</td>
         </tr>
         <tr>
-            <td>Basic informations</td>
+            <td{% if thumb_url %} class='text-center'{% endif %}>{% if thumb_url %}<img src="{{ thumb_url }}"/>{% else %}Basic informations{% endif %}</td>
             <td>
                 <table class='table table-condensed'>
                     <thead>
                         <tr>
-                            <th>Codec</th>
-                            <th>Definition</th>
-                            <th>Framerate</th>
-                            <th>Bitrate</th>
+                            <th class='text-center'>Codec</th>
+                            <th class='text-center'>Definition</th>
+                            <th class='text-center'>Framerate</th>
+                            <th class='text-center'>Bitrate</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
+                        <tr class='text-center'>
                             <td>
                                 {% if media.video_codec %}
                                 {{ media.video_codec }}

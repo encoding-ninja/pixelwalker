@@ -36,6 +36,11 @@ def update(request):
         	app_settings.auto_bitrate_analysis = True
         else:
         	app_settings.auto_bitrate_analysis = False
+
+        if request.POST.get('auto_generate_thumbnail') == 'on':
+            app_settings.auto_generate_thumbnail = True
+        else:
+            app_settings.auto_generate_thumbnail = False
         	
         app_settings.save()
         return HttpResponseRedirect(reverse('webgui:app_settings_read'))

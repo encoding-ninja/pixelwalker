@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.views import generic
 from django.utils import timezone
+from django.conf import settings
 
 import os
 import shutil
@@ -56,6 +57,10 @@ def create(request):
             if app_settings.auto_bitrate_analysis:
                 new_media.bitrate()
 
+            #Ask for thumbnail task
+            if app_settings.auto_generate_thumbnail:
+                new_media.generate_thumbnail()
+
         if len(request.FILES.getlist('files')) > 1:
             return HttpResponseRedirect(reverse('webgui:media_list'))
         else:
@@ -72,7 +77,14 @@ def read(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
     assessment_reference_list = Assessment.objects.filter(reference_media=media)
 
-    probe_tasks = Task.objects.filter(media=media, metric=Metric.objects.get(name='PROBE')).order_by('-id')
+    thumb_tasks = Task.objects.filter(media=media, state=Task.SUCCESS, metric=Metric.objects.get(name='THUMBNAIL')).order_by('-id')
+    if len(thumb_tasks) > 0:
+        thumb_path = thumb_tasks[0].output_data_path
+        thumb_url = settings.MEDIA_URL+thumb_path.replace(settings.MEDIA_ROOT+'\\','').replace('\\','/')
+    else:
+        thumb_url = None
+
+    probe_tasks = Task.objects.filter(media=media, state=Task.SUCCESS, metric=Metric.objects.get(name='PROBE')).order_by('-id')
     if len(probe_tasks) > 0:
         probe_data_path = probe_tasks[0].output_data_path
     else:
@@ -84,7 +96,7 @@ def read(request, media_id):
     else:
         probe = None
 
-    bitrate_tasks = Task.objects.filter(media=media, metric=Metric.objects.get(name='BITRATE')).order_by('-id')
+    bitrate_tasks = Task.objects.filter(media=media, state=Task.SUCCESS, metric=Metric.objects.get(name='BITRATE')).order_by('-id')
     if len(bitrate_tasks) > 0:
         bitrate_data_path = bitrate_tasks[0].output_data_path
     else:
@@ -95,7 +107,7 @@ def read(request, media_id):
     else:
         bitrate_chart_data = None
 
-    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list, 'probe':probe, 'bitrate_chart_data':bitrate_chart_data})
+    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list, 'thumb_url':thumb_url, 'probe':probe, 'bitrate_chart_data':bitrate_chart_data})
 
 
 #crUd
@@ -141,10 +153,16 @@ def delete(request, media_id):
 def probe(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
     media.probe()
-    return HttpResponseRedirect(reverse('webgui:media_read', args=(media.id,)))
+    return HttpResponseRedirect(reverse('webgui:task_list'))
 
 
 def bitrate(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
     media.bitrate()
-    return HttpResponseRedirect(reverse('webgui:media_read', args=(media.id,)))
+    return HttpResponseRedirect(reverse('webgui:task_list'))
+
+
+def generate_thumbnail(request, media_id):
+    media = get_object_or_404(Media, pk=media_id)
+    media.generate_thumbnail()
+    return HttpResponseRedirect(reverse('webgui:task_list'))

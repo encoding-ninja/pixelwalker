@@ -44,6 +44,13 @@ class Media(models.Model):
         new_task.media = Media.objects.get(id=self.id)
         new_task.metric = worker.models.Metric.objects.get(name='BITRATE')
         new_task.save()
+
+    def generate_thumbnail(self):
+        new_task = worker.models.Task()
+        new_task.assessment = None
+        new_task.media = Media.objects.get(id=self.id)
+        new_task.metric = worker.models.Metric.objects.get(name='THUMBNAIL')
+        new_task.save()
     
 
 class Assessment(models.Model):
@@ -65,4 +72,5 @@ class AppSettings(models.Model):
     worker_pulling_interval = models.IntegerField(default=10)
     auto_probe_media = models.BooleanField(default=True)
     auto_bitrate_analysis = models.BooleanField(default=True)
+    auto_generate_thumbnail = models.BooleanField(default=True)
     

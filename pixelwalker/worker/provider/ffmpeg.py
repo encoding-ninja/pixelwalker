@@ -26,7 +26,7 @@ def process_ssim(task, callback_task) :
     task.save()
 
     if p.returncode > 0:
-    	error = True
+        error = True
 
     try:
         chart_labels = []
@@ -110,6 +110,39 @@ def process_psnr(task, callback_task) :
 
         task.save_chart_dataset(dataset)
         task.save_chart_labels(chart_labels)
+
+    except:
+        error = True
+
+    callback_task(task, error)
+
+
+def generate_thumbnail(task, callback_task) :
+    error = False
+
+    output_img_path = os.path.join(os.path.dirname(task.media.file.path), task.media.name+"_"+task.metric.name+"_"+str(task.id)+".jpg")
+    
+    command = [FFMPEG_PATH,
+                '-hide_banner',
+                '-ss', '1',
+                '-i', task.media.file.path,
+                '-vf', 'select=gt(scene\,0.5),scale=320:-1',
+                '-frames:v', '1', '-y', output_img_path]
+
+    p = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE, universal_newlines=True)
+    task.process_pid = p.pid
+    task.save()
+
+    out, err = p.communicate()
+    task.message = err
+    task.save()
+
+    if p.returncode > 0:
+        error = True
+
+    try:
+        task.output_data_path = output_img_path
+        task.save()
 
     except:
         error = True
