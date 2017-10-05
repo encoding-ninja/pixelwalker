@@ -17,6 +17,10 @@
         <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
         <li><a href="{% url 'webgui:media_update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
         <li><a href="{% url 'webgui:media_delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+        <li></li>
+        <li>New task:</li>
+        <li><a href="{% url 'webgui:media_probe' media.id %}"><i class='fa fa-flask'></i> Probe</a></li>
+        <li><a href="{% url 'webgui:media_bitrate' media.id %}"><i class='fa fa-bar-chart'></i> Bitrate</a></li>
     </ul>
 {% endblock %}
 

@@ -8,18 +8,19 @@ import time
 import threading
 
 # import db models
-from engine.models import EncodingProvider, Media, Assessment
+from engine.models import EncodingProvider, Media, Assessment, AppSettings
 from worker.models import Metric, Task
 from worker.provider import ffprobe, ffmpeg
 
-
-MAX_TASK = 1
-PULLING_INTERVAL = 10
+# global variables
+app_settings = AppSettings.objects.get(id=1)
 current_tasks = []
 
 
 def empty_slots():
-    return (MAX_TASK - len(current_tasks))
+    # Refersh settings
+    app_settings = AppSettings.objects.get(id=1)
+    return (app_settings.max_parallel_tasks - len(current_tasks))
 
 
 def start():
@@ -32,7 +33,13 @@ def start():
 
     # Start interval pulling tasks
     while True:
-        time.sleep(PULLING_INTERVAL)
+        # Refersh settings
+        app_settings = AppSettings.objects.get(id=1)
+
+        # Wait
+        time.sleep(app_settings.worker_pulling_interval)
+
+        #Work
         print 'worker pulling'
 
         for task in current_tasks:
@@ -43,8 +50,10 @@ def start():
         print "empty slots = " + str(empty_slots())
 
         #Get new tasks
-        task_list = get_queued_tasks(empty_slots())
-        print "queued tasks retrieved = " + str(len(task_list))
+        task_list = []
+        if empty_slots() > 0:
+            task_list = get_queued_tasks(empty_slots())
+            print "queued tasks retrieved = " + str(len(task_list))
 
         if len(task_list) > 0:
             for task in task_list:

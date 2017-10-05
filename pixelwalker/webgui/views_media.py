@@ -13,7 +13,7 @@ import json
 import json2table
 
 # import db models
-from engine.models import EncodingProvider, Media, Assessment
+from engine.models import EncodingProvider, Media, Assessment, AppSettings
 from worker.models import Metric, Task
 
 
@@ -45,19 +45,16 @@ def create(request):
 
             new_media.save()
 
+            # Get app settings
+            app_settings = AppSettings.objects.get(id=1)
+
             #Ask for probing task
-            new_task = Task()
-            new_task.assessment = None
-            new_task.media = Media.objects.get(id=new_media.id)
-            new_task.metric = Metric.objects.get(name='PROBE')
-            new_task.save()
+            if app_settings.auto_probe_media:
+                new_media.probe()
 
             #Ask for bitrate task
-            new_task2 = Task()
-            new_task2.assessment = None
-            new_task2.media = Media.objects.get(id=new_media.id)
-            new_task2.metric = Metric.objects.get(name='BITRATE')
-            new_task2.save()
+            if app_settings.auto_bitrate_analysis:
+                new_media.bitrate()
 
         if len(request.FILES.getlist('files')) > 1:
             return HttpResponseRedirect(reverse('webgui:media_list'))
@@ -75,7 +72,11 @@ def read(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
     assessment_reference_list = Assessment.objects.filter(reference_media=media)
 
-    probe_data_path = Task.objects.get(media=media, metric=Metric.objects.get(name='PROBE')).output_data_path
+    probe_tasks = Task.objects.filter(media=media, metric=Metric.objects.get(name='PROBE')).order_by('-id')
+    if len(probe_tasks) > 0:
+        probe_data_path = probe_tasks[0].output_data_path
+    else:
+        probe_data_path = None
     if probe_data_path:
         with open(probe_data_path) as f:
             probe_json = json.load(f)
@@ -83,7 +84,11 @@ def read(request, media_id):
     else:
         probe = None
 
-    bitrate_data_path = Task.objects.get(media=media, metric=Metric.objects.get(name='BITRATE')).output_data_path
+    bitrate_tasks = Task.objects.filter(media=media, metric=Metric.objects.get(name='BITRATE')).order_by('-id')
+    if len(bitrate_tasks) > 0:
+        bitrate_data_path = bitrate_tasks[0].output_data_path
+    else:
+        bitrate_data_path = None
     if bitrate_data_path:
         with open(bitrate_data_path) as f:
             bitrate_chart_data = f.readlines()[0]
@@ -131,3 +136,15 @@ def delete(request, media_id):
     # Asking for the delete confirmation form
     else:
         return render(request, 'media/delete.html', {'media': media})
+
+
+def probe(request, media_id):
+    media = get_object_or_404(Media, pk=media_id)
+    media.probe()
+    return HttpResponseRedirect(reverse('webgui:media_read', args=(media.id,)))
+
+
+def bitrate(request, media_id):
+    media = get_object_or_404(Media, pk=media_id)
+    media.bitrate()
+    return HttpResponseRedirect(reverse('webgui:media_read', args=(media.id,)))

@@ -143,3 +143,10 @@ ul.actions li{
 .objectName{
 	font-size:18px;
 }
+
+a#settings_link{
+	display:block;
+	position: absolute;
+	right:0;
+	top:15px;
+}

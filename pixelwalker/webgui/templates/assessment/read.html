@@ -44,7 +44,7 @@
                                     {% if assessment.reference_media != None %}
                                     Reference: <a href="{% url 'webgui:media_read' assessment.reference_media.id %}">{{ assessment.reference_media.name }}</a>
                                     {% else %}
-                                    <i>Undefined</i>
+                                    <i><a href="{% url 'webgui:assessment_update' assessment.id %}"><i class='fa fa-pencil'></i> Edit assessment to set a reference media file</a></i>
                                     {% endif %}
                                 </th>
                                 <td class='text-center'>
@@ -83,7 +83,7 @@
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
                                 <th class='text-center'>
-                                    <input type="checkbox" class='select-all' name='{{ metric.name }}-select-all' id='{{ metric.name }}-select-all' data-metric="{{ metric.name }}">
+                                    <input type="checkbox" class='select-all' name='{{ metric.name }}-select-all' id='{{ metric.name }}-select-all' data-metric="{{ metric.name }}"{% if assessment.reference_media is None %} disabled{% endif %}>
                                 </th>
                                 {% endfor %}
                                 {% endif %}
@@ -97,8 +97,8 @@
                                 </td>
                                 {% endif %}
                                 <td class='text-center'>
-                                    {% if  assessment.reference_media.video_codec %}
-                                    {{  assessment.reference_media.video_codec }}
+                                    {% if encoded_media.video_codec %}
+                                    {{  encoded_media.video_codec }}
                                     {% else %}
                                     <i>Unknown</i>
                                     {% endif %}
@@ -120,7 +120,7 @@
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
                                 <td class='text-center'>
-                                     <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}">
+                                     <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}"{% if assessment.reference_media is None %} disabled{% endif %}>
                                     {% for task in task_list %}
                                         {% if task.metric == metric and task.media == encoded_media %}
                                             {% if task.get_state_display == 'Queued' %}
@@ -160,7 +160,7 @@
                             <tr class='active'>
                                 <td colspan='5'></td>
                                 <td {% if metric_list.count > 0 %}colspan='{{ metric_list.count }}' {% endif %}class='text-center'>
-                                    <button type="submit" class="btn btn-primary btn-block">Process</button>
+                                    <button type="submit" class="btn btn-primary btn-block"{% if assessment.reference_media is None %} disabled{% endif %}>Process</button>
                                 </td>
                             </tr>
                         </tfoot>

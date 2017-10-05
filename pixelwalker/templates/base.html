@@ -42,11 +42,13 @@
 					<nav>
 						{% block nav %}
 							<ul>
-								<li><a href="{% url 'webgui:assessment_list' %}">Assessments</a></li>
-								<li><a href="#">Media</a></li>
-								<li><a href="#">Tasks</a></li>
-							</ul>
+        						<li><a href="{% url 'webgui:assessment_list' %}">Assessments</a></li>
+        						<li><a href="{% url 'webgui:media_list' %}">Media</a></li>
+        						<li><a href="{% url 'webgui:encoding_provider_list' %}">Encoding providers</a></li>
+        						<li><a href="{% url 'webgui:task_list' %}">Tasks</a></li>
+    						</ul>
 						{% endblock %}
+						<a href="{% url 'webgui:app_settings_read' %}" id='settings_link' data-toggle="tooltip" data-placement="left" title="Settings"><i class='fa fa-gear fa-lg'></i></a>
 					</nav>
 				</header>
 				{% endblock %}
@@ -67,7 +69,12 @@
 			<script src="{% static 'bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
 		{% endblock %}
 		{% block javascript %}
-			<script>function goBack() { window.history.back(); }</script>
+			<script>
+				function goBack() { window.history.back(); }
+				$(function () {
+  					$('[data-toggle="tooltip"]').tooltip()
+				})
+			</script>
 		{% endblock %}
 	</body>
 </html>

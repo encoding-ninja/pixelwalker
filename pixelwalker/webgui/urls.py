@@ -5,6 +5,7 @@ from . import views_assessment
 from . import views_encoding_provider
 from . import views_media
 from . import views_task
+from . import views_app_settings
 
 urlpatterns = [
     url(r'^$', views.hello_world, name='index'),
@@ -27,8 +28,13 @@ urlpatterns = [
     url(r'^media/(?P<media_id>[0-9]+)/$', views_media.read, name='media_read'),
     url(r'^media/(?P<media_id>[0-9]+)/update/$', views_media.update, name='media_update'),
     url(r'^media/(?P<media_id>[0-9]+)/delete/$', views_media.delete, name='media_delete'),
+    url(r'^media/(?P<media_id>[0-9]+)/probe/$', views_media.probe, name='media_probe'),
+    url(r'^media/(?P<media_id>[0-9]+)/bitrate/$', views_media.bitrate, name='media_bitrate'),
     # Task
      url(r'^task/$', views_task.list, name='task_list'),
      url(r'^task/(?P<task_id>[0-9]+)/$', views_task.read, name='task_read'),
      url(r'^task/(?P<task_id>[0-9]+)/delete/$', views_task.delete, name='task_delete'),
+     # AppSettings
+     url(r'^settings/$', views_app_settings.read, name='app_settings_read'),
+     url(r'^settings/update/$', views_app_settings.update, name='app_settings_update'),
 ]
