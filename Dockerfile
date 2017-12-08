@@ -21,7 +21,7 @@ RUN git clone https://github.com/antoinehng/pixelwalker.git /pixelwalker
 RUN cd /pixelwalker && pip install -r requirements.txt
 
 # Bower JS+CSS dependencies
-RUN cd /pixelwalker/static && Bower --allow-root install
+RUN cd /pixelwalker/pixelwalker/static && Bower --allow-root install
 
 
 WORKDIR /pixelwalker/pixelwalker
