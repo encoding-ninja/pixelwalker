@@ -46,12 +46,18 @@ def abort(request, task_id):
     task.state = Task.ABORTED
 
     if task.output_data_path is not None:
-        os.remove(task.output_data_path)
+        try:
+            os.remove(task.output_data_path)
+        except OSError:
+            pass
         task.output_data_path = None
+
     if task.chart_labels_path is not None:
-        os.remove(task.chart_labels_path)
+        try:
+            os.remove(task.chart_labels_path)
+        except OSError:
+            pass
         task.chart_labels_path = None
-    
     
     task.date_ended = timezone.now()
     task.save()
@@ -70,10 +76,17 @@ def retry(request, task_id):
     task.progress = 0
 
     if task.output_data_path is not None:
-        os.remove(task.output_data_path)
+        try:
+            os.remove(task.output_data_path)
+        except OSError:
+            pass
         task.output_data_path = None
+
     if task.chart_labels_path is not None:
-        os.remove(task.chart_labels_path)
+        try:
+            os.remove(task.chart_labels_path)
+        except OSError:
+            pass
         task.chart_labels_path = None
         
     task.process_pid = None
@@ -86,9 +99,18 @@ def retry(request, task_id):
 #User delete
 def remove(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
+
     if task.output_data_path is not None:
-        os.remove(task.output_data_path)
+        try:
+            os.remove(task.output_data_path)
+        except OSError:
+            pass
+
     if task.chart_labels_path is not None:
-        os.remove(task.chart_labels_path)
+        try:
+            os.remove(task.chart_labels_path)
+        except OSError:
+            pass
+
     task.delete()
     return HttpResponseRedirect(reverse('webgui:task_list'))

@@ -59,6 +59,10 @@ def process_ssim(task, callback_task) :
     except:
         error = True
 
+    if error is True:
+        task.message = err
+        task.save()
+
     callback_task(task, error)
 
 
@@ -114,6 +118,10 @@ def process_psnr(task, callback_task) :
     except:
         error = True
 
+    if error is True:
+        task.message = err
+        task.save()
+
     callback_task(task, error)
 
 
@@ -146,5 +154,9 @@ def generate_thumbnail(task, callback_task) :
 
     except:
         error = True
+
+    if error is True:
+        task.message = err
+        task.save()
 
     callback_task(task, error)

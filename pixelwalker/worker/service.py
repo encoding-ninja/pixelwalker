@@ -109,10 +109,17 @@ def callback_task(task, error):
         if error:
             task.state = Task.ERROR
             if task.output_data_path is not None:
-                os.remove(task.output_data_path)
+                try:
+                    os.remove(task.output_data_path)
+                except OSError:
+                    pass   
                 task.output_data_path = None
+
             if task.chart_labels_path is not None:
-                os.remove(task.chart_labels_path)
+                try:
+                    os.remove(task.chart_labels_path)
+                except OSError:
+                    pass   
                 task.chart_labels_path = None
 
         else:

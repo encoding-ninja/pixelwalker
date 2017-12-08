@@ -40,6 +40,10 @@ def execute(task, callback_task) :
     except:
         error = True
 
+    if error is True:
+        task.message = err
+        task.save()
+
     callback_task(task, error)
 
 
@@ -109,5 +113,9 @@ def frame_bitrate_analysis(task, callback_task) :
 
     except:
         error = True
+
+    if error is True:
+        task.message = err
+        task.save()
 
     callback_task(task, error)
