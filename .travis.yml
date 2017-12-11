@@ -8,6 +8,6 @@ install:
 before_script:
   - python pixelwalker/manage.py runserver & 
 script:
-  - coverage run pixelwalker/manage.py tests
+  - coverage run pixelwalker/manage.py test
 after_script:
   - coveralls
