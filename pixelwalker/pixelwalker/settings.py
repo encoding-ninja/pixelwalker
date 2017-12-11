@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'engine.apps.EngineConfig',
+#    'worker.apps.workerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -118,3 +120,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "engine", "webgui", "static"),
+]
+
+
+# Media Files upload to
+
+MEDIA_ROOT = 'D:\GitHub\pixelwalker\media_library'
+MEDIA_URL = '/media/'
