@@ -1,7 +1,11 @@
 language: python
+python:
+  - "2.7"
+  - "3.4"
 before_install:
-- sudo apt-get update -qq
-- sudo apt-get install -yqq build-essential python python-setuptools python-dev python-tk python-pip npm ffmpeg
-- sudo npm install -g bower
-- sudo ln -s /usr/bin/nodejs /usr/bin/node
-install: true
+  - sudo apt-get update -qq
+  - sudo apt-get install -yqq npm ffmpeg
+  - sudo npm install -g bower
+  - sudo ln -s /usr/bin/nodejs /usr/bin/node
+install:
+  - pip install -r requirements.txt
