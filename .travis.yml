@@ -6,7 +6,7 @@ python:
 install:
   - pip install -r requirements.txt
   - sudo apt-get install -yqq npm
-  - sudo npm install -g bower && ln -s /usr/bin/nodejs /usr/bin/node
+  - sudo npm install -g bower
   - bower install 
 before_script:
   - python pixelwalker/manage.py migrate 
