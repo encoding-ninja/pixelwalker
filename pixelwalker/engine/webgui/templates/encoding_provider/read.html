@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: {{ encoding_provider.name }}{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+    <li><a href="">Media</a></li>
+    <li><a href="{% url 'webgui_encoding-provider-list' %}" class='active'>Encoding providers</a></li>
+    <li><a href="">Tasks</a></li>
+</ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-delete' encoding_provider.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+<h4><span class='info'>Encoding provider:</span> {{ encoding_provider.name }}</h4>
+{% if media_list %}
+<table class='table table-striped'>
+    <tbody>
+        <tr>
+            <td>{{ media_list|length }} associated media file(s)</td>
+            <td>
+            {% for media in media_list %}
+                <a href="{% url 'webgui_media-read' media.id %}">{{ media.name }}</a><br>
+            {% endfor %}
+            </td>
+        </tr>
+        {% if task_list %}
+        <tr>
+            <td colspan='2'>
+                {% regroup task_list by assessment as assessment_task_list %}
+                {% for assessment_task in assessment_task_list %}
+                    {% if assessment_task.grouper is not None %}
+                        {{ assessment_task.grouper }}
+                        {% regroup assessment_task.list by metric as metric_task_list %}
+                        {% for metric_task in metric_task_list %}
+                            {{ metric_task.grouper.name }}
+                            {% for task in metric_task.list %}
+                                {{ task.average_score }}
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+{% endblock %}

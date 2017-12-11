@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Delete encoding provider{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+    <li><a href="">Media</a></li>
+    <li><a href="{% url 'webgui_encoding-provider-list' %}" class='active'>Encoding providers</a></li>
+    <li><a href="">Tasks</a></li>
+</ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+
+    <h4><span class='danger'>Delete:</span> {{ encoding_provider.name }}</h4>
+    <p class='col-sm-7 danger'>
+    - Media files associated with this encoding provider will still exist and will be set to a default/unknown provider.
+    </p>
+<form action="{% url 'webgui_encoding-provider-delete' encoding_provider.id %}" method="post" class="form-horizontal">
+    {% csrf_token %}
+    <input type="hidden" name="delete_id" id="delete_id" value="{{ encoding_provider.id }}" required/>
+    
+    <div class="form-group col-sm-7">
+        <button type="submit" class="btn btn-danger">Yes</button>
+        <a href="{% url 'webgui_encoding-provider-read' encoding_provider.id %}" class="btn btn-default">No</a>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+{% endblock %}
