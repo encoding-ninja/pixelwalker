@@ -48,7 +48,7 @@
         						<li><a href="#">Tasks</a></li>
     						</ul>
 						{% endblock %}
-						<a href="#" id='settings_link' data-toggle="tooltip" data-placement="left" title="Settings"><i class='fa fa-gear fa-lg'></i></a>
+						<a href="{% url 'webgui_app-settings-read' %}" id='settings_link' data-toggle="tooltip" data-placement="left" title="Settings"><i class='fa fa-gear fa-lg'></i></a>
 					</nav>
 				</header>
 				{% endblock %}
