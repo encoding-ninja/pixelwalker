@@ -92,10 +92,11 @@ ENV/
 *.sqlite3
 
 # Bower installed components
-#  you should install them from the /static/bower.json dependency list
+#  you should install them from the bower.json dependency list
 bower_components/
-#  don't publish proxy settings on public repo
-.bowerrc
+
+#  don't publish local dev settings on public repo
+local.dev/
 
 # Imported media files
 media_library/
