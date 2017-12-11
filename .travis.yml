@@ -4,3 +4,4 @@ before_install:
 - sudo apt-get install -yqq build-essential python python-setuptools python-dev python-tk python-pip npm ffmpeg
 - sudo npm install -g bower
 - sudo ln -s /usr/bin/nodejs /usr/bin/node
+install: true
