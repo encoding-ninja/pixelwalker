@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Assessments{% endblock %}
+
+{% block nav %}
+    {{ block.super }}
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href="#"><i class='fa fa-plus'></i> New</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+
+        <p>No assessment project to display.</p>
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+    <link href="{% static 'bower_components/datatables/media/css/jquery.dataTables.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bower_components/datatables/media/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/datatables/media/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables/media/js/dataTables.bootstrap.min.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function(){
+            $('.datatable').DataTable();
+        }); 
+    </script>
+{% endblock %}

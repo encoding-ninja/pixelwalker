@@ -25,9 +25,6 @@
       "chart.js": "^2.6.0",
       "bootstrap-select": "^1.12.4",
       "awesome-bootstrap-checkbox": "^1.0.0"
-    },
-    "install": {
-        "base": ".\\pixelwalker\\engine\\webgui\\static"
     }
   }
   
