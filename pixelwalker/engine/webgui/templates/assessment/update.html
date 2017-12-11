@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Edit assessment{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="{% url 'webgui_assessment-list' %}" class='active'>Assessments</a></li>
+    <li><a href="">Media</a></li>
+    <li><a href="">Encoding providers</a></li>
+    <li><a href="">Tasks</a></li>
+</ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+
+    <h4><span class='info'>Edit:</span> {{ assessment.name }}</h4>
+<form action="{% url 'webgui_assessment-update' assessment.id %}" method="post" class="form-horizontal">
+    {% csrf_token %}
+    
+
+    <div class="form-group col-sm-7">
+        <label for="name">Name</label>
+            <input class="form-control" type="text" name="name" id="name" placeholder="Project name" value="{{ assessment.name }}" required/>
+    </div>
+
+    <div class="form-group col-sm-7">
+        <label for="description">Description</label>
+        <textarea class="form-control" rows="2" type="text" name="description" id="description" placeholder="This assessment's goal is...">{{ assessment.description }}</textarea>
+    </div>
+
+    <div class="form-group col-sm-7">
+        <label for="reference_media">Reference media</label>
+        <select class="form-control selectpicker" data-live-search="true" name="reference_media" id="reference_media">
+            <option value='None' {% if assessment.reference_media.id == None %} selected{% endif %}>Undefined</option>
+            {% if media_list %}
+            {% for media in media_list %}
+            <option value='{{ media.id }}'{% if media.id == assessment.reference_media.id %} selected{% endif %}>{{ media.name }}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+
+    <div class="form-group col-sm-7">
+        <label for="encoded_media_list">Encoded media list</label>
+        <select class="form-control selectpicker" data-live-search="true" name="encoded_media_list" id="encoded_media_list" multiple>
+            {% if media_list %}
+            {% for media in assessment.encoded_media_list.all %}
+            <option value='{{ media.id }}' selected>{{ media.name }}</option>
+            {% endfor %}
+            {% for media in media_list %}
+            {% if media not in assessment.encoded_media_list.all %}
+            <option value='{{ media.id }}'>{{ media.name }}</option>
+            {% endif %}
+            {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+    
+    <div class="form-group col-sm-7">
+        <button type="submit" class="btn btn-default">Update</button>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+    <link href="{% static 'bower_components/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
+{% endblock %}

@@ -4,19 +4,55 @@
 {% block tab_title %}{{ block.super }}: Assessments{% endblock %}
 
 {% block nav %}
-    {{ block.super }}
+<ul>
+    <li><a href="{% url 'webgui_assessment-list' %}" class='active'>Assessments</a></li>
+    <li><a href="">Media</a></li>
+    <li><a href="">Encoding providers</a></li>
+    <li><a href="">Tasks</a></li>
+</ul>
 {% endblock %}
 
 {% block options %}
     <ul>
-        <li><a href="#"><i class='fa fa-plus'></i> New</a></li>
+        <li><a href="{% url 'webgui_assessment-create' %}"><i class='fa fa-plus'></i> New</a></li>
     </ul>
 {% endblock %}
 
-{% block content %}       
-
-        <p>No assessment project to display.</p>
-
+{% block content %}      
+{% if assessment_list %}
+    <table class='table datatable table-striped table-hover table-condensed' data-page-length='50'>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th class='text-right'>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for assessment in assessment_list %}
+        <tr>
+            <td>
+                <a href="{% url 'webgui_assessment-read' assessment.id %}"><b>{{ assessment.name }}</b></a>
+            </td>
+            <td>
+                {% if assessment.description %}
+                    {{ assessment.description }}
+                {% endif %}
+            </td> 
+            <td class='text-right'>
+                <ul class='actions'>
+                    <li><a href="{% url 'webgui_assessment-read'  assessment.id %}"><i class='fa fa-eye'></i> View</a></li>
+                    <li><a href="{% url 'webgui_assessment-update' assessment.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                    <li><a href="{% url 'webgui_assessment-delete' assessment.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                </ul>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+    <p>No assessment project to display.</p>
+{% endif %}
 {% endblock %}
 
 {% block css_requirements %}
