@@ -13,19 +13,25 @@ RUN apt-get install -yqq ffmpeg
 
 # Clone pixelwalker repo
 RUN git clone https://github.com/antoinehng/pixelwalker.git /pixelwalker
-RUN cd /pixelwalker && git checkout django_2.0 && git pull
+WORKDIR /pixelwalker
+RUN git checkout django_2.0 && git pull
 
 # Python dependencies
-RUN cd /pixelwalker && pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 # Bower JS+CSS dependencies
-RUN cd /pixelwalker && bower --allow-root install
+RUN bower --allow-root install
+
+WORKDIR /pixelwalker/pixelwalker
 
 # Install pixelwalker
-RUN python3 /pixelwalker/pixelwalker/manage.py migrate
+RUN python3 manage.py migrate
 
 # Execute django test suite
-RUN python3 /pixelwalker/pixelwalker/manage.py test
+RUN python3 manage.py test
+
+# Expose web server port
+EXPOSE 8000
 
 # Start django dev server
-CMD python3 /pixelwalker/pixelwalker/manage.py runserver
+CMD python3 manage.py runserver
