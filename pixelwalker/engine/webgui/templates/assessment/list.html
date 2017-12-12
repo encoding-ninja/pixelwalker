@@ -50,6 +50,23 @@
         {% endfor %}
     </tbody>
 </table>
+
+<div id="assessments">
+    <!-- class="search" automagically makes an input a search field. -->
+    <input class="search" placeholder="Search" />
+    <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+    <button class="sort" data-sort="name">Sort by name</button>
+    <button class="sort" data-sort="id">Sort by id</button>
+  <ul class="list">
+    {% for assessment in assessment_list %}
+        <li>
+                <span class='id'>{{ assessment.id }}</span> 
+                <a href="{% url 'webgui_assessment-read' assessment.id %}" class="name"><b>{{ assessment.name }}</b></a>
+        </li>
+    {% endfor %}
+</ul>
+</div>
+
 {% else %}
     <p>No assessment project to display.</p>
 {% endif %}
@@ -65,6 +82,7 @@
     {{ block.super }}
     <script src="{% static 'bower_components/datatables/media/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'bower_components/datatables/media/js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
 {% endblock %}
 
 {% block javascript %}
@@ -73,5 +91,12 @@
         $(document).ready(function(){
             $('.datatable').DataTable();
         }); 
+
+
+        var options = {
+            valueNames: [ 'name', 'id' ]
+        };
+        var assessmentList = new List('assessments', options);
+
     </script>
 {% endblock %}
