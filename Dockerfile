@@ -34,4 +34,4 @@ RUN python3 manage.py test
 EXPOSE 8000
 
 # Start django dev server
-CMD python3 manage.py runserver
+CMD python3 manage.py runserver 0.0.0.0:8000
