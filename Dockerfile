@@ -16,6 +16,7 @@ RUN apt-get install -yqq ffmpeg
 
 # Clone pixelwalker repo
 RUN git clone https://github.com/antoinehng/pixelwalker.git /pixelwalker
+RUN cd /pixelwalker && git checkout django_2.0 && git pull
 
 # Python dependencies
 RUN cd /pixelwalker && pip install -r requirements.txt
