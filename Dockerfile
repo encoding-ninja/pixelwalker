@@ -5,7 +5,7 @@ MAINTAINER Antoine Henning <henning.antoine@gmail.com>
 RUN apt-get update -yqq && apt-get install -yqq \
 	build-essential \
 	git \
-	python3.6 python-setuptools python-dev python-tk python-pip npm
+	python3 python-setuptools python-dev python-tk python-pip npm
 RUN npm install -g bower && ln -s /usr/bin/nodejs /usr/bin/node
 
 
