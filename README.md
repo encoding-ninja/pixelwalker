@@ -1,2 +1,2 @@
 # pixelwalker
-Video quality assessment platform
+There is no stable release available yet.
