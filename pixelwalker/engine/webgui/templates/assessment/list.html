@@ -20,53 +20,43 @@
 
 {% block content %}      
 {% if assessment_list %}
-    <table class='table datatable table-striped table-hover table-condensed' data-page-length='50'>
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th class='text-right'>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for assessment in assessment_list %}
-        <tr>
-            <td>
-                <a href="{% url 'webgui_assessment-read' assessment.id %}"><b>{{ assessment.name }}</b></a>
-            </td>
-            <td>
-                {% if assessment.description %}
-                    {{ assessment.description }}
-                {% endif %}
-            </td> 
-            <td class='text-right'>
+<div id="assessments">
+
+    <!-- class="search" automagically makes an input a search field. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <input class="search form-control" placeholder="Search" />
+    </div>
+
+    <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+        <button class="sort btn btn-default" data-sort="name"><i class='fa fa-sort'></i> Name</button>
+        <button class="sort btn btn-default" data-sort="nb_of_media"><i class='fa fa-sort'></i> Number of media</button>
+    </div>
+
+
+    <ul class="list col-xs-12">
+    {% for assessment in assessment_list %}
+        <li class='item'>
+                <div class='general'>
+                    <a href="{% url 'webgui_assessment-read' assessment.id %}" class="name"><b>{{ assessment.name }}</b> <span class='id'>#{{ assessment.id }}</span></a>
+                    <p class='desc'>{{ assessment.description }}</p>
+                </div>
+
+                <ul class='infos'>
+                    <li>Media reference: {% if assessment.reference_media == None %}undefined{% else %}{{ assessment.reference_media.name }}{% endif %}</li>
+                    <li>Number of compressed media: <span class="nb_of_media">{{ assessment.encoded_media_list|length }}</span></li>
+                </ul>
+
                 <ul class='actions'>
                     <li><a href="{% url 'webgui_assessment-read'  assessment.id %}"><i class='fa fa-eye'></i> View</a></li>
                     <li><a href="{% url 'webgui_assessment-update' assessment.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
                     <li><a href="{% url 'webgui_assessment-delete' assessment.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
                 </ul>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-<div id="assessments">
-    <!-- class="search" automagically makes an input a search field. -->
-    <input class="search" placeholder="Search" />
-    <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
-    <button class="sort" data-sort="name">Sort by name</button>
-    <button class="sort" data-sort="id">Sort by id</button>
-  <ul class="list">
-    {% for assessment in assessment_list %}
-        <li>
-                <span class='id'>{{ assessment.id }}</span> 
-                <a href="{% url 'webgui_assessment-read' assessment.id %}" class="name"><b>{{ assessment.name }}</b></a>
         </li>
     {% endfor %}
-</ul>
+    </ul>
 </div>
-
 {% else %}
     <p>No assessment project to display.</p>
 {% endif %}
@@ -92,9 +82,8 @@
             $('.datatable').DataTable();
         }); 
 
-
         var options = {
-            valueNames: [ 'name', 'id' ]
+            valueNames: [ 'name', 'id', 'nb_of_media' ]
         };
         var assessmentList = new List('assessments', options);
 
