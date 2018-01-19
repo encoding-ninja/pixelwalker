@@ -4,7 +4,7 @@
 {% block tab_title %}{{ block.super }}: Tasks{% endblock %}
 
 {% block nav %}
-<ul>
+    <ul>
         <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
         <li><a href="{% url 'webgui_media-list' %}">Media</a></li>
         <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
@@ -43,22 +43,25 @@
             {% for task in task_list %}
                 <li class='item'>
                         <div class='general'>
-                            <a href="#TODO" class="name id"><b>#{{ task.id }}</b></span></a>
-                            <p class='desc'><span class="type">{{ task.type.name }}</span></a></p>
+                            <a href="{% url 'webgui_task-read' task.id %}" class="name id"><b>#{{ task.id }}</b></span></a>
+                            <p class='desc'>
+                                <span class="type">{{ task.type.name }}</span><br>
+                                <a href="{% url 'webgui_media-read' task.media.id %}">{{ task.media.name }}</a>
+                            </p>
                         </div>
         
                         <ul class='infos'>
-                            <li><span class="state">{{ task.get_state_display }}</span></li>
+                            <li><span class="state label label-default">{{ task.get_state_display }}</span></li>
                         </ul>
 
+                        {% if task.assessment %}
                         <ul class='infos'>
-                            {% if task.assessment %}
-                            <li><a href="{% url 'webgui_assessment-read'  task.assessment.id %}">{{ task.assessment.name }}</a></li>
-                            {% endif %}
+                            <li>Assessment: <a href="{% url 'webgui_assessment-read'  task.assessment.id %}">{{ task.assessment.name }}</a></li>
                         </ul>
+                        {% endif %}
         
                         <ul class='actions'>
-                            <li><a href="#TODO"><i class='fa fa-eye'></i> View</a></li>
+                            <li><a href="{% url 'webgui_task-read' task.id %}"><i class='fa fa-eye'></i> View</a></li>
                         </ul>
                 </li>
             {% endfor %}
@@ -85,10 +88,6 @@
     {{ block.super }}
     <script>
         $(document).ready(function(){
-            $('.datatable').DataTable({
-                "order": [[ 0, "desc" ]]
-            });
-
             setInterval(function(){
                 console.log($("#autorefresh").prop('checked'))
                 if($("#autorefresh").prop('checked'))

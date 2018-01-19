@@ -44,9 +44,10 @@ def create(request):
 
             new_media.save()
 
-            #Ask for probing task
-            #Ask for bitrate task
-            #Ask for thumbnail task
+            # Auto submit task
+            task_type_list = TaskType.objects.filter(auto_submit_on_new_media=True).order_by('-name')
+            for task_type in task_type_list:
+                new_media.auto_submit_task(task_type.name)
 
         if len(request.FILES.getlist('files')) > 1:
             return HttpResponseRedirect(reverse('webgui_media-list'))

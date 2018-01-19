@@ -32,6 +32,7 @@ urlpatterns = [
     path('encoding_provider/<int:encoding_provider_id>/delete', encoding_provider.delete, name='webgui_encoding-provider-delete'),   
     # Task
     path('task', task.list, name='webgui_task-list'), 
+    path('task/<int:task_id>', task.read, name='webgui_task-read'), 
     # AppSettings
     path('app_settings', app_settings.read, name='webgui_app-settings-read'),   
     path('app_settings/update', app_settings.update, name='webgui_app-settings-update'), 

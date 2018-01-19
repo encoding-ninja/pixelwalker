@@ -34,6 +34,13 @@ class Media(models.Model):
     def extension(self):
         name, extension = os.path.splitext(self.file.name)
         return extension
+
+    def auto_submit_task(self, type_name):
+        new_task = Task()
+        new_task.assessment = None
+        new_task.media = Media.objects.get(id=self.id)
+        new_task.type = TaskType.objects.get(name=type_name)
+        new_task.save()
     
 
 class Assessment(models.Model):
