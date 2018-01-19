@@ -27,6 +27,10 @@ WORKDIR /pixelwalker/pixelwalker
 # Install pixelwalker
 RUN python3 manage.py migrate
 
+# Load fixtures
+RUN python3 manage.py loaddata AppSettings
+RUN python3 manage.py loaddata TaskTypes
+
 # Execute django test suite
 RUN python3 manage.py test
 
