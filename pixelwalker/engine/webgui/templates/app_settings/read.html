@@ -3,6 +3,15 @@
 
 {% block tab_title %}{{ block.super }}: Settings{% endblock %}
 
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+        <li><a href="">Media</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+        <li><a href="">Tasks</a></li>
+    </ul>
+{% endblock %}
+
 {% block options %}
     <ul>
         <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
