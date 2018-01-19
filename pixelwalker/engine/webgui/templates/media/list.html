@@ -14,7 +14,7 @@
 
 {% block options %}
     <ul>
-        <li><a href=""><i class='fa fa-plus'></i> New</a></li>
+        <li><a href="{% url 'webgui_media-create' %}"><i class='fa fa-plus'></i> New</a></li>
     </ul>
 {% endblock %}
 
@@ -37,16 +37,24 @@
     {% for media in media_list %}
         <li class='item'>
                 <div class='general'>
-                    <a href="{% url 'webgui_assessment-read' assessment.id %}" class="name"><b>{{ media.name }}</b> <span class='id'>#{{ media.id }}</span></a>
+                    <a href="{% url 'webgui_media-read' media.id %}" class="name"><b>{{ media.name }}</b> <span class='id'>#{{ media.id }}</span></a>
+                    <p class='desc'>{{ media.encoding_provider.name }}</p>
                 </div>
 
                 <ul class='infos'>
+                    <li>Codec</li>
+                    <li>Bitrate</li>
+                </ul>
+
+                <ul class='infos'>
+                    <li>Definition</li>
+                    <li>Framerate</li>
                 </ul>
 
                 <ul class='actions'>
-                    <li><a href=""><i class='fa fa-eye'></i> View</a></li>
-                    <li><a href=""><i class='fa fa-pencil'></i> Edit</a></li>
-                    <li><a href="" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                    <li><a href="{% url 'webgui_media-read' media.id %}"><i class='fa fa-eye'></i> View</a></li>
+                    <li><a href="{% url 'webgui_media-update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                    <li><a href="{% url 'webgui_media-delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
                 </ul>
         </li>
     {% endfor %}

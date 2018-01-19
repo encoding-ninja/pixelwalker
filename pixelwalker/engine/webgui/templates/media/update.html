@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Edit media{% endblock %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+        <li><a href="{% url 'webgui_media-list' %}" class='active'>Media</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+        <li><a href="">Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+
+    <h4><span class='info'>Edit:</span> {{ media.name }}</h4>
+<form action="{% url 'webgui_media-update' media.id %}" method="post" class="form-horizontal">
+    {% csrf_token %}
+
+    <div class="form-group col-sm-7">
+        <label for="name">Name</label>
+            <input class="form-control" type="text" name="name" id="name" placeholder="Media file name" value="{{ media.name }}" required/>
+    </div>
+
+    <div class="form-group col-sm-7">
+        <label for="name">Encoding provider</label>
+        <select class="form-control selectpicker" data-live-search="true" name="encoding_provider" id="encoding_provider">
+            <option value='None'{% if media.encoding_provider == None %} selected{% endif %}>Undefined</option>
+            {% if encoding_provider_list %}
+            {% for encoding_provider in encoding_provider_list %}
+            <option value='{{ encoding_provider.id }}'{% if media.encoding_provider == encoding_provider %} selected{% endif %}>{{ encoding_provider.name }}</option>
+            {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+
+    <div class="form-group col-sm-7">
+        <button type="submit" class="btn btn-default">Update</button>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+    <link href="{% static 'bower_components/bootstrap-select/dist/css/bootstrap-select.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
+{% endblock %}

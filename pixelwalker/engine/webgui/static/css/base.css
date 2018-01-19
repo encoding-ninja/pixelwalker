@@ -167,7 +167,7 @@ ul.list li.item{
 	height:100px;
 }
 ul.list li.item:hover{
-	background: linear-gradient(to right,#197bd6 0,#197bd6 10px,#fff 10px,#fff 100%) no-repeat;
+	background: linear-gradient(to right,#197bd6 0,#197bd6 10px,#197bd605 10px,#197bd605 100%) no-repeat;
 	border: 1px solid #197bd6;
 }
 
@@ -181,7 +181,10 @@ ul.list li.item div.general{
 	overflow:hidden;
 }
 ul.list li.item span.id{
-	color:#eaeaea;
+	color:#ddd;
+}
+ul.list li.item:hover span.id{
+	color:#aaa;
 }
 ul.list li.item a.name{
 	font-size:18px;
@@ -196,9 +199,12 @@ ul.list li.item p.desc{
 	left:10px;
 	color:#888;
 }
+ul.list li.item:hover p.desc{
+	color:#666;
+}
 
 ul.list li.item ul.actions{
-	background: linear-gradient(to right,#eaeaea 0,#eaeaea 1px,#fff 1px,#fff 100%) no-repeat;
+	background: linear-gradient(to right,#eaeaea 0,#eaeaea 1px,rgba(255, 255, 255, 0) 1px,rgba(255, 255, 255, 0) 100%) no-repeat;
 	float:right;
 	padding-left:10px;
 	height:70px;
@@ -210,11 +216,15 @@ ul.list li.item ul.actions li{
 }
 
 ul.list li.item ul.infos{
-	background: linear-gradient(to right,#eaeaea 0,#eaeaea 1px,#fff 1px,#fff 100%) no-repeat;
+	background: linear-gradient(to right,#eaeaea 0,#eaeaea 1px,rgba(255, 255, 255, 0) 1px,rgba(255, 255, 255, 0) 100%) no-repeat;
 	float:left;
 	padding-left:10px;
 	height:70px;
 	color:#888;
+	margin-right:50px;
+}
+ul.list li.item:hover ul.infos{
+	color:#444;
 }
 ul.list li.item ul.infos li{
 	display:block;

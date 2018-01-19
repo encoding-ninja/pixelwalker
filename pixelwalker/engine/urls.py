@@ -18,6 +18,10 @@ urlpatterns = [
     path('assessment/<int:assessment_id>/delete', assessment.delete, name='webgui_assessment-delete'),
     # Media
     path('media', media.list, name='webgui_media-list'),  
+    path('media/create', media.create, name='webgui_media-create'),  
+    path('media/<int:media_id>', media.read, name='webgui_media-read'),  
+    path('media/<int:media_id>/update', media.update, name='webgui_media-update'),  
+    path('media/<int:media_id>/delete', media.delete, name='webgui_media-delete'),  
     # EncodingProvider
     path('encoding_provider', encoding_provider.list, name='webgui_encoding-provider-list'),   
     path('encoding_provider/create', encoding_provider.create, name='webgui_encoding-provider-create'),   
