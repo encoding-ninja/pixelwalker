@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Media{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+    <li><a href="{% url 'webgui_media-list' %}" class='active'>Media</a></li>
+    <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+    <li><a href="">Tasks</a></li>
+</ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href=""><i class='fa fa-plus'></i> New</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}      
+{% if media_list %}
+<div id="medias">
+
+    <!-- class="search" automagically makes an input a search field. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <input class="search form-control" placeholder="Search" />
+    </div>
+
+    <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+        <button class="sort btn btn-default" data-sort="name"><i class='fa fa-sort'></i> Name</button>
+    </div>
+
+    <ul class="list col-xs-12">
+    {% for media in media_list %}
+        <li class='item'>
+                <div class='general'>
+                    <a href="{% url 'webgui_assessment-read' assessment.id %}" class="name"><b>{{ media.name }}</b> <span class='id'>#{{ media.id }}</span></a>
+                </div>
+
+                <ul class='infos'>
+                </ul>
+
+                <ul class='actions'>
+                    <li><a href=""><i class='fa fa-eye'></i> View</a></li>
+                    <li><a href=""><i class='fa fa-pencil'></i> Edit</a></li>
+                    <li><a href="" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                </ul>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{% else %}
+    <p>No media item to display.</p>
+{% endif %}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        var options = {
+            valueNames: [ 'name', 'id' ]
+        };
+        var mediaList = new List('medias', options);
+    </script>
+{% endblock %}

@@ -2,6 +2,7 @@ from django.urls import path
 
 from .api.v1 import views as api
 from .webgui import views_assessment as assessment
+from .webgui import views_media as media
 from .webgui import views_encoding_provider as encoding_provider
 from .webgui import views_app_settings as app_settings
 
@@ -15,6 +16,8 @@ urlpatterns = [
     path('assessment/<int:assessment_id>', assessment.read, name='webgui_assessment-read'),   
     path('assessment/<int:assessment_id>/update', assessment.update, name='webgui_assessment-update'),   
     path('assessment/<int:assessment_id>/delete', assessment.delete, name='webgui_assessment-delete'),
+    # Media
+    path('media', media.list, name='webgui_media-list'),  
     # EncodingProvider
     path('encoding_provider', encoding_provider.list, name='webgui_encoding-provider-list'),   
     path('encoding_provider/create', encoding_provider.create, name='webgui_encoding-provider-create'),   
