@@ -38,7 +38,9 @@
         <li class='item'>
                 <div class='general'>
                     <a href="{% url 'webgui_media-read' media.id %}" class="name"><b>{{ media.name }}</b> <span class='id'>#{{ media.id }}</span></a>
-                    <p class='desc'>{{ media.encoding_provider.name }}</p>
+                    {% if media.encoding_provider %}
+                        <p class='desc'><a href="{% url 'webgui_encoding-provider-read' media.encoding_provider.id %}">{{ media.encoding_provider.name }}</a></p>
+                    {% endif %}
                 </div>
 
                 <ul class='infos'>
@@ -61,7 +63,7 @@
     </ul>
 </div>
 {% else %}
-    <p>No media item to display.</p>
+    <p class='col-sm-7 danger'>No media item to display.</p>
 {% endif %}
 {% endblock %}
 

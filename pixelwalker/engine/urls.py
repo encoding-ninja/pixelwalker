@@ -12,6 +12,7 @@ urlpatterns = [
     # WEBGUI
     # Assessment
     path('', assessment.list, name='webgui_assessment-list'),   
+    path('assessment', assessment.list, name='webgui_assessment-list'),   
     path('assessment/create', assessment.create, name='webgui_assessment-create'),   
     path('assessment/<int:assessment_id>', assessment.read, name='webgui_assessment-read'),   
     path('assessment/<int:assessment_id>/update', assessment.update, name='webgui_assessment-update'),   

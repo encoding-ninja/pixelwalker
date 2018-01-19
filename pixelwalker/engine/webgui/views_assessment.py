@@ -9,7 +9,7 @@ from ..models import Assessment, Media, EncodingProvider, Task, TaskType
 
 # List all assessments
 def list(request):
-    assessment_list = Assessment.objects.all().order_by('name')
+    assessment_list = Assessment.objects.all().order_by('-id')
     return render(request, 'assessment/list.html', {'assessment_list':assessment_list})
 
 #Crud

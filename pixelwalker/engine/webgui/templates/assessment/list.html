@@ -43,8 +43,8 @@
                 </div>
 
                 <ul class='infos'>
-                    <li>Media reference: {% if assessment.reference_media == None %}undefined{% else %}{{ assessment.reference_media.name }}{% endif %}</li>
-                    <li>Number of compressed media: <span class="nb_of_media">{{ assessment.encoded_media_list|length }}</span></li>
+                    {% if assessment.reference_media != None %}Reference: <a href="{% url 'webgui_media-read' assessment.reference_media.id %}">{{ assessment.reference_media.name }}</a>{% endif %}</li>
+                    {% if assessment.encoded_media_list.count > 0 %}<li><span class="nb_of_media">{{ assessment.encoded_media_list.count }}</span> encoded variant{% if assessment.encoded_media_list.count > 1 %}s{% endif%}</li>{% endif%}
                 </ul>
 
                 <ul class='actions'>
@@ -57,7 +57,7 @@
     </ul>
 </div>
 {% else %}
-    <p>No assessment project to display.</p>
+    <p class='col-sm-7 danger'>No assessment project to display.</p>
 {% endif %}
 {% endblock %}
 

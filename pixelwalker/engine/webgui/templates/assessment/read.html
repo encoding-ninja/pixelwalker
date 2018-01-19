@@ -32,7 +32,7 @@
         {% if assessment.encoded_media_list.count > 0 %}
         <tr>
             <td colspan='2'>
-                <form action="{% url 'worker:task_create' %}" method="post">
+                <form action="#TODO" method="post">
                 {% csrf_token %}
                     <input type='hidden' name='assessment_id' value='{{ assessment.id }}'/>
                     <input type='hidden' name='reference_media_id' value='{{ assessment.reference_media.id }}'/>
@@ -77,7 +77,7 @@
                         <tbody>
                             <tr class='info'>
                                 <th colspan='5'>
-                                    Encoded versions
+                                    Encoded variants
                                 </th>
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}

@@ -40,21 +40,17 @@
                         <div class='general'>
                             <a href="{% url 'webgui_encoding-provider-read' encoding_provider.id %}" class="name"><b>{{ encoding_provider.name }}</b> <span class='id'>#{{ encoding_provider.id }}</span></a>
                         </div>
-        
-                        <ul class='infos'>
-                            <li>Number of media: 
-                                <span class="nb_of_media">
-                                    {% regroup media_list by encoding_provider as provider_media_list %}
-                                    {% for provider in provider_media_list %}
-                                    {% if provider.grouper == encoding_provider %}
-                                    {{ provider.list|length }}
-                                    {% else %}
-                                    0
+                        
+                            {% regroup media_list by encoding_provider as provider_media_list %}
+                            {% for provider in provider_media_list %}
+                                {% if provider.grouper == encoding_provider %}
+                                    {% if provider.list|length > 0 %}
+                                    <ul class='infos'>
+                                        <li>{{ provider.list|length }} media file{% if provider.list|length > 1 %}s{% endif %}</li>
+                                    </ul>
                                     {% endif %}
-                                    {% endfor %}
-                                </span>
-                            </li>
-                        </ul>
+                                {% endif %}
+                            {% endfor %}
         
                         <ul class='actions'>
                             <li><a href="{% url 'webgui_encoding-provider-read'  encoding_provider.id %}"><i class='fa fa-eye'></i> View</a></li>
@@ -66,7 +62,7 @@
             </ul>
         </div>
     {% else %}
-        <p>No encoding provider to display.</p>
+        <p class='col-sm-7 danger'>No encoding provider to display.</p>
     {% endif %}
 {% endblock %}
 
@@ -79,7 +75,7 @@
     {{ block.super }}
     <script>
         var options = {
-            valueNames: [ 'name', 'id', 'nb_of_media' ]
+            valueNames: [ 'name', 'id' ]
         };
         var encodingProviderList = new List('encoding_providers', options);
     </script>
