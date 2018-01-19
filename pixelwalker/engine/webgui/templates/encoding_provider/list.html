@@ -20,64 +20,67 @@
 
 {% block content %}       
     {% if encoding_provider_list %}
-        <table class='table datatable table-striped table-hover table-condensed' data-page-length='50'>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th class='text-center'>Media</th>
-                <th class='text-right'>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for encoding_provider in encoding_provider_list %}
-            <tr>
-                <td>
-                    <a href="{% url 'webgui_encoding-provider-read' encoding_provider.id %}"><b>{{ encoding_provider.name }}</b></a>
-                </td>
-                <td class='text-center'>
-                    {% regroup media_list by encoding_provider as provider_media_list %}
-                    {% for provider in provider_media_list %}
-                    {% if provider.grouper == encoding_provider %}
-                    {{ provider.list|length }}
-                    {% else %}
-                    0
-                    {% endif %}
-                    {% endfor %}
-                </td>
-                <td class='text-right'>
-                    <ul class='actions'>
-                        <li><a href="{% url 'webgui_encoding-provider-read'  encoding_provider.id %}"><i class='fa fa-eye'></i> View</a></li>
-                        <li><a href="{% url 'webgui_encoding-provider-update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
-                        <li><a href="{% url 'webgui_encoding-provider-delete' encoding_provider.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
-                    </ul>
-                </td>
-            </tr>
+    <div id="encoding_providers">
+
+            <!-- class="search" automagically makes an input a search field. -->
+            <div class="form-group col-xs-12 col-md-6">
+                <input class="search form-control" placeholder="Search" />
+            </div>
+        
+            <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+            <div class="form-group col-xs-12 col-md-6">
+                <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+                <button class="sort btn btn-default" data-sort="name"><i class='fa fa-sort'></i> Name</button>
+                <button class="sort btn btn-default" data-sort="nb_of_media"><i class='fa fa-sort'></i> Number of media</button>
+            </div>
+        
+            <ul class="list col-xs-12">
+                    {% for encoding_provider in encoding_provider_list %}
+                <li class='item'>
+                        <div class='general'>
+                            <a href="{% url 'webgui_encoding-provider-read' encoding_provider.id %}" class="name"><b>{{ encoding_provider.name }}</b> <span class='id'>#{{ encoding_provider.id }}</span></a>
+                        </div>
+        
+                        <ul class='infos'>
+                            <li>Number of media: 
+                                <span class="nb_of_media">
+                                    {% regroup media_list by encoding_provider as provider_media_list %}
+                                    {% for provider in provider_media_list %}
+                                    {% if provider.grouper == encoding_provider %}
+                                    {{ provider.list|length }}
+                                    {% else %}
+                                    0
+                                    {% endif %}
+                                    {% endfor %}
+                                </span>
+                            </li>
+                        </ul>
+        
+                        <ul class='actions'>
+                            <li><a href="{% url 'webgui_encoding-provider-read'  encoding_provider.id %}"><i class='fa fa-eye'></i> View</a></li>
+                            <li><a href="{% url 'webgui_encoding-provider-update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                            <li><a href="{% url 'webgui_encoding-provider-delete' encoding_provider.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                        </ul>
+                </li>
             {% endfor %}
-        </tbody>
-    </table>
+            </ul>
+        </div>
     {% else %}
         <p>No encoding provider to display.</p>
     {% endif %}
-
-{% endblock %}
-
-{% block css_requirements %}
-    {{ block.super }}
-    <link href="{% static 'bower_components/datatables/media/css/jquery.dataTables.min.css' %}" rel="stylesheet">
-    <link href="{% static 'bower_components/datatables/media/css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block js_requirements %}
     {{ block.super }}
-    <script src="{% static 'bower_components/datatables/media/js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'bower_components/datatables/media/js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
 {% endblock %}
 
 {% block javascript %}
     {{ block.super }}
     <script>
-        $(document).ready(function(){
-            $('.datatable').DataTable();
-        }); 
+        var options = {
+            valueNames: [ 'name', 'id', 'nb_of_media' ]
+        };
+        var encodingProviderList = new List('encoding_providers', options);
     </script>
 {% endblock %}
