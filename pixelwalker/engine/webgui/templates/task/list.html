@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Tasks{% endblock %}
+
+{% block nav %}
+<ul>
+        <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+        <li><a href="{% url 'webgui_media-list' %}">Media</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+        <li><a href="{% url 'webgui_task-list' %}" class='active'>Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li>
+            <label class="checkbox-inline">
+                <input type="checkbox" id="autorefresh" name='autorefresh' checked data-toggle="toggle" data-size="mini" data-on="<i class='fa fa-refresh'></i>" data-off="<i class='fa fa-times'></i>">
+                Auto-refresh
+            </label>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+    {% if task_list %}
+    <div id="tasks">
+
+            <!-- class="search" automagically makes an input a search field. -->
+            <div class="form-group col-xs-12 col-md-6">
+                <input class="search form-control" placeholder="Search" />
+            </div>
+        
+            <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+            <div class="form-group col-xs-12 col-md-6">
+                <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+                <button class="sort btn btn-default" data-sort="type"><i class='fa fa-sort'></i> Type</button>
+                <button class="sort btn btn-default" data-sort="State"><i class='fa fa-sort'></i> State</button>
+            </div>
+        
+            <ul class="list col-xs-12">
+            {% for task in task_list %}
+                <li class='item'>
+                        <div class='general'>
+                            <a href="#TODO" class="name id"><b>#{{ task.id }}</b></span></a>
+                            <p class='desc'><span class="type">{{ task.type.name }}</span></a></p>
+                        </div>
+        
+                        <ul class='infos'>
+                            <li><span class="state">{{ task.get_state_display }}</span></li>
+                        </ul>
+
+                        <ul class='infos'>
+                            {% if task.assessment %}
+                            <li><a href="{% url 'webgui_assessment-read'  task.assessment.id %}">{{ task.assessment.name }}</a></li>
+                            {% endif %}
+                        </ul>
+        
+                        <ul class='actions'>
+                            <li><a href="#TODO"><i class='fa fa-eye'></i> View</a></li>
+                        </ul>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p class='col-sm-7 danger'>No task to display.</p>
+    {% endif %}
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+    <link href="{% static 'bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
+    <script src="{% static 'bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        $(document).ready(function(){
+            $('.datatable').DataTable({
+                "order": [[ 0, "desc" ]]
+            });
+
+            setInterval(function(){
+                console.log($("#autorefresh").prop('checked'))
+                if($("#autorefresh").prop('checked'))
+                {
+                    window.location.reload(1);
+                }
+            }, 5000);
+        }); 
+
+        var options = {
+            valueNames: [ 'id', 'type', 'state' ]
+        };
+        var taskList = new List('tasks', options);
+    </script>
+{% endblock %}

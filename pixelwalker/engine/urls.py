@@ -4,6 +4,7 @@ from .api.v1 import views as api
 from .webgui import views_assessment as assessment
 from .webgui import views_media as media
 from .webgui import views_encoding_provider as encoding_provider
+from .webgui import views_task as task
 from .webgui import views_app_settings as app_settings
 
 urlpatterns = [
@@ -29,6 +30,8 @@ urlpatterns = [
     path('encoding_provider/<int:encoding_provider_id>', encoding_provider.read, name='webgui_encoding-provider-read'),   
     path('encoding_provider/<int:encoding_provider_id>/update', encoding_provider.update, name='webgui_encoding-provider-update'),   
     path('encoding_provider/<int:encoding_provider_id>/delete', encoding_provider.delete, name='webgui_encoding-provider-delete'),   
+    # Task
+    path('task', task.list, name='webgui_task-list'), 
     # AppSettings
     path('app_settings', app_settings.read, name='webgui_app-settings-read'),   
     path('app_settings/update', app_settings.update, name='webgui_app-settings-update'), 
