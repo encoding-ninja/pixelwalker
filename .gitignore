@@ -97,6 +97,8 @@ bower_components/
 
 #  don't publish local dev settings on public repo
 local.dev/
+dev.local/
 
 # Imported media files
 media_library/
+.DS_Store
