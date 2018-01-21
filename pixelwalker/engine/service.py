@@ -1,5 +1,5 @@
 # -*- coding: utf8 -*-
-import time, threading
+import time, threading, json, requests
 from .models import AppSettings, Task
 
 
@@ -36,7 +36,21 @@ class Service(object):
             # For queued tasks
             for task in self.get_queued_tasks():
                 if self.get_empty_task_slot() > 0:
-                    task.state = Task.PROCESSING
+                    # Prepare to send task to available worker
+                    data = {}
+                    data['id'] = task.id
+                    data['media_file_path'] = task.media.file.path
+                    data['type'] = task.type.name
+
+                    url = "http://localhost:8000/api/v1/worker/task"
+                    headers = {'content-type': 'application/json'}
+                    r=requests.post(url, data=json.dumps(data), headers=headers)
+
+                    if r.status_code == 200:
+                        # Task correctly received by worker
+                        task.state = Task.PROCESSING
+                    else:
+                        task.state = Task.ERROR
                     task.save()
             
     def get_processing_tasks(self):

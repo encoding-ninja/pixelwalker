@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .api.v1 import views as api
+from .api.v1 import endpoints as api
 from .webgui import views_assessment as assessment
 from .webgui import views_media as media
 from .webgui import views_encoding_provider as encoding_provider
@@ -8,8 +8,9 @@ from .webgui import views_task as task
 from .webgui import views_app_settings as app_settings
 
 urlpatterns = [
-	# API v1
-    path('api/v1/', api.index, name='index'),
+	# API v1 ENGINE
+    path('api/v1/engine', api.index, name='api-engine_root'),
+    path('api/v1/engine/task/<int:task_id>', api.task_acknowledge, name='api-engine_task'),
     # WEBGUI
     # Assessment
     path('', assessment.list, name='webgui_assessment-list'),   
