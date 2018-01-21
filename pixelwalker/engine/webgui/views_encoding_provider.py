@@ -11,8 +11,7 @@ from ..models import Assessment, Media, EncodingProvider, Task, TaskType
 # List all encoding providers
 def list(request):
     encoding_provider_list = EncodingProvider.objects.all().order_by('name')
-    media_list = Media.objects.all()
-    return render(request, 'encoding_provider/list.html', {'encoding_provider_list':encoding_provider_list, 'media_list':media_list})
+    return render(request, 'encoding_provider/list.html', {'encoding_provider_list':encoding_provider_list})
 
 
 #Crud
@@ -33,7 +32,7 @@ def create(request):
 #cRud
 def read(request, encoding_provider_id):
     encoding_provider = get_object_or_404(EncodingProvider, pk=encoding_provider_id)
-    media_list = Media.objects.filter(encoding_provider=encoding_provider)
+    media_list = Media.objects.filter(encoding_provider=encoding_provider).order_by('-id')
     task_list = Task.objects.filter(media__in=media_list)
     return render(request, 'encoding_provider/read.html', {'encoding_provider': encoding_provider, 'media_list':media_list, 'task_list':task_list})
 

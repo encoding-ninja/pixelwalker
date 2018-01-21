@@ -39,19 +39,13 @@
                 <li class='item'>
                         <div class='general'>
                             <a href="{% url 'webgui_encoding-provider-read' encoding_provider.id %}" class="name"><b>{{ encoding_provider.name }}</b> <span class='id'>#{{ encoding_provider.id }}</span></a>
+                            <p class='desc'>{{ encoding_provider.get_number_of_media }} media file{% if encoding_provider.get_number_of_media > 1 %}s{% endif %}</p>
                         </div>
-                        
-                            {% regroup media_list by encoding_provider as provider_media_list %}
-                            {% for provider in provider_media_list %}
-                                {% if provider.grouper == encoding_provider %}
-                                    {% if provider.list|length > 0 %}
-                                    <ul class='infos'>
-                                        <li>{{ provider.list|length }} media file{% if provider.list|length > 1 %}s{% endif %}</li>
-                                    </ul>
-                                    {% endif %}
-                                {% endif %}
-                            {% endfor %}
-        
+                        <ul class='images'>
+                            {% for media in encoding_provider.get_some_media_preview %}
+                            <li><img src="{{ media.get_thumbnail_url }}"></li>
+                            {% endfor %}   
+                        </ul>
                         <ul class='actions'>
                             <li><a href="{% url 'webgui_encoding-provider-read'  encoding_provider.id %}"><i class='fa fa-eye'></i> View</a></li>
                             <li><a href="{% url 'webgui_encoding-provider-update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>

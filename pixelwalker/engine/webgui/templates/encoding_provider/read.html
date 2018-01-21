@@ -23,44 +23,71 @@
 {% block content %}       
 <h4><span class='info'>Encoding provider:</span> {{ encoding_provider.name }}</h4>
 {% if media_list %}
-<table class='table table-striped'>
+<table class='table'>
     <tbody>
         <tr>
             <td>{{ media_list|length }} associated media file(s)</td>
-            <td>
-            {% for media in media_list %}
-                <a href="{% url 'webgui_media-read' media.id %}">{{ media.name }}</a><br>
-            {% endfor %}
-            </td>
         </tr>
-        {% if task_list %}
-        <tr>
-            <td colspan='2'>
-                {% regroup task_list by assessment as assessment_task_list %}
-                {% for assessment_task in assessment_task_list %}
-                    {% if assessment_task.grouper is not None %}
-                        {{ assessment_task.grouper }}
-                        {% regroup assessment_task.list by metric as metric_task_list %}
-                        {% for metric_task in metric_task_list %}
-                            {{ metric_task.grouper.name }}
-                            {% for task in metric_task.list %}
-                                {{ task.average_score }}
-                            {% endfor %}
-                        {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            </td>
-        </tr>
-        {% endif %}
     </tbody>
 </table>
-{% endif %}
-{% endblock %}
+<div id="medias">
 
-{% block css_requirements %}
-    {{ block.super }}
+    <!-- class="search" automagically makes an input a search field. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <input class="search form-control" placeholder="Search" />
+    </div>
+
+    <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+        <button class="sort btn btn-default" data-sort="name"><i class='fa fa-sort'></i> Name</button>
+    </div>
+
+    <ul class="list col-xs-12">
+    {% for media in media_list %}
+        <li class='item'>
+                {% if media.get_thumbnail_url %}
+                <div class='thumb'>
+                    <img src="{{ media.get_thumbnail_url }}">
+                </div>
+                {% endif %}
+
+                <div class='general'>
+                    <a href="{% url 'webgui_media-read' media.id %}" class="name"><b>{{ media.name }}</b> <span class='id'>#{{ media.id }}</span></a>
+                    {% if media.encoding_provider %}
+                        <p class='desc'><a href="{% url 'webgui_encoding-provider-read' media.encoding_provider.id %}" class='provider'>{{ media.encoding_provider.name }}</a></p>
+                    {% endif %}
+                </div>
+
+                <ul class='infos'>
+                    {% if media.video_codec %}<li>{{ media.video_codec }}</li>{% endif %}
+                    {% if media.width %}<li>{{ media.width }}x{{ media.height }}{% if media.framerate %} - {{ media.framerate }}fps{% endif %}</li>{% endif %}
+                    {% if media.average_bitrate %}<li>{{ media.average_bitrate }}</li>{% endif %}
+                </ul>
+
+                <ul class='actions'>
+                    <li><a href="{% url 'webgui_media-read' media.id %}"><i class='fa fa-eye'></i> View</a></li>
+                    <li><a href="{% url 'webgui_media-update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                    <li><a href="{% url 'webgui_media-delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                </ul>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block js_requirements %}
     {{ block.super }}
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        var options = {
+            valueNames: [ 'name', 'id', 'provider' ]
+        };
+        var mediaList = new List('medias', options);
+    </script>
 {% endblock %}

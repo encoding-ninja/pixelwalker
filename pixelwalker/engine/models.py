@@ -15,6 +15,14 @@ class AppSettings(models.Model):
 class EncodingProvider(models.Model):
     name = models.CharField(max_length=200, null=False, default='unnamed encoding provider')
 
+    def get_number_of_media(self):
+        media_list = Media.objects.filter(encoding_provider=self)
+        return len(media_list)
+
+    def get_some_media_preview(self):
+        media_list = Media.objects.filter(encoding_provider=self).order_by('-id')[:5]
+        return media_list
+
 
 class Media(models.Model):
     name = models.CharField(max_length=200, null=False, default='unnamed media')

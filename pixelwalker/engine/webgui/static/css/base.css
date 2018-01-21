@@ -249,3 +249,26 @@ ul.list li.item div.thumb img{
 ul.list li.item:hover div.thumb img{
 	opacity: 1;
 }
+
+
+ul.list li.item ul.images{
+	float:left;
+	padding-left:10px;
+	height:70px;
+	color:#888;
+	margin-right:50px;
+}
+ul.list li.item ul.images li{
+	display:block;
+	padding:none;
+	float:left;
+	width:70px;
+	height:70px;
+	margin-right:10px;
+	background: #000;
+	text-align: center;
+	overflow:hidden;
+}
+ul.list li.item ul.images li img{
+	height:70px;
+}

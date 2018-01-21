@@ -92,7 +92,7 @@
                                 <td {% if not encoded_media.encoding_provider %}colspan='2'{% endif%}><i class='fa fa-film'></i> <a href="{% url 'webgui_media-read' encoded_media.id %}"><b>{{ encoded_media.name }}</b></a></td>
                                 {% if encoded_media.encoding_provider %}
                                 <td class='text-center'>
-                                    {{ encoded_media.encoding_provider.name }}
+                                    <a href="{% url 'webgui_encoding-provider-read' encoded_media.encoding_provider.id %}">{{ encoded_media.encoding_provider.name }}</a>
                                 </td>
                                 {% endif %}
                                 <td class='text-center'>
