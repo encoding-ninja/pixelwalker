@@ -72,6 +72,18 @@ def task_acknowledge(request, task_id):
 
                 new_output.save()
 
+                # Specific to the probe ouput, get some info back to the media object
+                if new_output.name == 'Probe':
+                    probe = json.load(open(new_output.file_path))
+                    for stream in probe['streams']:
+                        if stream['codec_type'] == 'video':
+                            task.media.width = int(stream['width'])
+                            task.media.height = int(stream['height'])
+                            task.media.average_bitrate = probe['format']['bit_rate']
+                            task.media.video_codec = stream['codec_name']
+                            task.media.framerate = int(stream['r_frame_rate'].replace('/1',''))
+                    task.media.save()
+
     task.save()
 
     return HttpResponse("OK")

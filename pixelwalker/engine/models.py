@@ -42,6 +42,15 @@ class Media(models.Model):
         new_task.media = Media.objects.get(id=self.id)
         new_task.type = TaskType.objects.get(name=type_name)
         new_task.save()
+
+    def get_thumbnail_url(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='THUMBNAIL')).last()
+        output = TaskOutput.objects.filter(task=task, type=TaskOutput.MEDIA).last()
+        if output is not None:
+            return output.get_url()
+        else:
+            return None
+
     
 
 class Assessment(models.Model):

@@ -176,7 +176,7 @@ ul.list li.item div.general{
 	display:block;
 	height:80px;
 	margin-top:-5px;
-	width:50%;
+	width:40%;
 	float:left;
 	overflow:hidden;
 }
@@ -230,4 +230,23 @@ ul.list li.item ul.infos li{
 	display:block;
 	padding:none;
 	float:none;
+}
+ul.list li.item div.thumb{
+	float:left;
+	padding-left:0px;
+	margin-left:2px;
+	margin-top:-8px;
+	height:85px;
+	width:130px;
+	overflow:hidden;
+	margin-right:5px;
+	background:#000;
+	text-align: center;
+}
+ul.list li.item div.thumb img{
+	height:100%;
+	opacity: 0.9;
+}
+ul.list li.item:hover div.thumb img{
+	opacity: 1;
 }

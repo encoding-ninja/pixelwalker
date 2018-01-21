@@ -37,6 +37,12 @@
     <ul class="list col-xs-12">
     {% for assessment in assessment_list %}
         <li class='item'>
+                {% if assessment.reference_media.get_thumbnail_url %}
+                <div class='thumb'>
+                    <img src="{{ assessment.reference_media.get_thumbnail_url }}">
+                </div>
+                {% endif %}
+
                 <div class='general'>
                     <a href="{% url 'webgui_assessment-read' assessment.id %}" class="name"><b>{{ assessment.name }}</b> <span class='id'>#{{ assessment.id }}</span></a>
                     <p class='desc'>{{ assessment.description }}</p>
