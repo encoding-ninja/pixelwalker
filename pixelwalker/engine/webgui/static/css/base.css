@@ -271,4 +271,8 @@ ul.list li.item ul.images li{
 }
 ul.list li.item ul.images li img{
 	height:70px;
+	opacity: 0.9;
+}
+ul.list li.item:hover ul.images li img{
+	opacity: 1;
 }
