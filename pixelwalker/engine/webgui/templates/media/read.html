@@ -30,7 +30,7 @@
             <td>{{ media.file.path }}</td>
         </tr>
         <tr>
-            <td{% if thumb_url %} class='text-center'{% endif %}>{% if thumb_url %}<img src="{{ thumb_url }}"/>{% else %}Basic informations{% endif %}</td>
+            <td{% if media.get_thumbnail_url %} class='text-center'{% endif %}>{% if media.get_thumbnail_url %}<img src="{{ media.get_thumbnail_url }}" style='height:150px;'/>{% else %}Basic informations{% endif %}</td>
             <td>
                 <table class='table table-condensed'>
                     <thead>
@@ -96,6 +96,7 @@
             </td>
         </tr>
         {% endif %}
+
         {% if bitrate_chart_data or probe %}
         <tr>
             <td colspan="2">
@@ -126,6 +127,51 @@
         {% endif %}
     </tbody>
 </table>
+
+<h4>Associated tasks:</h4>
+<ul class="list col-xs-12">
+{% for task in task_list %}
+    <li class='item'>
+            <div class='general'>
+                <a href="{% url 'webgui_task-read' task.id %}" class="name id"><b>#{{ task.id }}</b></span></a>
+                <p class='desc'>
+                    <span class="type">{{ task.type.name }}</span><br>
+                    <a href="{% url 'webgui_media-read' task.media.id %}">{{ task.media.name }}</a>
+                </p>
+            </div>
+
+            <ul class='infos'>
+                {% if task.state == 1 %}
+                <li><span class="state label label-default label-primary">{{ task.get_state_display }}</span></li>
+                {% elif task.state == 2 %}
+                <li><span class="state label label-default label-success">{{ task.get_state_display }}</span></li>
+                {% elif task.state == 3 %}
+                <li><span class="state label label-default label-danger">{{ task.get_state_display }}</span></li>
+                {% elif task.state == 4 %}
+                <li><span class="state label label-default label-warning">{{ task.get_state_display }}</span></li>
+                {% else %}
+                <li><span class="state label label-default">{{ task.get_state_display }}</span></li>
+                {% endif %}
+            </ul>
+
+            {% if task.assessment %}
+            <ul class='infos'>
+                <li>Assessment: <a href="{% url 'webgui_assessment-read'  task.assessment.id %}">{{ task.assessment.name }}</a></li>
+            </ul>
+            {% endif %}
+
+            <ul class='actions'>
+                <li><a href="{% url 'webgui_task-read' task.id %}"><i class='fa fa-eye'></i> View</a></li>
+                {% if task.state > 1 %}
+                <li><a href="{% url 'webgui_task-redo' task.id %}"><i class='fa fa-refresh'></i> Redo</a></li>
+                {% endif %}
+                {% if task.state < 2 %}
+                <li><a href="{% url 'webgui_task-abort' task.id %}"><i class='fa fa-times'></i> Abort</a></li>
+                {% endif %}
+            </ul>
+    </li>
+{% endfor %}
+</ul>
 
 {% endblock %}
 

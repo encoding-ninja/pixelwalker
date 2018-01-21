@@ -165,6 +165,7 @@ ul.list li.item{
 	border-radius: 2px;
 	border: 1px solid #eaeaea;
 	height:100px;
+	overflow:hidden;
 }
 ul.list li.item:hover{
 	background: linear-gradient(to right,#197bd6 0,#197bd6 10px,#197bd605 10px,#197bd605 100%) no-repeat;
@@ -233,13 +234,11 @@ ul.list li.item ul.infos li{
 }
 ul.list li.item div.thumb{
 	float:left;
-	padding-left:0px;
-	margin-left:2px;
-	margin-top:-8px;
-	height:85px;
-	width:130px;
+	margin-left:-5px;
+	margin-top:-15px;
+	height:99px;
+	width:174px;
 	overflow:hidden;
-	margin-right:5px;
 	background:#000;
 	text-align: center;
 }

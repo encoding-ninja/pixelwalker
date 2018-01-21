@@ -63,8 +63,8 @@ def create(request):
 def read(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
     assessment_reference_list = Assessment.objects.filter(reference_media=media)
-
-    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list})
+    task_list = Task.objects.filter(media=media).order_by('-id')
+    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list, 'task_list': task_list})
 
 #crUd
 def update(request, media_id):

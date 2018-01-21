@@ -50,21 +50,21 @@
                                     {% if  assessment.reference_media.video_codec %}
                                     {{  assessment.reference_media.video_codec }}
                                     {% else %}
-                                    <i>Codec</i>
+                                    <i>Unknown video codec</i>
                                     {% endif %}
                                 </td>
                                 <td class='text-center'>
                                     {% if  assessment.reference_media.width and  assessment.reference_media.height %}
                                     {{  assessment.reference_media.width }}x{{  assessment.reference_media.height }}
                                     {% else %}
-                                    <i>Definition</i>
+                                    <i>Unknown video definition</i>
                                     {% endif %}
                                 </td>
                                 <td class='text-center'>
                                     {% if  assessment.reference_media.average_bitrate %}
                                     {{  assessment.reference_media.average_bitrate }}
                                     {% else %}
-                                    <i>Bitrate</i>
+                                    <i>Unknown average bitrate</i>
                                     {% endif %}
                                 </td>
                                 {% if metric_list.count > 0 %}
@@ -119,7 +119,7 @@
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
                                 <td class='text-center'>
-                                     <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}"{% if assessment.reference_media is None %} disabled{% endif %}>
+                                     <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}"{% if assessment.reference_media.width is None %} disabled{% endif %} {% if encoded_media.width is None %} disabled{% endif %}>
                                     {% for task in task_list %}
                                         {% if task.metric == metric and task.media == encoded_media %}
                                             {% if task.get_state_display == 'Queued' %}
@@ -214,7 +214,9 @@
                 var metric = $(this).data('metric');
                 if(this.checked) {
                     $(':checkbox[data-metric="'+metric+'"]').each(function() {
-                        this.checked = true;
+                        if(!this.disabled){
+                            this.checked = true;
+                        }
                     });
                 }
                 else {
