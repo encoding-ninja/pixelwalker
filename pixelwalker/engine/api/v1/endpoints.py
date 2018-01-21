@@ -45,6 +45,33 @@ def task_acknowledge(request, task_id):
         else:
             return HttpResponseBadRequest("Unknown task state")
 
+        if data['outputs'] is not None:
+            # Remove previous ouputs of this task
+            TaskOutput.objects.filter(task=task).delete()
+
+            # For every new output
+            for output in data['outputs']:
+                new_output = TaskOutput()
+                new_output.task = task
+                new_output.name = output['name']
+                new_output.file_path = output['file_path']
+                new_output.average = output['average']
+
+                if output['type'] == 'ChartData':
+                    new_output.type = TaskOutput.CHART_DATA
+                elif output['type'] == 'ChartLabels':
+                    new_output.type = TaskOutput.CHART_LABELS
+                elif output['type'] == 'JSON':
+                    new_output.type = TaskOutput.JSON
+                elif output['type'] == 'PLAIN':
+                    new_output.type = TaskOutput.PLAIN
+                elif output['type'] == 'MEDIA':
+                    new_output.type = TaskOutput.MEDIA
+                else:
+                    new_output.type = TaskOutput.PLAIN
+
+                new_output.save()
+
     task.save()
 
     return HttpResponse("OK")

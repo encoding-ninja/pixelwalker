@@ -34,6 +34,8 @@ urlpatterns = [
     # Task
     path('task', task.list, name='webgui_task-list'), 
     path('task/<int:task_id>', task.read, name='webgui_task-read'), 
+    path('task/<int:task_id>/redo', task.redo, name='webgui_task-redo'), 
+    path('task/<int:task_id>/abort', task.abort, name='webgui_task-abort'), 
     # AppSettings
     path('app_settings', app_settings.read, name='webgui_app-settings-read'),   
     path('app_settings/update', app_settings.update, name='webgui_app-settings-update'), 

@@ -18,7 +18,7 @@ class ThumbnailProvider(TaskProvider):
         TaskProvider.__init__(self, task_id, input_file_path)
 
     def execute(self):
-        """Using FFprobe to get input video file informations"""
+        """Using FFmpeg to generate a thumbnail"""
         self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-thumbnail.jpg")
         command = ['ffmpeg',
                 '-ss', '1',

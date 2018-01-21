@@ -51,7 +51,17 @@
                         </div>
         
                         <ul class='infos'>
+                            {% if task.state == 1 %}
+                            <li><span class="state label label-default label-primary">{{ task.get_state_display }}</span></li>
+                            {% elif task.state == 2 %}
+                            <li><span class="state label label-default label-success">{{ task.get_state_display }}</span></li>
+                            {% elif task.state == 3 %}
+                            <li><span class="state label label-default label-danger">{{ task.get_state_display }}</span></li>
+                            {% elif task.state == 4 %}
+                            <li><span class="state label label-default label-warning">{{ task.get_state_display }}</span></li>
+                            {% else %}
                             <li><span class="state label label-default">{{ task.get_state_display }}</span></li>
+                            {% endif %}
                         </ul>
 
                         {% if task.assessment %}
@@ -62,6 +72,12 @@
         
                         <ul class='actions'>
                             <li><a href="{% url 'webgui_task-read' task.id %}"><i class='fa fa-eye'></i> View</a></li>
+                            {% if task.state > 1 %}
+                            <li><a href="{% url 'webgui_task-redo' task.id %}"><i class='fa fa-refresh'></i> Redo</a></li>
+                            {% endif %}
+                            {% if task.state < 2 %}
+                            <li><a href="{% url 'webgui_task-abort' task.id %}"><i class='fa fa-times'></i> Abort</a></li>
+                            {% endif %}
                         </ul>
                 </li>
             {% endfor %}

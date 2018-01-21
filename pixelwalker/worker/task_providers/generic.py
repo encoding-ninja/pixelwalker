@@ -44,7 +44,6 @@ class TaskProvider(object):
         data = {}
         data['id'] = self.task_id
         data['state'] = 'ERROR'
-        data['logs'] = str(self.subprocess_out) + str(self.subprocess_err)
         url = "http://localhost:8000/api/v1/engine/task/"+str(self.task_id)
         headers = {'content-type': 'application/json'}
         r=requests.post(url, data=json.dumps(data), headers=headers)
@@ -52,7 +51,6 @@ class TaskProvider(object):
     def acknowledge_success(self, data):
         data['id'] = self.task_id
         data['state'] = 'SUCCESS'
-        data['logs'] = str(self.subprocess_out) + str(self.subprocess_err)
         url = "http://localhost:8000/api/v1/engine/task/"+str(self.task_id)
         headers = {'content-type': 'application/json'}
         r=requests.post(url, data=json.dumps(data), headers=headers)

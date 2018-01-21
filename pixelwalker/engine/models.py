@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.conf import settings
 import os
 
 from . import utils
@@ -108,3 +109,6 @@ class TaskOutput(models.Model):
         (MEDIA, 'Media'),
     )
     type = models.IntegerField(default=PLAIN, choices=OUTPUT_TYPES)
+
+    def get_url(self):
+        return settings.MEDIA_URL+self.file_path.replace(settings.MEDIA_ROOT+'\\','').replace(settings.MEDIA_ROOT+'/','').replace('\\','/')

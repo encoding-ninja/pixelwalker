@@ -19,4 +19,17 @@ def list(request):
 #cRud
 def read(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
-    return render(request, 'task/read.html', {'task': task})
+    output_list = TaskOutput.objects.filter(task=task)
+    return render(request, 'task/read.html', {'task': task, 'output_list': output_list})
+
+def redo(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    task.state = Task.QUEUED
+    task.save()
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+
+def abort(request, task_id):
+    task = get_object_or_404(Task, pk=task_id)
+    task.state = Task.ABORTED
+    task.save()
+    return HttpResponseRedirect(request.META['HTTP_REFERER'])
