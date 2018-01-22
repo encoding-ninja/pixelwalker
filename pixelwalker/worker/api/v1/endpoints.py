@@ -5,7 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 import json, requests, threading
 
-from ...task_providers import thumbnail, probe
+from ...task_providers import thumbnail, probe, bitrate
 
 def index(request):
     return HttpResponse("Hello, world. You're at the api root.")
@@ -29,6 +29,8 @@ def task_submit(request):
         task_provider = thumbnail.ThumbnailProvider(task_id, task_media_file_path)
     elif task_type == 'PROBE':
         task_provider = probe.ProbeProvider(task_id, task_media_file_path)
+    elif task_type == 'BITRATE':
+        task_provider = bitrate.BitrateProvider(task_id, task_media_file_path)
     else:
         return HttpResponseBadRequest("The task type of the request is not available: "+str(data['type']))
 

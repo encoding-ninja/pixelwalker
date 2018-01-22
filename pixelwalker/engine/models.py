@@ -66,6 +66,16 @@ class Media(models.Model):
             return json2table.convert(json.load(open(output.file_path)), build_direction="LEFT_TO_RIGHT", table_attributes={"class" : "table table-bordered table-hover table-condensed"})
         else:
             return None
+    
+    def get_bitrate_json(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE')).last()
+        output = TaskOutput.objects.filter(task=task, type=TaskOutput.CHART_DATA).last()
+        if output is not None:
+            with open(output.file_path) as f:
+                bitrate_chart_data = f.readlines()[0]
+            return bitrate_chart_data
+        else:
+            return None
 
     
 

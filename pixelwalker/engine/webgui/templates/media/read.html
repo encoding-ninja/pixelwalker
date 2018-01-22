@@ -97,10 +97,10 @@
         </tr>
         {% endif %}
 
-        {% if bitrate_chart_data or media.get_probe_html_table %}
+        {% if media.get_bitrate_json or media.get_probe_html_table %}
         <tr>
             <td colspan="2">
-                {% if bitrate_chart_data %}
+                {% if media.get_bitrate_json %}
                 <div class="panel panel-success">
                     <div class="panel-heading" data-toggle="collapse" href="#collapseBitrate" aria-expanded="false" aria-controls="collapseBitrate" style="cursor: pointer;">
                         <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Bitrate and frame analysis</h3>
@@ -182,13 +182,13 @@
 {% block js_requirements %}
     {{ block.super }}
 
-    {% if bitrate_chart_data %}
+    {% if media.get_bitrate_json %}
     <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
     <script>
         var bitrateCtx = document.getElementById("bitrateChart");
         var bitrateChart = new Chart(bitrateCtx, {
             type: 'bar',
-            data: {% autoescape off %}{{ bitrate_chart_data }}{% endautoescape %},
+            data: {% autoescape off %}{{ media.get_bitrate_json }}{% endautoescape %},
             options: {
                 responsive:true,
                 maintainAspectRatio: false,
