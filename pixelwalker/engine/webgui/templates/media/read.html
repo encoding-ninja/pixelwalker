@@ -97,7 +97,7 @@
         </tr>
         {% endif %}
 
-        {% if bitrate_chart_data or probe %}
+        {% if bitrate_chart_data or media.get_probe_html_table %}
         <tr>
             <td colspan="2">
                 {% if bitrate_chart_data %}
@@ -110,14 +110,14 @@
                     </div>
                 </div>
                 {% endif %}
-                {% if probe %}
+                {% if media.get_probe_html_table %}
                 <div class="panel panel-info">
                     <div class="panel-heading" data-toggle="collapse" href="#collapseProbe" aria-expanded="false" aria-controls="collapseProbe" style="cursor: pointer;">
                         <h3 class="panel-title"><i class='fa fa-flask'></i> Probe</h3>
                     </div>
                     <div class="panel-body collapse" id="collapseProbe">
                     {% autoescape off %}
-                        {{ probe }}
+                        {{ media.get_probe_html_table }}
                     {% endautoescape %}
                     </div>
                 </div>

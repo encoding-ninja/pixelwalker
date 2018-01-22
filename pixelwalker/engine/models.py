@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.conf import settings
-import os
+import os, json, json2table
 
 from . import utils
 
@@ -56,6 +56,14 @@ class Media(models.Model):
         output = TaskOutput.objects.filter(task=task, type=TaskOutput.MEDIA).last()
         if output is not None:
             return output.get_url()
+        else:
+            return None
+    
+    def get_probe_html_table(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='PROBE')).last()
+        output = TaskOutput.objects.filter(task=task, type=TaskOutput.JSON).last()
+        if output is not None:
+            return json2table.convert(json.load(open(output.file_path)), build_direction="LEFT_TO_RIGHT", table_attributes={"class" : "table table-bordered table-hover table-condensed"})
         else:
             return None
 
