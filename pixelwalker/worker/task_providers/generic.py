@@ -1,4 +1,5 @@
 # -*- coding: utf8 -*-
+from celery.execute import send_task
 
 import os
 import json, requests
@@ -35,6 +36,8 @@ class TaskProvider(object):
         proc = subprocess.Popen(command, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         self.subprocess_pid = proc.pid
         
+        self.acknowledge_processing()
+
         try:
             self.subprocess_out, self.subprocess_err = proc.communicate()
         except:
@@ -44,15 +47,23 @@ class TaskProvider(object):
         data = {}
         data['id'] = self.task_id
         data['state'] = 'ERROR'
-        url = "http://localhost:8000/api/v1/engine/task/"+str(self.task_id)
-        headers = {'content-type': 'application/json'}
-        r=requests.post(url, data=json.dumps(data), headers=headers)
+        data['outputs'] = None
+        self.acknowledge(data)
+    
+    def acknowledge_processing(self):
+        data = {}
+        data['id'] = self.task_id
+        data['state'] = 'PROCESSING'
+        data['outputs'] = None
+        self.acknowledge(data)
 
     def acknowledge_success(self, data):
         data['id'] = self.task_id
         data['state'] = 'SUCCESS'
-        url = "http://localhost:8000/api/v1/engine/task/"+str(self.task_id)
-        headers = {'content-type': 'application/json'}
-        r=requests.post(url, data=json.dumps(data), headers=headers)
+        self.acknowledge(data)
+
+    def acknowledge(self, data):
+        send_task('engine.tasks.acknowledge', args=[data])
+
 
     

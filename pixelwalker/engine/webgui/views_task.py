@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
+from django.utils import timezone
 
 
 # import db models
@@ -26,6 +27,7 @@ def redo(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
     task.submit()
     task.state = Task.QUEUED
+    task.date_queued = timezone.now()
     task.save()
     return HttpResponseRedirect(request.META['HTTP_REFERER'])
 

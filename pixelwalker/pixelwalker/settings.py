@@ -33,7 +33,6 @@ ALLOWED_HOSTS = [ '*' ]
 
 INSTALLED_APPS = [
     'engine.apps.EngineConfig',
-#    'worker.apps.workerConfig',
     'worker.apps.WorkerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
