@@ -1,4 +1,6 @@
 Django==2.0.1
+Celery==4.1.0
+sqlalchemy>=1.0.14
 json2table==1.1.5
 pytz==2017.2
 coveralls

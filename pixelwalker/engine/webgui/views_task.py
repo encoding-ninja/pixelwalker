@@ -24,6 +24,7 @@ def read(request, task_id):
 
 def redo(request, task_id):
     task = get_object_or_404(Task, pk=task_id)
+    task.submit()
     task.state = Task.QUEUED
     task.save()
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

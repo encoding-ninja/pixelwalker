@@ -2,6 +2,7 @@
 from django.db import models
 from django.conf import settings
 import os, json, json2table
+from celery.execute import send_task
 
 from . import utils
 
@@ -50,6 +51,7 @@ class Media(models.Model):
         new_task.media = Media.objects.get(id=self.id)
         new_task.type = TaskType.objects.get(name=type_name)
         new_task.save()
+        new_task.submit()
 
     def get_thumbnail_url(self):
         task = Task.objects.filter(media=self, type=TaskType.objects.get(name='THUMBNAIL')).last()
@@ -123,6 +125,16 @@ class Task(models.Model):
     date_queued = models.DateTimeField('date queued', null=True)
     date_started = models.DateTimeField('date started', null=True)
     date_ended = models.DateTimeField('date ended', null=True)
+
+    def submit(self):
+        # Prepare to send task to available worker
+        data = {}
+        data['id'] = self.id
+        data['media_file_path'] = self.media.file.path
+        if self.assessment:
+            data['reference_file_path'] = self.assessment.reference_media.file.path
+        data['type'] = self.type.name
+        send_task('worker.tasks.add', args=[data])
 
 
 class TaskOutput(models.Model):

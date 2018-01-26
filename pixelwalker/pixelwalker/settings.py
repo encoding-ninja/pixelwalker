@@ -34,6 +34,7 @@ ALLOWED_HOSTS = [ '*' ]
 INSTALLED_APPS = [
     'engine.apps.EngineConfig',
 #    'worker.apps.workerConfig',
+    'worker.apps.WorkerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -132,3 +133,14 @@ STATICFILES_DIRS = [
 
 MEDIA_ROOT = 'D:\GitHub\pixelwalker\media_library'
 MEDIA_URL = '/media/'
+
+
+# Celery settings
+
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
+
+#: Only add pickle to this list if your broker is secured
+#: from unwanted access (see userguide/security.html)
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
+CELERY_TASK_SERIALIZER = 'json'

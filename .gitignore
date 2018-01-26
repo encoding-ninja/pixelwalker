@@ -102,3 +102,4 @@ dev.local/
 # Imported media files
 media_library/
 .DS_Store
+*.sqlite
