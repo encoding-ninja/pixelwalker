@@ -4,20 +4,19 @@ services:
   db:
     image: postgres
     hostname: db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
+    restart: always
     ports:
       - "5432:5432"
 
   redis:
     image: redis
     hostname: redis
+    restart: always
 
   rabbit:
     hostname: rabbit
-    image: rabbitmq:3.6.0
+    restart: always
+    image: rabbitmq:latest
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=mypass
@@ -30,7 +29,7 @@ services:
       context: ./Engine
       dockerfile: Dockerfile
     hostname: engine
-    command: ./Engine/run.sh
+    restart: always
     volumes:
       - .:/media_library
     ports:
@@ -47,7 +46,7 @@ services:
       context: ./Worker
       dockerfile: Dockerfile
     hostname: worker
-    command: ./Worker/run.sh
+    restart: always
     volumes:
       - .:/media_library
     links:
