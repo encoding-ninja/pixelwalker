@@ -22,6 +22,7 @@ RUN pip3 install -r requirements.txt
 # Get settings
 WORKDIR /pixelwalker/pixelwalker/pixelwalker
 COPY settings.py ./
+COPY urls.py ./
 
 WORKDIR /pixelwalker/pixelwalker
 

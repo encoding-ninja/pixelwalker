@@ -116,7 +116,7 @@ STATIC_URL = '/static/'
 # Media Files upload to
 
 MEDIA_ROOT = '/media_library'
-
+MEDIA_URL = '/media/'
 
 # Celery settings
 

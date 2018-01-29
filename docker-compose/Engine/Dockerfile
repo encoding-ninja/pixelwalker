@@ -22,6 +22,7 @@ RUN bower --allow-root install
 # Get settings
 WORKDIR /pixelwalker/pixelwalker/pixelwalker
 COPY settings.py ./
+COPY urls.py ./
 
 WORKDIR /pixelwalker/pixelwalker
 
