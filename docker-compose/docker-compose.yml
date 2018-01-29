@@ -8,11 +8,6 @@ services:
     ports:
       - "5432:5432"
 
-  redis:
-    image: redis
-    hostname: redis
-    restart: always
-
   rabbit:
     image: rabbitmq:latest
     hostname: rabbit

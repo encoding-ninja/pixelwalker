@@ -136,20 +136,12 @@ MEDIA_ROOT = '/media_library'
 MEDIA_URL = '/media/'
 
 
-# Redis
-
-REDIS_PORT = 6379  
-REDIS_DB = 0  
-REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', 'redis')
-
-
 # Celery settings
 
 CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 
 #: Only add pickle to this list if your broker is secured
 #: from unwanted access (see userguide/security.html)
-CELERY_ACCEPT_CONTENT = ['json', 'application/json']
-CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB) 
-CELERY_REDIS_MAX_CONNECTIONS = 1
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
 CELERY_TASK_SERIALIZER = 'json'

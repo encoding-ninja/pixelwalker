@@ -27,4 +27,4 @@ COPY settings.py .
 RUN python3 manage.py test worker
 
 # Launch service
-CMD celery worker -A pixelwalker
+CMD celery -A pixelwalker worker -l info
