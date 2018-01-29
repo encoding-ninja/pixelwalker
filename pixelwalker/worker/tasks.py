@@ -25,6 +25,5 @@ def add(data):
     else:
         # TODO: error management
         pass
-
-    provider_thread = threading.Thread(target=task_provider.execute, args=(), kwargs={})
-    provider_thread.start()
+    
+    task_provider.execute()

@@ -130,7 +130,7 @@ STATICFILES_DIRS = [
 
 # Media Files upload to
 
-MEDIA_ROOT = 'D:\GitHub\pixelwalker\media_library'
+MEDIA_ROOT = '/Users/antoine/Github/pixelwalker/media_library'
 MEDIA_URL = '/media/'
 
 

@@ -7,8 +7,8 @@ services:
     hostname: rabbit
     restart: always
     ports:
-      - "5672:5672"  # we forward this port because it's useful for debugging
-      - "15672:15672"  # here, we can access rabbitmq management plugin
+      - "5672:5672"
+      - "15672:15672"
 
   engine:
     build:
@@ -17,7 +17,7 @@ services:
     hostname: engine
     restart: always
     volumes:
-      - .:/media_library
+      - ../media_library:/media_library
     ports:
       - "8000:8000"
     links:
@@ -32,7 +32,7 @@ services:
     hostname: worker
     restart: always
     volumes:
-      - .:/media_library
+      - ../media_library:/media_library
     links:
       - rabbit
     depends_on:

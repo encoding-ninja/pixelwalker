@@ -30,4 +30,4 @@ WORKDIR /pixelwalker/pixelwalker
 RUN python3 manage.py test worker
 
 # Launch service
-CMD celery -A pixelwalker worker -l info
+CMD celery -A pixelwalker worker -l info -Q worker_queue -n worker@%h
