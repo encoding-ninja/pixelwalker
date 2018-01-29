@@ -26,10 +26,11 @@ services:
       - "15672:15672"  # here, we can access rabbitmq management plugin
 
   engine:
-    context: ./Engine
-    build: Dockerfile
+    build:
+      context: ./Engine
+      dockerfile: Dockerfile
     hostname: engine
-    command: run.sh
+    command: ./run.sh
     volumes:
       - .:/media_library
     ports:
@@ -42,10 +43,11 @@ services:
       - db
 
   worker:
-    context: ./Worker
-    build: Dockerfile
+    build:
+      context: ./Worker
+      dockerfile: Dockerfile
     hostname: engine
-    command: run.sh
+    command: ./run.sh
     volumes:
       - .:/media_library
     links:
