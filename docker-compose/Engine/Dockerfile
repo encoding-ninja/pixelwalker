@@ -20,8 +20,10 @@ RUN pip3 install -r requirements.txt
 RUN bower --allow-root install
 
 # Get settings
+WORKDIR /pixelwalker/pixelwalker/pixelwalker
+COPY settings.py ./
+
 WORKDIR /pixelwalker/pixelwalker
-COPY settings.py .
 
 # Execute tests
 RUN python3 manage.py test engine

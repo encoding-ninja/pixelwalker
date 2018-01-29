@@ -20,8 +20,10 @@ RUN git checkout django_2.0 && git pull
 RUN pip3 install -r requirements.txt
 
 # Get settings
+WORKDIR /pixelwalker/pixelwalker/pixelwalker
+COPY settings.py ./
+
 WORKDIR /pixelwalker/pixelwalker
-COPY settings.py .
 
 # Execute tests
 RUN python3 manage.py test worker
