@@ -4,7 +4,7 @@
 sleep 10
 
 # Launch celery consumer
-celery worker -A pixelwalker
+bash -c "celery worker -A pixelwalker &"
 
 # Tests
-python3 manage.py test worker
+bash -c "python3 manage.py test worker"

@@ -30,7 +30,7 @@ services:
       context: ./Engine
       dockerfile: Dockerfile
     hostname: engine
-    command: ./run.sh
+    command: ./Engine/run.sh
     volumes:
       - .:/media_library
     ports:
@@ -46,8 +46,8 @@ services:
     build:
       context: ./Worker
       dockerfile: Dockerfile
-    hostname: engine
-    command: ./run.sh
+    hostname: worker
+    command: ./Worker/run.sh
     volumes:
       - .:/media_library
     links:
