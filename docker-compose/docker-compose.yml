@@ -20,6 +20,7 @@ services:
       - .:/media_library
     ports:
       - "8000:8000"
+      - "5672:5672"
     links:
       - rabbit
     depends_on:
@@ -33,6 +34,8 @@ services:
     restart: always
     volumes:
       - .:/media_library
+    ports:
+      - "5672:5672"
     links:
       - rabbit
     depends_on:
