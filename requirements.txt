@@ -5,3 +5,4 @@ json2table==1.1.5
 pytz==2017.2
 coveralls
 psycopg2
+redis==2.10.5

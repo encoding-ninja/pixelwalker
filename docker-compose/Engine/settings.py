@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 
+from kombu import Exchange, Queue
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -136,12 +138,26 @@ MEDIA_ROOT = '/media_library'
 MEDIA_URL = '/media/'
 
 
+# Redis
+
+REDIS_PORT = 6379  
+REDIS_DB = 0  
+REDIS_HOST = os.environ.get('REDIS_PORT_6379_TCP_ADDR', 'redis')
+
 # Celery settings
 
 CELERY_BROKER_URL = 'amqp://guest:guest@rabbit//'
 
+# configure queues, currently we have only one
+CELERY_DEFAULT_QUEUE = 'default'  
+CELERY_QUEUES = (  
+    Queue('engine_queue', routing_key='engine.#'),
+    Queue('worker_queue', routing_key='worker.#'),
+)
+
 #: Only add pickle to this list if your broker is secured
 #: from unwanted access (see userguide/security.html)
 CELERY_ACCEPT_CONTENT = ['json']
-CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
+#CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
+CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)
 CELERY_TASK_SERIALIZER = 'json'

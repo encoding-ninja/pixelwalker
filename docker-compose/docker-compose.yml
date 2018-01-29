@@ -3,9 +3,15 @@ version: '3'
 services:
 
   db:
-    image: postgres
+    image: postgres:latest
     hostname: db
     restart: always
+
+  redis:
+    image: redis:latest
+    hostname: redis
+    restart: always
+
   
   rabbit:
     image: rabbitmq:latest
@@ -26,8 +32,11 @@ services:
     ports:
       - "8000:8000"
     links:
+      - db
       - rabbit
+      - redis
     depends_on:
+      - db
       - rabbit
 
   worker:
@@ -40,5 +49,7 @@ services:
       - ../media_library:/media_library
     links:
       - rabbit
+      - redis
     depends_on:
+      - engine
       - rabbit
