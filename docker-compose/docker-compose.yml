@@ -12,7 +12,6 @@ services:
     hostname: redis
     restart: always
 
-  
   rabbit:
     image: rabbitmq:latest
     hostname: rabbit
@@ -20,6 +19,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    depends_on:
+      - redis
 
   engine:
     build:
