@@ -31,5 +31,5 @@ CMD python3 manage.py makemigrations && \
     python3 manage.py migrate && \
     python3 manage.py loaddata AppSettings && \
 	python3 manage.py loaddata TaskTypes && \
-    celery -A pixelwalker worker -l info && \
+    celery -A pixelwalker worker -l info --detach && \
     python3 manage.py runserver 0.0.0.0:8000

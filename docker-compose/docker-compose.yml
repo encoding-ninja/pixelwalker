@@ -1,12 +1,6 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:latest
-    hostname: db
-    restart: always
-    ports:
-      - "5432:5432"
 
   rabbit:
     image: rabbitmq:latest
@@ -27,10 +21,8 @@ services:
     ports:
       - "8000:8000"
     links:
-      - db
       - rabbit
     depends_on:
-      - db
       - rabbit
 
   worker:
@@ -44,5 +36,4 @@ services:
     links:
       - rabbit
     depends_on:
-      - engine
       - rabbit

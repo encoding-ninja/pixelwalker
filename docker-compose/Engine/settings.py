@@ -79,11 +79,8 @@ WSGI_APPLICATION = 'pixelwalker.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432,
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -138,7 +135,7 @@ MEDIA_URL = '/media/'
 
 # Celery settings
 
-CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq//'
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbit//'
 
 #: Only add pickle to this list if your broker is secured
 #: from unwanted access (see userguide/security.html)
