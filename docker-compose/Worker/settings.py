@@ -120,7 +120,7 @@ MEDIA_URL = '/media/'
 
 # Celery settings
 
-CELERY_BROKER_URL = 'amqp://guest:guest@rabbitmq//'
+CELERY_BROKER_URL = 'amqp://guest:guest@rabbit//'
 
 #: Only add pickle to this list if your broker is secured
 #: from unwanted access (see userguide/security.html)
