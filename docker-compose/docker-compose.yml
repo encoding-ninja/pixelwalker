@@ -2,6 +2,11 @@ version: '3'
 
 services:
 
+  db:
+    image: postgres
+    hostname: db
+    restart: always
+  
   rabbit:
     image: rabbitmq:latest
     hostname: rabbit
