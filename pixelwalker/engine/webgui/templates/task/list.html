@@ -36,7 +36,9 @@
             <div class="form-group col-xs-12 col-md-6">
                 <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
                 <button class="sort btn btn-default" data-sort="type"><i class='fa fa-sort'></i> Type</button>
-                <button class="sort btn btn-default" data-sort="State"><i class='fa fa-sort'></i> State</button>
+                <button class="sort btn btn-default" data-sort="state"><i class='fa fa-sort'></i> State</button>
+                <button class="sort btn btn-default" data-sort="media"><i class='fa fa-sort'></i> Media</button>
+                <button class="sort btn btn-default" data-sort="assessment"><i class='fa fa-sort'></i> Assessment</button>
             </div>
         
             <ul class="list col-xs-12">
@@ -46,7 +48,7 @@
                             <a href="{% url 'webgui_task-read' task.id %}" class="name id"><b>#{{ task.id }}</b></span></a>
                             <p class='desc'>
                                 <span class="type">{{ task.type.name }}</span><br>
-                                <a href="{% url 'webgui_media-read' task.media.id %}">{{ task.media.name }}</a>
+                                <a href="{% url 'webgui_media-read' task.media.id %}" class="media">{{ task.media.name }}</a>
                             </p>
                         </div>
         
@@ -62,14 +64,12 @@
                             {% else %}
                             <li><span class="state label label-default">{{ task.get_state_display }}</span></li>
                             {% endif %}
+                            {% if task.assessment %}
+                            <li><br></li>
+                            <li>Assessment: <a href="{% url 'webgui_assessment-read'  task.assessment.id %}" class="assessment">{{ task.assessment.name }}</a></li>
+                            {% endif %}
                         </ul>
 
-                        {% if task.assessment %}
-                        <ul class='infos'>
-                            <li>Assessment: <a href="{% url 'webgui_assessment-read'  task.assessment.id %}">{{ task.assessment.name }}</a></li>
-                        </ul>
-                        {% endif %}
-        
                         <ul class='actions'>
                             <li><a href="{% url 'webgui_task-read' task.id %}"><i class='fa fa-eye'></i> View</a></li>
                             {% if task.state > 1 %}
@@ -114,7 +114,7 @@
         }); 
 
         var options = {
-            valueNames: [ 'id', 'type', 'state' ]
+            valueNames: [ 'id', 'type', 'state', 'media', 'assessment' ]
         };
         var taskList = new List('tasks', options);
     </script>

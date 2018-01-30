@@ -27,7 +27,7 @@
     <tbody>
         <tr>
             <td>File path</td>
-            <td>{{ media.file.path }}</td>
+            <td><a href="{{ media.get_file_url }}" target="media_{{ media.id }}">{{ media.file.path }}</a></td>
         </tr>
         <tr>
             <td{% if media.get_thumbnail_url %} class='text-center'{% endif %}>{% if media.get_thumbnail_url %}<img src="{{ media.get_thumbnail_url }}" style='height:150px;'/>{% else %}Basic informations{% endif %}</td>
@@ -129,6 +129,21 @@
 </table>
 
 <h4>Associated tasks:</h4>
+<div id="tasks">
+ <!-- class="search" automagically makes an input a search field. -->
+ <div class="form-group col-xs-12 col-md-6">
+    <input class="search form-control" placeholder="Search" />
+</div>
+    
+<!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+<div class="form-group col-xs-12 col-md-6">
+    <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+    <button class="sort btn btn-default" data-sort="type"><i class='fa fa-sort'></i> Type</button>
+    <button class="sort btn btn-default" data-sort="state"><i class='fa fa-sort'></i> State</button>
+    <button class="sort btn btn-default" data-sort="media"><i class='fa fa-sort'></i> Media</button>
+    <button class="sort btn btn-default" data-sort="assessment"><i class='fa fa-sort'></i> Assessment</button>
+</div>
+
 <ul class="list col-xs-12">
 {% for task in task_list %}
     <li class='item'>
@@ -136,7 +151,7 @@
                 <a href="{% url 'webgui_task-read' task.id %}" class="name id"><b>#{{ task.id }}</b></span></a>
                 <p class='desc'>
                     <span class="type">{{ task.type.name }}</span><br>
-                    <a href="{% url 'webgui_media-read' task.media.id %}">{{ task.media.name }}</a>
+                    <a href="{% url 'webgui_media-read' task.media.id %}" class="media">{{ task.media.name }}</a>
                 </p>
             </div>
 
@@ -152,13 +167,11 @@
                 {% else %}
                 <li><span class="state label label-default">{{ task.get_state_display }}</span></li>
                 {% endif %}
+                {% if task.assessment %}
+                <li><br></li>
+                <li>Assessment: <a href="{% url 'webgui_assessment-read'  task.assessment.id %}" class="assessment">{{ task.assessment.name }}</a></li>
+                {% endif %}
             </ul>
-
-            {% if task.assessment %}
-            <ul class='infos'>
-                <li>Assessment: <a href="{% url 'webgui_assessment-read'  task.assessment.id %}">{{ task.assessment.name }}</a></li>
-            </ul>
-            {% endif %}
 
             <ul class='actions'>
                 <li><a href="{% url 'webgui_task-read' task.id %}"><i class='fa fa-eye'></i> View</a></li>
@@ -172,7 +185,7 @@
     </li>
 {% endfor %}
 </ul>
-
+</div>
 {% endblock %}
 
 {% block css_requirements %}
@@ -181,9 +194,22 @@
 
 {% block js_requirements %}
     {{ block.super }}
-
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
     {% if media.get_bitrate_json %}
     <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        var options = {
+            valueNames: [ 'id', 'type', 'state', 'media', 'assessment' ]
+        };
+        var taskList = new List('tasks', options);
+    </script>
+
+    {% if media.get_bitrate_json %}
     <script>
         var bitrateCtx = document.getElementById("bitrateChart");
         var bitrateChart = new Chart(bitrateCtx, {
