@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 import os, json, json2table
 from celery.execute import send_task
 
@@ -52,6 +53,9 @@ class Media(models.Model):
         new_task.type = TaskType.objects.get(name=type_name)
         new_task.save()
         new_task.submit()
+
+    def get_file_url(self):
+        return settings.MEDIA_URL+self.file.path.replace(settings.MEDIA_ROOT+'\\','').replace(settings.MEDIA_ROOT+'/','').replace('\\','/')
 
     def get_thumbnail_url(self):
         task = Task.objects.filter(media=self, type=TaskType.objects.get(name='THUMBNAIL')).last()
@@ -127,12 +131,20 @@ class Task(models.Model):
     date_ended = models.DateTimeField('date ended', null=True)
 
     def submit(self):
+        self.date_queued = timezone.now()
+        self.state = Task.QUEUED
+        self.save()
+
         # Prepare to send task to available worker
         data = {}
         data['id'] = self.id
         data['media_file_path'] = self.media.file.path
+        if self.media.framerate:
+            data['media_framerate'] = self.media.framerate
         if self.assessment:
             data['reference_file_path'] = self.assessment.reference_media.file.path
+            data['reference_width'] = self.assessment.reference_media.width
+            data['reference_height'] = self.assessment.reference_media.height
         data['type'] = self.type.name
         send_task('worker.tasks.add', args=[data])
 

@@ -47,7 +47,7 @@ class TaskProvider(object):
         data = {}
         data['id'] = self.task_id
         data['state'] = 'ERROR'
-        data['outputs'] = None
+        data['outputs'] = []
         self.acknowledge(data)
     
     def acknowledge_processing(self):
@@ -63,6 +63,28 @@ class TaskProvider(object):
         self.acknowledge(data)
 
     def acknowledge(self, data):
+
+        if data['outputs'] is not None:
+            err_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-err.txt")
+            with open(err_file_path, "w") as f:
+                f.write(str(self.subprocess_err))
+            err = {}
+            err['name'] = 'Subprocess Err'
+            err['file_path'] = err_file_path
+            err['average'] = None
+            err['type'] = 'PLAIN'
+            data['outputs'].append(err)
+
+            out_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-out.txt")
+            with open(out_file_path, "w") as f:
+                f.write(str(self.subprocess_out))
+            out = {}
+            out['name'] = 'Subprocess Out'
+            out['file_path'] = out_file_path
+            out['average'] = None
+            out['type'] = 'PLAIN'
+            data['outputs'].append(out)
+
         send_task('engine.tasks.acknowledge', args=[data])
 
 

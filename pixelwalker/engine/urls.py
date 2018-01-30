@@ -28,7 +28,8 @@ urlpatterns = [
     path('encoding_provider/<int:encoding_provider_id>/update', encoding_provider.update, name='webgui_encoding-provider-update'),   
     path('encoding_provider/<int:encoding_provider_id>/delete', encoding_provider.delete, name='webgui_encoding-provider-delete'),   
     # Task
-    path('task', task.list, name='webgui_task-list'), 
+    path('task', task.list, name='webgui_task-list'),
+    path('task/create', task.create, name='webgui_task-create'),  
     path('task/<int:task_id>', task.read, name='webgui_task-read'), 
     path('task/<int:task_id>/redo', task.redo, name='webgui_task-redo'), 
     path('task/<int:task_id>/abort', task.abort, name='webgui_task-abort'), 

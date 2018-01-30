@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 
 import threading
-from .task_providers import thumbnail, probe, bitrate
+from .task_providers import thumbnail, probe, bitrate, ssim
 
 @shared_task
 def add(data):
@@ -11,6 +11,10 @@ def add(data):
         task_id = int(data['id'])
         task_type = str(data['type'])
         task_media_file_path = str(data['media_file_path'])
+        task_media_framerate = int(data.get('media_framerate', 0))
+        task_reference_file_path = str(data.get('reference_file_path', 'unknown'))
+        task_reference_width = int(data.get('reference_width', 0))
+        task_reference_height = int(data.get('reference_height', 0))
     except:
         # TODO: error management
         pass
@@ -22,6 +26,11 @@ def add(data):
         task_provider = probe.ProbeProvider(task_id, task_media_file_path)
     elif task_type == 'BITRATE':
         task_provider = bitrate.BitrateProvider(task_id, task_media_file_path)
+    elif task_type == 'BITRATE':
+        task_provider = bitrate.BitrateProvider(task_id, task_media_file_path)
+    elif task_type == 'SSIM':
+        task_provider = ssim.SsimProvider(task_id, task_media_file_path, task_media_framerate, 
+                                          task_reference_file_path, task_reference_width, task_reference_height)
     else:
         # TODO: error management
         pass
