@@ -26,5 +26,4 @@ COPY urls.py ./
 WORKDIR /pixelwalker/pixelwalker
 
 # Launch service
-CMD sleep 10 && \
-    celery worker -A pixelwalker -l info -Q worker -n worker@%h
+CMD celery worker -A pixelwalker -l info -Q worker -n worker@%h

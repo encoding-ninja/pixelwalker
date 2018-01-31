@@ -27,10 +27,9 @@ COPY urls.py ./
 WORKDIR /pixelwalker/pixelwalker
 
 # Launch service
-CMD sleep 10 && \
+CMD celery worker -A pixelwalker -l info -Q engine -n engine@%h --detach && \
     python3 manage.py makemigrations && \
     python3 manage.py migrate && \
     python3 manage.py loaddata AppSettings && \
 	python3 manage.py loaddata TaskTypes && \
-    celery worker -A pixelwalker -l info -Q engine -n engine@%h --detach && \
     python3 manage.py runserver 0.0.0.0:8000
