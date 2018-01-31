@@ -13,7 +13,7 @@ services:
     restart: always
 
   rabbit:
-    image: rabbitmq:latest
+    image: rabbitmq:3.7.2-management
     hostname: rabbit
     restart: always
     ports:

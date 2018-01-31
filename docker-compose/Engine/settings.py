@@ -148,7 +148,6 @@ CELERY_BROKER_URL = 'amqp://guest:guest@rabbit//'
 
 #: Only add pickle to this list if your broker is secured
 #: from unwanted access (see userguide/security.html)
-CELERY_ACCEPT_CONTENT = ['json']
-#CELERY_RESULT_BACKEND = 'db+sqlite:///results.sqlite'
+CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)
 CELERY_TASK_SERIALIZER = 'json'

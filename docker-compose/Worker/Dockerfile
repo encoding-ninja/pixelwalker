@@ -27,4 +27,4 @@ WORKDIR /pixelwalker/pixelwalker
 
 # Launch service
 CMD sleep 10 && \
-    celery -A pixelwalker worker -l info -Q worker -n worker@%h
+    celery worker -A pixelwalker -l info -Q worker -n worker@%h

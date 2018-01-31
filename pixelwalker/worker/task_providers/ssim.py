@@ -51,8 +51,8 @@ class SsimProvider(TaskProvider):
             dataset['data'] = []
 
             raw_data = self.subprocess_out.decode('utf-8').strip().splitlines()
-            sum_data = 0
-            nb_data = 1
+            sum_data = 0.
+            nb_data = 1.
             for line in raw_data:
                 chart_labels.append(str(datetime.timedelta(seconds=(nb_data/self.input_framerate))))
                 value = float(line[line.find('All:')+4:line.find('(')].strip())
