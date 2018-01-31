@@ -98,7 +98,7 @@
         <tr>
             <td><b>Name</b></td>
             <td><b>Type</b></td>
-            <td><b>File</b></td>
+            <td><b>Output</b></td>
         </tr>
         {% for output in output_list %}
         <tr>
@@ -106,6 +106,13 @@
             <td>{{ output.get_type_display }}</td>
             <td><a href="{{ output.get_url }}" target='output_{{ output.id }}'>{{ output.file_path }}</a></td>
         </tr>
+        {% if output.average %}
+        <tr>
+            <td>{{ output.name }}</td>
+            <td>Average</td>
+            <td>{{ output.average }}</td>
+        </tr>
+        {% endif %}
         {% empty %}
         <tr>
             <td colspan='3'><i>No existing output to be displayed</i></td>

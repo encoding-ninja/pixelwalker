@@ -66,8 +66,12 @@ class TaskProvider(object):
 
         if data['outputs'] is not None:
             err_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-err.txt")
-            with open(err_file_path, "w") as f:
-                f.write(str(self.subprocess_err))
+            try:
+                with open(err_file_path, "w") as f:
+                    f.write(self.subprocess_err.decode('utf-8').strip())
+            except:
+                with open(err_file_path, "w") as f:
+                    f.write(str(self.subprocess_err))
             err = {}
             err['name'] = 'Subprocess Err'
             err['file_path'] = err_file_path
@@ -76,8 +80,12 @@ class TaskProvider(object):
             data['outputs'].append(err)
 
             out_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-out.txt")
-            with open(out_file_path, "w") as f:
-                f.write(str(self.subprocess_out))
+            try:
+                with open(out_file_path, "w") as f:
+                    f.write(self.subprocess_out.decode('utf-8').strip())
+            except:
+                with open(out_file_path, "w") as f:
+                    f.write(str(self.subprocess_out))
             out = {}
             out['name'] = 'Subprocess Out'
             out['file_path'] = out_file_path

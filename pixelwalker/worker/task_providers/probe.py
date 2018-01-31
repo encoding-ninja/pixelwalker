@@ -28,7 +28,7 @@ class ProbeProvider(TaskProvider):
 
         try:
             self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-probe.json")
-            probe_data = json.loads(self.subprocess_out)
+            probe_data = json.loads(self.subprocess_out.decode('utf-8').strip())
             with open(self.output_file_path, "w") as f:
                 f.write(json.dumps(probe_data))
         

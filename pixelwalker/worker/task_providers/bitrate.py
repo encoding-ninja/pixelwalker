@@ -28,7 +28,7 @@ class BitrateProvider(TaskProvider):
         TaskProvider.execute(self, command)
 
         try:
-            bitrate_data = json.loads(self.subprocess_out)
+            bitrate_data = json.loads(self.subprocess_out.decode('utf-8').strip())
 
             # create json file Chart.js compatible
             chart_data = {}

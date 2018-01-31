@@ -50,7 +50,7 @@ class SsimProvider(TaskProvider):
             dataset['label'] = self.input_file_name
             dataset['data'] = []
 
-            raw_data = self.subprocess_out.text.splitlines()
+            raw_data = self.subprocess_out.decode('utf-8').strip().splitlines()
             sum_data = 0
             nb_data = 1
             for line in raw_data:
