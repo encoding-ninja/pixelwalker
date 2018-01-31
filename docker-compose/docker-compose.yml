@@ -44,7 +44,6 @@ services:
     build:
       context: ./Worker
       dockerfile: Dockerfile
-    hostname: worker
     restart: always
     volumes:
       - ../media_library:/media_library
