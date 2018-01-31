@@ -13,9 +13,9 @@ app = Celery('pixelwalker')
 #   should have a `CELERY_` prefix.
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
-app.task_routes = ([
-    ('engine.tasks.*', {'queue': 'engine'}),
-    ('worker.tasks.*', {'queue': 'worker'}),
+app.conf.task_routes = ([
+    ('engine.*', {'queue': 'engine'}),
+    ('worker.*', {'queue': 'worker'}),
 ],)
 
 # Load task modules from all registered Django app configs.
