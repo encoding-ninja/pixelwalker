@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: {{ media.name }}{% endblock %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+        <li><a href="{% url 'webgui_media-list' %}" class='active'>Media</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+        <li><a href="{% url 'webgui_task-list' %}">Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+        <li><a href="{% url 'webgui_media-update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+        <li><a href="{% url 'webgui_media-delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+<h4><span class='info'>Media:</span> {{ media.name }}</h4>
+
+<table class='table table-striped'>
+    <tbody>
+        <tr>
+            <td>File path</td>
+            <td><a href="{{ media.get_file_url }}" target="media_{{ media.id }}">{{ media.file.path }}</a></td>
+        </tr>
+        <tr>
+            <td{% if media.get_thumbnail_url %} class='text-center'{% endif %}>{% if media.get_thumbnail_url %}<img src="{{ media.get_thumbnail_url }}" style='height:150px;'/>{% else %}Basic informations{% endif %}</td>
+            <td>
+                <table class='table table-condensed'>
+                    <thead>
+                        <tr>
+                            <th class='text-center'>Codec</th>
+                            <th class='text-center'>Definition</th>
+                            <th class='text-center'>Framerate</th>
+                            <th class='text-center'>Bitrate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class='text-center'>
+                            <td>
+                                {% if media.video_codec %}
+                                {{ media.video_codec }}
+                                {% else %}
+                                <i>Unknown</i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if media.width and media.height %}
+                                {{ media.width }}x{{ media.height }}
+                                {% else %}
+                                <i>Unknown</i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if media.framerate %}
+                                {{ media.framerate }}
+                                {% else %}
+                                <i>Unknown</i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if media.average_bitrate %}
+                                {{ media.average_bitrate }}
+                                {% else %}
+                                <i>Unknown</i>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>Encoding provider</td>
+            <td>
+            {% if media.encoding_provider %}
+            <a href="{% url 'webgui_encoding-provider-read' media.encoding_provider.id %}">{{ media.encoding_provider.name }}</a>
+            {% else %}
+            <i>Undefined</i>
+            {% endif %}
+            </td>
+        </tr>
+        {% if assessment_reference_list %}
+        <tr>
+            <td>Reference media for {{ assessment_reference_list|length }} assessment project(s)</td>
+            <td>
+            {% for assessment_reference in assessment_reference_list %}
+            <a href="{% url 'webgui_assessment-read' assessment_reference.id %}">{{ assessment_reference.name }}</a><br>
+            {% endfor %}
+            </td>
+        </tr>
+        {% endif %}
+
+        {% if media.get_bitrate_json or media.get_probe_html_table %}
+        <tr>
+            <td colspan="2">
+                {% if media.get_bitrate_json %}
+                <div class="panel panel-success">
+                    <div class="panel-heading" data-toggle="collapse" href="#collapseBitrate" aria-expanded="false" aria-controls="collapseBitrate" style="cursor: pointer;">
+                        <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Bitrate and frame analysis</h3>
+                    </div>
+                    <div class="panel-body collapse" id="collapseBitrate">
+                        <canvas id="bitrateChart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
+                    </div>
+                </div>
+                {% endif %}
+                {% if media.get_probe_html_table %}
+                <div class="panel panel-info">
+                    <div class="panel-heading" data-toggle="collapse" href="#collapseProbe" aria-expanded="false" aria-controls="collapseProbe" style="cursor: pointer;">
+                        <h3 class="panel-title"><i class='fa fa-flask'></i> Probe</h3>
+                    </div>
+                    <div class="panel-body collapse" id="collapseProbe">
+                    {% autoescape off %}
+                        {{ media.get_probe_html_table }}
+                    {% endautoescape %}
+                    </div>
+                </div>
+                {% endif %}
+            </td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+
+<h4>Associated tasks:</h4>
+<div id="tasks">
+ <!-- class="search" automagically makes an input a search field. -->
+ <div class="form-group col-xs-12 col-md-6">
+    <input class="search form-control" placeholder="Search" />
+</div>
+    
+<!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+<div class="form-group col-xs-12 col-md-6">
+    <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+    <button class="sort btn btn-default" data-sort="type"><i class='fa fa-sort'></i> Type</button>
+    <button class="sort btn btn-default" data-sort="state"><i class='fa fa-sort'></i> State</button>
+    <button class="sort btn btn-default" data-sort="media"><i class='fa fa-sort'></i> Media</button>
+    <button class="sort btn btn-default" data-sort="assessment"><i class='fa fa-sort'></i> Assessment</button>
+</div>
+
+<ul class="list col-xs-12">
+{% for task in task_list %}
+    <li class='item'>
+            <div class='general'>
+                <a href="{% url 'webgui_task-read' task.id %}" class="name id"><b>#{{ task.id }}</b></span></a>
+                <p class='desc'>
+                    <span class="type">{{ task.type.name }}</span><br>
+                    <a href="{% url 'webgui_media-read' task.media.id %}" class="media">{{ task.media.name }}</a>
+                </p>
+            </div>
+
+            <ul class='infos'>
+                {% if task.state == 1 %}
+                <li><span class="state label label-default label-primary">{{ task.get_state_display }}</span></li>
+                {% elif task.state == 2 %}
+                <li><span class="state label label-default label-success">{{ task.get_state_display }}</span></li>
+                {% elif task.state == 3 %}
+                <li><span class="state label label-default label-danger">{{ task.get_state_display }}</span></li>
+                {% elif task.state == 4 %}
+                <li><span class="state label label-default label-warning">{{ task.get_state_display }}</span></li>
+                {% else %}
+                <li><span class="state label label-default">{{ task.get_state_display }}</span></li>
+                {% endif %}
+                {% if task.assessment %}
+                <li><br></li>
+                <li>Assessment: <a href="{% url 'webgui_assessment-read'  task.assessment.id %}" class="assessment">{{ task.assessment.name }}</a></li>
+                {% endif %}
+            </ul>
+
+            <ul class='actions'>
+                <li><a href="{% url 'webgui_task-read' task.id %}"><i class='fa fa-eye'></i> View</a></li>
+                {% if task.state > 1 %}
+                <li><a href="{% url 'webgui_task-redo' task.id %}"><i class='fa fa-refresh'></i> Redo</a></li>
+                {% endif %}
+                {% if task.state < 2 %}
+                <li><a href="{% url 'webgui_task-abort' task.id %}"><i class='fa fa-times'></i> Abort</a></li>
+                {% endif %}
+            </ul>
+    </li>
+{% endfor %}
+</ul>
+</div>
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
+    {% if media.get_bitrate_json %}
+    <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        var options = {
+            valueNames: [ 'id', 'type', 'state', 'media', 'assessment' ]
+        };
+        var taskList = new List('tasks', options);
+    </script>
+
+    {% if media.get_bitrate_json %}
+    <script>
+        var bitrateCtx = document.getElementById("bitrateChart");
+        var bitrateChart = new Chart(bitrateCtx, {
+            type: 'bar',
+            data: {% autoescape off %}{{ media.get_bitrate_json }}{% endautoescape %},
+            options: {
+                responsive:true,
+                maintainAspectRatio: false,
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        ticks: {
+                            callback: function(dataLabel, index) {
+                                // Hide the label of every N dataset. return null to hide the grid line too
+                                return index % 2 === 0 ? dataLabel : '';
+                            }
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Frames'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Size (bytes)'
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+    {% endif %}
+
+{% endblock %}

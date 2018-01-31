@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+
+  db:
+    image: postgres:latest
+    hostname: db
+    restart: always
+
+  redis:
+    image: redis:latest
+    hostname: redis
+    restart: always
+
+  rabbit:
+    image: rabbitmq:3.7.2-management
+    hostname: rabbit
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    depends_on:
+      - redis
+
+  engine:
+    build:
+      context: ./Engine
+      dockerfile: Dockerfile
+    hostname: engine
+    restart: always
+    volumes:
+      - ../media_library:/media_library
+    ports:
+      - "8000:8000"
+    links:
+      - db
+      - rabbit
+      - redis
+    depends_on:
+      - db
+      - rabbit
+
+  worker:
+    build:
+      context: ./Worker
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ../media_library:/media_library
+    links:
+      - rabbit
+      - redis
+    depends_on:
+      - engine
+      - rabbit

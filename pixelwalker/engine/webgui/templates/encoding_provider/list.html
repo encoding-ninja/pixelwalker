@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Encoding providers{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+    <li><a href="{% url 'webgui_media-list' %}">Media</a></li>
+    <li><a href="{% url 'webgui_encoding-provider-list' %}" class='active'>Encoding providers</a></li>
+    <li><a href="{% url 'webgui_task-list' %}">Tasks</a></li>
+</ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href="{% url 'webgui_encoding-provider-create' %}"><i class='fa fa-plus'></i> New</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+    {% if encoding_provider_list %}
+    <div id="encoding_providers">
+
+            <!-- class="search" automagically makes an input a search field. -->
+            <div class="form-group col-xs-12 col-md-6">
+                <input class="search form-control" placeholder="Search" />
+            </div>
+        
+            <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+            <div class="form-group col-xs-12 col-md-6">
+                <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+                <button class="sort btn btn-default" data-sort="name"><i class='fa fa-sort'></i> Name</button>
+                <button class="sort btn btn-default" data-sort="nb_of_media"><i class='fa fa-sort'></i> Number of media</button>
+            </div>
+        
+            <ul class="list col-xs-12">
+                    {% for encoding_provider in encoding_provider_list %}
+                <li class='item'>
+                        <div class='general'>
+                            <a href="{% url 'webgui_encoding-provider-read' encoding_provider.id %}" class="name"><b>{{ encoding_provider.name }}</b> <span class='id'>#{{ encoding_provider.id }}</span></a>
+                            <p class='desc'>{{ encoding_provider.get_number_of_media }} media file{% if encoding_provider.get_number_of_media > 1 %}s{% endif %}</p>
+                        </div>
+                        <ul class='images'>
+                            {% for media in encoding_provider.get_some_media_preview %}
+                            <li><img src="{{ media.get_thumbnail_url }}"></li>
+                            {% endfor %}   
+                        </ul>
+                        <ul class='actions'>
+                            <li><a href="{% url 'webgui_encoding-provider-read'  encoding_provider.id %}"><i class='fa fa-eye'></i> View</a></li>
+                            <li><a href="{% url 'webgui_encoding-provider-update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                            <li><a href="{% url 'webgui_encoding-provider-delete' encoding_provider.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                        </ul>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <p class='col-sm-7 danger'>No encoding provider to display.</p>
+    {% endif %}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        var options = {
+            valueNames: [ 'name', 'id' ]
+        };
+        var encodingProviderList = new List('encoding_providers', options);
+    </script>
+{% endblock %}

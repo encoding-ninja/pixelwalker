@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Assessments{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="{% url 'webgui_assessment-list' %}" class='active'>Assessments</a></li>
+    <li><a href="{% url 'webgui_media-list' %}">Media</a></li>
+    <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+    <li><a href="{% url 'webgui_task-list' %}">Tasks</a></li>
+</ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href="{% url 'webgui_assessment-create' %}"><i class='fa fa-plus'></i> New</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}      
+{% if assessment_list %}
+<div id="assessments">
+
+    <!-- class="search" automagically makes an input a search field. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <input class="search form-control" placeholder="Search" />
+    </div>
+
+    <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+        <button class="sort btn btn-default" data-sort="name"><i class='fa fa-sort'></i> Name</button>
+        <button class="sort btn btn-default" data-sort="nb_of_media"><i class='fa fa-sort'></i> Number of media</button>
+    </div>
+
+    <ul class="list col-xs-12">
+    {% for assessment in assessment_list %}
+        <li class='item'>
+                {% if assessment.reference_media.get_thumbnail_url %}
+                <div class='thumb'>
+                    <img src="{{ assessment.reference_media.get_thumbnail_url }}">
+                </div>
+                {% endif %}
+
+                <div class='general'>
+                    <a href="{% url 'webgui_assessment-read' assessment.id %}" class="name"><b>{{ assessment.name }}</b> <span class='id'>#{{ assessment.id }}</span></a>
+                    <p class='desc'>{{ assessment.description }}</p>
+                </div>
+
+                <ul class='infos'>
+                    {% if assessment.reference_media != None %}Reference: <a href="{% url 'webgui_media-read' assessment.reference_media.id %}">{{ assessment.reference_media.name }}</a>{% endif %}</li>
+                    {% if assessment.encoded_media_list.count > 0 %}<li><span class="nb_of_media">{{ assessment.encoded_media_list.count }}</span> encoded variant{% if assessment.encoded_media_list.count > 1 %}s{% endif%}</li>{% endif%}
+                </ul>
+
+                <ul class='actions'>
+                    <li><a href="{% url 'webgui_assessment-read'  assessment.id %}"><i class='fa fa-eye'></i> View</a></li>
+                    <li><a href="{% url 'webgui_assessment-update' assessment.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                    <li><a href="{% url 'webgui_assessment-delete' assessment.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                </ul>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{% else %}
+    <p class='col-sm-7 danger'>No assessment project to display.</p>
+{% endif %}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        var options = {
+            valueNames: [ 'name', 'id', 'nb_of_media' ]
+        };
+        var assessmentList = new List('assessments', options);
+    </script>
+{% endblock %}

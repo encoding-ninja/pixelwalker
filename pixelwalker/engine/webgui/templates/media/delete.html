@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Delete media{% endblock %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+        <li><a href="{% url 'webgui_media-list' %}" class='active'>Media</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+        <li><a href="{% url 'webgui_task-list' %}">Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+
+    <h4><span class='danger'>Delete:</span> {{ media.name }}</h4>
+    <p class='col-sm-7 danger'>
+    - All metrics and score data associated will be lost.<br>
+    - This file will be deleted: {{ media.file.path }}
+    </p>
+<form action="{% url 'webgui_media-delete' media.id %}" method="post" class="form-horizontal">
+    {% csrf_token %}
+    <input type="hidden" name="delete_id" id="delete_id" value="{{ media.id }}" required/>
+    
+    <div class="form-group col-sm-7">
+        <button type="submit" class="btn btn-danger">Yes</button>
+        <a href="{% url 'webgui_media-read' media.id %}" class="btn btn-default">No</a>
+    </div>
+
+</form>
+
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+{% endblock %}

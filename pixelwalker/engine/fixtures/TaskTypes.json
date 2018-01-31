@@ -1,0 +1,47 @@
+[
+    {
+      "model": "engine.TaskType",
+      "pk": 1,
+      "fields": {
+        "name": "PROBE",
+        "is_video_metric": "False",
+        "auto_submit_on_new_media" : "True"
+      }
+    },
+    {
+        "model": "engine.TaskType",
+        "pk": 2,
+        "fields": {
+          "name": "BITRATE",
+          "is_video_metric": "False",
+          "auto_submit_on_new_media" : "True"
+        }
+    },
+    {
+        "model": "engine.TaskType",
+        "pk": 3,
+        "fields": {
+          "name": "THUMBNAIL",
+          "is_video_metric": "False",
+          "auto_submit_on_new_media" : "True"
+        }
+    },
+    {
+        "model": "engine.TaskType",
+        "pk": 4,
+        "fields": {
+          "name": "PSNR",
+          "is_video_metric": "True",
+          "auto_submit_on_new_media" : "False"
+        }
+    },
+    {
+        "model": "engine.TaskType",
+        "pk": 5,
+        "fields": {
+          "name": "SSIM",
+          "is_video_metric": "True",
+          "auto_submit_on_new_media" : "False"
+        }
+    }
+  ]

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: {{ encoding_provider.name }}{% endblock %}
+
+{% block nav %}
+<ul>
+    <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+    <li><a href="{% url 'webgui_media-list' %}">Media</a></li>
+    <li><a href="{% url 'webgui_encoding-provider-list' %}" class='active'>Encoding providers</a></li>
+    <li><a href="{% url 'webgui_task-list' %}">Tasks</a></li>
+</ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-update' encoding_provider.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-delete' encoding_provider.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+<h4><span class='info'>Encoding provider:</span> {{ encoding_provider.name }}</h4>
+{% if media_list %}
+<table class='table'>
+    <tbody>
+        <tr>
+            <td>{{ media_list|length }} associated media file(s)</td>
+        </tr>
+    </tbody>
+</table>
+<div id="medias">
+
+    <!-- class="search" automagically makes an input a search field. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <input class="search form-control" placeholder="Search" />
+    </div>
+
+    <!-- class="sort" automagically makes an element a sort buttons. The date-sort value decides what to sort by. -->
+    <div class="form-group col-xs-12 col-md-6">
+        <button class="sort btn btn-default" data-sort="id"><i class='fa fa-sort'></i> Id</button>
+        <button class="sort btn btn-default" data-sort="name"><i class='fa fa-sort'></i> Name</button>
+        <button class="sort btn btn-default" data-sort="codec"><i class='fa fa-sort'></i> Codec</button>
+        <button class="sort btn btn-default" data-sort="height"><i class='fa fa-sort'></i> Definition</button>
+    </div>
+
+    <ul class="list col-xs-12">
+    {% for media in media_list %}
+        <li class='item'>
+                {% if media.get_thumbnail_url %}
+                <div class='thumb'>
+                    <img src="{{ media.get_thumbnail_url }}">
+                </div>
+                {% endif %}
+
+                <div class='general'>
+                    <a href="{% url 'webgui_media-read' media.id %}" class="name"><b>{{ media.name }}</b> <span class='id'>#{{ media.id }}</span></a>
+                    {% if media.encoding_provider %}
+                        <p class='desc'><a href="{% url 'webgui_encoding-provider-read' media.encoding_provider.id %}" class='provider'>{{ media.encoding_provider.name }}</a></p>
+                    {% endif %}
+                </div>
+
+                <ul class='infos'>
+                    {% if media.video_codec %}<li><span class="codec">{{ media.video_codec }}</li></li>{% endif %}
+                    {% if media.width %}<li><span class="width">{{ media.width }}</span>x<span class="height">{{ media.height }}</span>{% if media.framerate %} - {{ media.framerate }}fps{% endif %}</li>{% endif %}
+                    {% if media.average_bitrate %}<li>{{ media.average_bitrate }}</li>{% endif %}
+                </ul>
+
+                <ul class='actions'>
+                    <li><a href="{% url 'webgui_media-read' media.id %}"><i class='fa fa-eye'></i> View</a></li>
+                    <li><a href="{% url 'webgui_media-update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
+                    <li><a href="{% url 'webgui_media-delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+                </ul>
+        </li>
+    {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        var options = {
+            valueNames: [ 'name', 'id', 'provider', 'width', 'height', 'codec' ]
+        };
+        var mediaList = new List('medias', options);
+    </script>
+{% endblock %}

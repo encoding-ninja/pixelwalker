@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: Tasks{% endblock %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+        <li><a href="{% url 'webgui_media-list' %}">Media</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+        <li><a href="{% url 'webgui_task-list' %}" class='active'>Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+        {% if task.state > 1 %}
+        <li><a href="{% url 'webgui_task-redo' task.id %}"><i class='fa fa-refresh'></i> Redo</a></li>
+        {% endif %}
+        {% if task.state < 2 %}
+        <li><a href="{% url 'webgui_task-abort' task.id %}"><i class='fa fa-times'></i> Abort</a></li>
+        {% endif %}
+    </ul>
+{% endblock %}
+
+{% block content %}       
+<h4>
+    <span class='info'>Task:</span> #{{ task.id }}<br>
+    {% if task.state == 1 %}
+    <span class="state label label-default label-primary">{{ task.get_state_display }}</span>
+    {% elif task.state == 2 %}
+    <span class="state label label-default label-success">{{ task.get_state_display }}</span>
+    {% elif task.state == 3 %}
+    <span class="state label label-default label-danger">{{ task.get_state_display }}</span>
+    {% elif task.state == 4 %}
+    <span class="state label label-default label-warning">{{ task.get_state_display }}</span>
+    {% else %}
+    <span class="state label label-default">{{ task.get_state_display }}</span>
+    {% endif %}
+</h4>
+
+<table class='table table-striped table-condensed'>
+    <thead>
+        <tr>
+            <th colspan='3'><i class='fa fa-exchange'></i> Relationships</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Type</b></td>
+            <td><b>Assessment</b></td>
+            <td><b>Media</b></td>
+        </tr>
+        <tr>
+            <td>{{ task.type.name }}</td>
+            <td>
+                {% if task.assessment %}
+                <a href="{% url 'webgui_assessment-read'  task.assessment.id %}">{{ task.assessment.name }}</a>
+                {% else %}
+                <i>None</i>
+                {% endif %}
+            </td>
+            <td><a href="{% url 'webgui_media-read'  task.media.id %}">{{ task.media.name }}</a></td>
+        </tr>
+    </tbody>
+</table>
+
+<table class='table table-striped table-condensed'>
+    <thead>
+        <tr>
+            <th colspan='3'><i class='fa fa-calendar'></i> Time informations</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Created</b></td>
+            <td><b>Last queued</b></td>
+            <td><b>Process started</b></td>
+            <td><b>Process ended</b></td>
+        </tr>
+        <tr>
+            <td>{{ task.date_created }}</td>
+            <td>{{ task.date_queued }}</td>
+            <td>{{ task.date_started }}</td>
+            <td>{{ task.date_ended }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<table class='table table-striped table-condensed'>
+    <thead>
+        <tr>
+            <th colspan='3'><i class='fa fa-inbox'></i> Outputs</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><b>Name</b></td>
+            <td><b>Type</b></td>
+            <td><b>Output</b></td>
+        </tr>
+        {% for output in output_list %}
+        <tr>
+            <td>{{ output.name }}</td>
+            <td>{{ output.get_type_display }}</td>
+            <td><a href="{{ output.get_url }}" target='output_{{ output.id }}'>{{ output.file_path }}</a></td>
+        </tr>
+        {% if output.average %}
+        <tr>
+            <td>{{ output.name }}</td>
+            <td>Average</td>
+            <td>{{ output.average }}</td>
+        </tr>
+        {% endif %}
+        {% empty %}
+        <tr>
+            <td colspan='3'><i>No existing output to be displayed</i></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+{% endblock %}
