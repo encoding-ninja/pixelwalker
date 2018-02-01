@@ -11,10 +11,12 @@ RUN npm install -g bower && ln -s /usr/bin/nodejs /usr/bin/node
 # Install FFmpeg dependencies
 RUN apt-get install -yqq ffmpeg
 
-# Clone pixelwalker repo
-RUN git clone https://github.com/antoinehng/pixelwalker.git /pixelwalker
+# Install rabbitMQ
+RUN apt-get install -yqq rabbitmq-server
+
+# Copy pixelwalker sources
+COPY ./ /pixelwalker
 WORKDIR /pixelwalker
-RUN git checkout django_2.0 && git pull
 
 # Python dependencies
 RUN pip3 install -r requirements.txt
@@ -38,4 +40,6 @@ RUN python3 manage.py test
 EXPOSE 8000
 
 # Start django dev server
-CMD python3 manage.py runserver 0.0.0.0:8000
+CMD rabbitmq-server -detached && \
+	celery worker -A pixelwalker -l info -Q engine,worker --detach && \
+	python3 manage.py runserver 0.0.0.0:8000
