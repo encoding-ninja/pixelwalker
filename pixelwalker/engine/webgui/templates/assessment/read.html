@@ -83,7 +83,7 @@
                                 {% if metric_list.count > 0 %}
                                 {% for metric in metric_list %}
                                 <th class='text-center'>
-                                    <input type="checkbox" class='select-all' name='{{ metric.name }}-select-all' id='{{ metric.name }}-select-all' data-metric="{{ metric.name }}"{% if assessment.reference_media is None %} disabled{% endif %}>
+                                    <input type="checkbox" class='select-all' name='{{ metric.name }}-select-all' id='{{ metric.name }}-select-all' data-metric="{{ metric.name }}"{% if assessment.reference_media is None %} disabled data-toggle="tooltip" data-placement="left" title="Missing Reference"{% endif %}>
                                 </th>
                                 {% endfor %}
                                 {% endif %}
@@ -150,7 +150,7 @@
                                             {% endif %}
                                         {% endfor %}
                                     {% else %}                      
-                                       <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}"{% if assessment.reference_media.width is None %} disabled{% endif %} {% if encoded_media.width is None %} disabled{% endif %}>
+                                       <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}"{% if assessment.reference_media.width is None %} disabled data-toggle="tooltip" data-placement="left" title="Missing Reference"{% endif %} {% if encoded_media.width is None %} disabled data-toggle="tooltip" data-placement="left" title="Missing Probe Results"{% endif %}>
                                     {% endif %}                      
                                 </td>
                                 {% endfor %}
@@ -162,7 +162,7 @@
                             <tr>
                                 <td colspan='5'></td>
                                 <td {% if metric_list.count > 0 %}colspan='{{ metric_list.count }}' {% endif %}class='text-center'>
-                                    <button type="submit" class="btn btn-primary btn-block"{% if assessment.reference_media is None %} disabled{% endif %}>Process</button>
+                                    <button type="submit" class="btn btn-primary btn-block"{% if assessment.reference_media is None %} disabled data-toggle="tooltip" data-placement="left" title="Missing Reference"{% endif %}>Process</button>
                                 </td>
                             </tr>
                         </tfoot>
