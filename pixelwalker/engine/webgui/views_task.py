@@ -24,15 +24,15 @@ def create(request):
         # list all possible metrics
         task_type_list = TaskType.objects.all()
         for task_type in task_type_list:
-            print(str(task_type.name))
             requested_task_list = request.POST.getlist(task_type.name+'[]')
-            print(str(len(requested_task_list)))
             if len(requested_task_list) > 0:
                 for media_id in requested_task_list:
-                    print(media_id)
                     # set simple task values
                     new_task = Task()
-                    new_task.assessment = Assessment.objects.get(id=request.POST.get('assessment_id'))
+                    if request.POST.get('assessment_id')=='None':
+                        new_task.assessment = None
+                    else:
+                        new_task.assessment = Assessment.objects.get(id=request.POST.get('assessment_id'))
                     new_task.media = Media.objects.get(id=media_id)
                     new_task.type = task_type
                     new_task.save()

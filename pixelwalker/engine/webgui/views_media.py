@@ -64,7 +64,8 @@ def read(request, media_id):
     media = get_object_or_404(Media, pk=media_id)
     assessment_reference_list = Assessment.objects.filter(reference_media=media)
     task_list = Task.objects.filter(media=media).order_by('-id')
-    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list, 'task_list': task_list})
+    not_auto_task_list = TaskType.objects.filter(is_video_metric=False, auto_submit_on_new_media=False).order_by('name')
+    return render(request, 'media/read.html', {'media': media, 'assessment_reference_list': assessment_reference_list, 'task_list': task_list, 'not_auto_task_list': not_auto_task_list})
 
 #crUd
 def update(request, media_id):

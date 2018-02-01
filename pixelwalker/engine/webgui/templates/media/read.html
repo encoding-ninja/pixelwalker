@@ -17,6 +17,19 @@
         <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
         <li><a href="{% url 'webgui_media-update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
         <li><a href="{% url 'webgui_media-delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+        {% for task_type in not_auto_task_list %}
+        {% media_tasktype_exists media task_type as task_exists %} 
+        {% if not task_exists %}
+        <li>
+            <form action="{% url 'webgui_task-create' %}" method="post">
+                {% csrf_token %}
+                <input type='hidden' name='assessment_id' value='None'/>
+                <input type='hidden' name='{{ task_type.name }}[]' value="{{ media.id }}"/>
+                <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="bottom" title="Submit task"><i class='fa fa-cogs'></i> <b>{{ task_type.name }}</b></button>
+            </form>
+        </li>
+        {% endif %}
+        {% endfor %}
     </ul>
 {% endblock %}
 
