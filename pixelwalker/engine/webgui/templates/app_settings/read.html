@@ -15,13 +15,13 @@
 {% block options %}
     <ul>
         <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
-        <!-- <li><a href="{% url 'webgui_app-settings-update' %}"><i class='fa fa-pencil'></i> Edit</a></li> -->
+        <li><a href="{% url 'webgui_app-settings-update' %}"><i class='fa fa-pencil'></i> Edit</a></li>
     </ul>
 {% endblock %}
 
 {% block content %}       
-<h4><span class='info'>Settings:</span> Nothing useful here for now !</h4>
-<!--
+<h4><span class='info'>Settings:</span></h4>
+
 <table class='table table-striped table-condensed table-bordered table-hover'>
 	<thead>
         <tr>
@@ -31,23 +31,17 @@
         </tr>
     </thead>
     <tbody>
+        {% for metric in metric_list %}
         <tr>
-            <td><b>Task pulling interval</b></td>
+            <td>Auto submit on new media <b>{{ metric.name }}</b></td>
             <td class='text-center'>
-            	<input class="form-control" type="number" name="worker_pulling_interval" id="worker_pulling_interval" placeholder="Number" value="{{ app_settings.worker_pulling_interval }}" disabled/>
-            </td>
-            <td>in seconds</td>
+                    <input type="checkbox" name='{{ metric.id }}_auto_submit_on_new_media' {% if metric.auto_submit_on_new_media %} checked {% endif %} data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>" disabled></td>
+            <td>Queue a new task on new media creation</td>
         </tr>
-        <tr>
-            <td><b>Maximum number of parallel processing tasks</b></td>
-            <td class='text-center'>
-            	<input class="form-control" type="number" name="max_parallel_tasks" id="max_parallel_tasks" placeholder="Number" value="{{ app_settings.max_parallel_tasks }}" disabled/>
-            </td>
-            <td></td>
-        </tr>
+        {% endfor %}
     </tbody>
 </table>
--->
+
 
 {% endblock %}
 
