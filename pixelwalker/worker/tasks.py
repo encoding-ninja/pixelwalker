@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 
 import threading
-from .task_providers import thumbnail, probe, bitrate, ssim
+from .task_providers import thumbnail, probe, bitrate, ssim, psnr
 
 @shared_task
 def add(data):
@@ -30,6 +30,9 @@ def add(data):
         task_provider = bitrate.BitrateProvider(task_id, task_media_file_path)
     elif task_type == 'SSIM':
         task_provider = ssim.SsimProvider(task_id, task_media_file_path, task_media_framerate, 
+                                          task_reference_file_path, task_reference_width, task_reference_height)
+    elif task_type == 'PSNR':
+        task_provider = psnr.PsnrProvider(task_id, task_media_file_path, task_media_framerate, 
                                           task_reference_file_path, task_reference_width, task_reference_height)
     else:
         # TODO: error management
