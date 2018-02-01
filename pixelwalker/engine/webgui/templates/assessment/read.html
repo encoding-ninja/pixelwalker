@@ -22,21 +22,22 @@
 
 {% block content %}       
 <h4><span class='info'>Project:</span> {{ assessment.name }}</h4>
-
+{%if assessment.description %}
 <table class='table'>
     <tbody>
         <tr>
-            <td>Description</td>
             <td>{{ assessment.description }}</td>
         </tr>
+    </tbody>
+</table>
+{% endif %}
+
         {% if assessment.encoded_media_list.count > 0 %}
-        <tr>
-            <td colspan='2'>
                 <form action="{% url 'webgui_task-create' %}" method="post">
                 {% csrf_token %}
                     <input type='hidden' name='assessment_id' value='{{ assessment.id }}'/>
                     <input type='hidden' name='reference_media_id' value='{{ assessment.reference_media.id }}'/>
-                    <table class='table table-hover table-condensed table-bordered'>
+                    <table class='table table-hover table-condensed>
                         <thead>
                             <tr class='active'>
                                 <th colspan='2'>
@@ -75,7 +76,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class='info'>
+                            <tr class='active'>
                                 <th colspan='5'>
                                     Encoded variants
                                 </th>
@@ -89,7 +90,7 @@
                             </tr>
                             {% for encoded_media in assessment.encoded_media_list.all %}
                             <tr>
-                                <td {% if not encoded_media.encoding_provider %}colspan='2'{% endif%}><i class='fa fa-film'></i> <a href="{% url 'webgui_media-read' encoded_media.id %}"><b>{{ encoded_media.name }}</b></a></td>
+                                <td {% if not encoded_media.encoding_provider %}colspan='2'{% endif%}><a href="{% url 'webgui_media-read' encoded_media.id %}"><b>{{ encoded_media.name }}</b></a></td>
                                 {% if encoded_media.encoding_provider %}
                                 <td class='text-center'>
                                     <a href="{% url 'webgui_encoding-provider-read' encoded_media.encoding_provider.id %}">{{ encoded_media.encoding_provider.name }}</a>
@@ -158,7 +159,7 @@
                             {% endfor %}
                         </tbody>
                         </tfoot>
-                            <tr class='active'>
+                            <tr>
                                 <td colspan='5'></td>
                                 <td {% if metric_list.count > 0 %}colspan='{{ metric_list.count }}' {% endif %}class='text-center'>
                                     <button type="submit" class="btn btn-primary btn-block"{% if assessment.reference_media is None %} disabled{% endif %}>Process</button>
@@ -167,22 +168,23 @@
                         </tfoot>
                     </table>
                 </form>
-            </td>
-        </tr>
         {% else %}
-        <tr>
-            <td>Reference</td>
-            <td>
-            {% if assessment.reference_media != None %}
-            <a href="{% url 'webgui_media-read' assessment.reference_media.id %}">{{ assessment.reference_media.name }}</a>
-            {% else %}
-            <i>Undefined</i>
-            {% endif %}
-            </td>
-        </tr>
+        <table class='table'>
+            <tbody>
+                <tr>
+                    <td>Reference</td>
+                    <td>
+                    {% if assessment.reference_media != None %}
+                    <a href="{% url 'webgui_media-read' assessment.reference_media.id %}">{{ assessment.reference_media.name }}</a>
+                    {% else %}
+                    <i>Undefined</i>
+                    {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
         {% endif %}
-    </tbody>
-</table>
 
 {% endblock %}
 
