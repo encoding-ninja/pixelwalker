@@ -131,7 +131,9 @@
                                         </a>
                                         {% elif task.state == 2 %}
                                         <a href="{% url 'webgui_task-read' task.id %}">
-                                            <span class="label label-success">{{ task.get_average_score|floatformat:3 }}</span>
+                                            {% is_best_assessment_task assessment task as is_best %}
+                                            {% is_worst_assessment_task assessment task as is_worst %}
+                                            <span class="label {% if is_best %}label-success{% elif is_worst %}label-danger{% else %}label-warning{% endif %}">{{ task.get_average_score|floatformat:3 }}</span>
                                         </a>
                                         {% elif task.state == 3 %}
                                         <a href="{% url 'webgui_task-read' task.id %}">
