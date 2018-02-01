@@ -22,7 +22,7 @@ class TaskProvider(object):
             self.input_file_path = input_file_path
             self.input_file_name = os.path.basename(input_file_path)
         else:
-            raise ValueError('Cannot access the file: {}'.format(input_file_path))
+            self.acknowledge_error()
 
         self.subprocess_pid = None
         self.subprocess_out = None

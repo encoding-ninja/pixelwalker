@@ -94,7 +94,10 @@ def delete(request, media_id):
     if request.POST:
         # delete the media object
         if int(media_id) == int(request.POST.get('delete_id')):
-            shutil.rmtree(os.path.dirname(media.file.path))
+            try:
+                shutil.rmtree(os.path.dirname(media.file.path))
+            except:
+                pass
             media.delete()
             return HttpResponseRedirect(reverse('webgui_media-list'))
         else:

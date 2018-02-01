@@ -147,6 +147,10 @@ class Task(models.Model):
             data['reference_height'] = self.assessment.reference_media.height
         data['type'] = self.type.name
         send_task('worker.tasks.add', args=[data])
+    
+    def get_average_score(self):
+        output = TaskOutput.objects.filter(task=self, type=TaskOutput.CHART_DATA).last()
+        return output.average
 
 
 class TaskOutput(models.Model):

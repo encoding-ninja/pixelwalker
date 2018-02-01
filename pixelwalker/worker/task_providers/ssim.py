@@ -29,7 +29,7 @@ class SsimProvider(TaskProvider):
             self.reference_file_path = reference_file_path
             self.reference_file_name = os.path.basename(reference_file_path)
         else:
-            raise ValueError('Cannot access the file: {}'.format(reference_file_path))
+            self.acknowledge_error()
 
         self.reference_definition = str(reference_width)+':'+str(reference_height)
         self.input_framerate = input_framerate
