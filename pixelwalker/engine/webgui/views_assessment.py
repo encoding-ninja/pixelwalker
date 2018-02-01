@@ -65,15 +65,24 @@ def update(request, assessment_id):
 
             assessment.reference_media = Media.objects.get(id=request.POST.get('reference_media'))
         else:
+            # There is no longer a reference media, delete all metric results
             assessment.reference_media = None
             Task.objects.filter(assessment=assessment).delete()
 
+        # Update the list of media encoded variants
         if len(request.POST.getlist('encoded_media_list')) > 0:
             assessment.encoded_media_list.clear()
             for encoded_media in request.POST.getlist('encoded_media_list'):
                 assessment.encoded_media_list.add(Media.objects.get(id=encoded_media))
         else:
             assessment.encoded_media_list.clear()
+
+        assessment.save()
+
+        # Remove task is the encoded media variant is no longer in assessment
+        for task in Task.objects.filter(assessment=assessment):
+            if task.media not in assessment.encoded_media_list.all():
+                task.delete()
 
         assessment.save()
         return HttpResponseRedirect(reverse('webgui_assessment-read', args=(assessment.id,)))
