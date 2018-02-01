@@ -121,7 +121,7 @@
                                 <td class='text-center'>
                                      <input type="checkbox" class='select-one' name='{{ metric.name }}[]' id='{{ metric.name }}-media_{{ encoded_media.id }}' data-metric="{{ metric.name }}" value="{{ encoded_media.id }}"{% if assessment.reference_media.width is None %} disabled{% endif %} {% if encoded_media.width is None %} disabled{% endif %}>
                                     {% for task in task_list %}
-                                        {% if task.metric == metric and task.media == encoded_media %}
+                                        {% if task.type == metric and task.media == encoded_media %}
                                             {% if task.get_state_display == 'Queued' %}
                                             <a href="{% url 'webgui_task-read' task.id %}">
                                                 <span class="label label-default"><i class="fa fa-clock-o"></i> {{ task.get_state_display }}</span>
@@ -179,20 +179,6 @@
             </td>
         </tr>
         {% endif %}
-        {% if task_list.count > 0 %}
-        <tr>
-            <td colspan='2'>
-                <div class="panel panel-warning">
-                    <div class="panel-heading" data-toggle="collapse" href="#collapseAverageMetric" aria-expanded="false" aria-controls="collapseAverageMetric" style="cursor: pointer;">
-                        <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Average scores by metric</h3>
-                    </div>
-                    <div class="panel-body collapse" id="collapseAverageMetric">
-                        <canvas id="averageMetricChart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
-                    </div>
-                </div>
-            </td>
-        </tr>
-        {% endif %}
     </tbody>
 </table>
 
@@ -236,130 +222,4 @@
 
         });
     </script>
-
-    {% if task_list.count > 0 %}
-    <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
-    
-    <script>
-        var getcolor = function (num) {
-            if (num%6 == 0)
-                return "#F7464A";
-            else if (num%6 == 1)
-                return "#46BFBD";
-            else if (num%6 == 2)
-                return "#FDB45C";
-            else if (num%6 == 3)
-                return "#4674bf";
-            else if (num%6 == 4)
-                return "#949FB1";
-            else if (num%6 == 5)
-                return "#4D5360";
-        };
-        var gethighlight = function (num) {
-            if (num%6 == 0)
-                return "#FF5A5E";
-            else if (num%6 == 1)
-                return "#5AD3D1";
-            else if (num%6 == 2)
-                return "#FFC870";
-            else if (num%6 == 3)
-                return "#5a79d3";
-            else if (num%6 == 4)
-                return "#A8B3C5";
-            else if (num%6 == 5)
-                return "#616774";
-        };
-        var getfill = function (num) {
-            if (num%6 == 0)
-                return "rgba(255,90,94,0.08)";
-            else if (num%6 == 1)
-                return "rgba(90,211,209,0.08)";
-            else if (num%6 == 2)
-                return "rgba(255,200,112,0.08)";
-            else if (num%6 == 3)
-                return "rgba(90,121,211,0.08)";
-            else if (num%6 == 4)
-                return "rgba(168,179,197,0.08)";
-            else if (num%6 == 5)
-                return "rgba(97,103,116,0.08)";
-        };
-
-        var averageMetricCtx = document.getElementById("averageMetricChart");
-        var averageMetricChart = new Chart(averageMetricCtx, {
-            type: 'bar',
-            data: {
-                labels: [{% for encoded_media in assessment.encoded_media_list.all %}'{{ encoded_media.name }}',{% endfor %}],
-                datasets: [
-                {% for metric in metric_list %}
-                {
-                    label: '{{ metric.name }}',
-                    yAxisID: "{{ metric.name }}",
-                    backgroundColor: getcolor({{ metric.id }}),
-                    data: [
-                    {% for encoded_media in assessment.encoded_media_list.all %}
-                        {% for task in task_list %}
-                            {% if task.metric == metric and task.media == encoded_media %}
-                                {% if task.average_score is None %}
-                                    0,
-                                {% else %}
-                                    {{ task.average_score }},
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                    ]
-                },
-                {% endfor %}
-                ]
-            },
-            options: {
-                responsive:true,
-                maintainAspectRatio: false,
-                tooltips: {
-                    mode: 'index',
-                    position: 'average',
-                    intersect: false
-                },
-                scales: {
-                    yAxes: [
-                        {% for metric in metric_list %}
-                        {
-                            type: "linear", 
-                            display: true,
-                            {% if metric.id|divisibleby:2 %}
-                            position: "left",
-                            {% else %}
-                            position: "right",
-                            {% endif %}
-                            id: "{{ metric.name }}",
-                            scaleLabel: {
-                                display: true,
-                                labelString: '{{ metric.name }}'
-                            },
-                            {% if metric.name == "SSIM" %}
-                            ticks: {
-                                max: 1,
-                                min: 0
-                            },
-                            {% elif metric.name == "PSNR" %}
-                            ticks: {
-                                min: 0
-                            },
-                            {% endif %}
-                        },
-                        {% endfor %}
-                    ],
-                },
-                animation: {
-                    duration: 0, // general animation time
-                },
-                hover: {
-                    animationDuration: 250, // duration of animations when hovering an item
-                },
-                responsiveAnimationDuration: 0, // animation duration after a resize
-            }
-        });
-    </script>
-    {% endif %}
-
 {% endblock %}
