@@ -8,9 +8,8 @@ RUN apt-get update -yqq && apt-get install -yqq \
 	python3 python3-setuptools python3-dev python3-tk python3-pip npm
 
 # Clone pixelwalker repo
-RUN git clone https://github.com/antoinehng/pixelwalker.git /pixelwalker
+COPY . /pixelwalker
 WORKDIR /pixelwalker
-RUN git checkout django_2.0 && git pull
 
 # Python dependencies
 RUN pip3 install -r requirements.txt
@@ -21,8 +20,8 @@ RUN bower --allow-root install
 
 # Get settings
 WORKDIR /pixelwalker/pixelwalker/pixelwalker
-COPY settings.py ./
-COPY urls.py ./
+COPY ./docker-compose/Engine/settings.py ./
+COPY ./docker-compose/Engine/urls.py ./
 
 WORKDIR /pixelwalker/pixelwalker
 

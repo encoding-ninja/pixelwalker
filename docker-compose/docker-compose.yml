@@ -24,8 +24,8 @@ services:
 
   engine:
     build:
-      context: ./Engine
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: ./docker-compose/Engine/Dockerfile
     hostname: engine
     restart: always
     volumes:
@@ -42,8 +42,8 @@ services:
 
   worker:
     build:
-      context: ./Worker
-      dockerfile: Dockerfile
+      context: ../
+      dockerfile: ./docker-compose/Worker/Dockerfile
     restart: always
     volumes:
       - ../media_library:/media_library
