@@ -21,6 +21,8 @@ urlpatterns = [
     path('media/<int:media_id>', media.read, name='webgui_media-read'),  
     path('media/<int:media_id>/update', media.update, name='webgui_media-update'),  
     path('media/<int:media_id>/delete', media.delete, name='webgui_media-delete'),  
+    path('media/<int:media_id>/chart/bitrate', media.chart_bitrate, name='webgui_media-chart-bitrate'),  
+    path('media/<int:media_id>/probe', media.display_probe, name='webgui_media-display-probe'),  
     # EncodingProvider
     path('encoding_provider', encoding_provider.list, name='webgui_encoding-provider-list'),   
     path('encoding_provider/create', encoding_provider.create, name='webgui_encoding-provider-create'),   

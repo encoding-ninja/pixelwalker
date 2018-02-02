@@ -79,6 +79,26 @@ class Media(models.Model):
         if output is not None:
             with open(output.file_path) as f:
                 bitrate_chart_data = f.readlines()[0]
+                
+            if self.average_bitrate is not None:
+                try:
+                    int(self.average_bitrate)
+                    chart_data = json.loads(bitrate_chart_data)
+                    for dataset in chart_data['datasets']:
+                        dataset['yAxisID'] = "packet",
+                    average_dataset = {}
+                    average_dataset['type'] = 'line'
+                    average_dataset['label'] = 'Average Bitrate'
+                    average_dataset['borderColor'] = 'green' 
+                    average_dataset['borderWidth'] = 1
+                    average_dataset['fill'] = False 
+                    average_dataset['data'] = [self.average_bitrate] * len(chart_data['labels'])
+                    average_dataset['yAxisID'] = "average"
+                    chart_data['datasets'].append(average_dataset)
+                    #bitrate_chart_data = json.dumps(chart_data)
+                except:
+                    pass
+
             return bitrate_chart_data
         else:
             return None

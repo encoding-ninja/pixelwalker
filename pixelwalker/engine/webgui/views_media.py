@@ -107,3 +107,14 @@ def delete(request, media_id):
     # Asking for the delete confirmation form
     else:
         return render(request, 'media/delete.html', {'media': media})
+
+
+# Chart bitrate view
+def chart_bitrate(request, media_id):
+    media = get_object_or_404(Media, pk=media_id)
+    return render(request, 'media/chart_bitrate.html', {'media': media})
+
+# Display probe data view
+def display_probe(request, media_id):
+    media = get_object_or_404(Media, pk=media_id)
+    return render(request, 'media/display_probe.html', {'media': media})

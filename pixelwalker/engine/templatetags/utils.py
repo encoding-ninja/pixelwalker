@@ -15,7 +15,7 @@ def media_tasktype_exists(media, tasktype):
 
 @register.simple_tag
 def is_best_assessment_task(assessment, task):
-    assessment_task_list = Task.objects.filter(assessment=assessment, type=task.type)
+    assessment_task_list = Task.objects.filter(assessment=assessment, type=task.type, state=Task.SUCCESS)
     if task.get_average_score() == max(t.get_average_score() for t in assessment_task_list):
         return True
     else:
@@ -23,8 +23,25 @@ def is_best_assessment_task(assessment, task):
 
 @register.simple_tag
 def is_worst_assessment_task(assessment, task):
-    assessment_task_list = Task.objects.filter(assessment=assessment, type=task.type)
+    assessment_task_list = Task.objects.filter(assessment=assessment, type=task.type, state=Task.SUCCESS)
     if task.get_average_score() == min(t.get_average_score() for t in assessment_task_list):
         return True
     else:
         return False
+
+@register.filter
+def human_bitrate(bitrate):
+    human_bitrate = str(bitrate)   
+    try:
+        bitrate = float(bitrate)
+        if bitrate > 1000000:
+            human_bitrate = str(round(bitrate/1000000, 3))+' Mbps'
+        elif bitrate > 1000:
+            human_bitrate = str(round(bitrate/1000, 3))+' kbps'
+        else:
+            human_bitrate = str(bitrate)+' bps'
+    except:
+        pass
+
+    return human_bitrate
+

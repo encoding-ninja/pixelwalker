@@ -6,12 +6,12 @@ body{
     text-rendering: optimizeLegibility;
     color:#666;
 }
-a:link, a:visited{
+a:link, a:visited, button.btn-link{
 	color:#666;
 	text-decoration: none;
 	transition: color .15s ease-out;
 }
-a:hover, a:focus{
+a:hover, a:focus, button.btn-link:hover{
 	color:#197bd6;
 	text-decoration: none;
 }

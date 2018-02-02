@@ -17,6 +17,12 @@
         <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
         <li><a href="{% url 'webgui_media-update' media.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
         <li><a href="{% url 'webgui_media-delete' media.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+        {% if media.get_probe_html_table %}
+        <li><a href="{% url 'webgui_media-display-probe' media.id %}"><i class='fa fa-flask'></i> Probe info</a></li>
+        {% endif %}
+        {% if media.get_bitrate_json %}
+        <li><a href="{% url 'webgui_media-chart-bitrate' media.id %}"><i class='fa fa-bar-chart'></i> Bitrate and frame analysis</a></li>
+        {% endif %}
         {% for task_type in not_auto_task_list %}
         {% media_tasktype_exists media task_type as task_exists %} 
         {% if not task_exists %}
@@ -25,7 +31,7 @@
                 {% csrf_token %}
                 <input type='hidden' name='assessment_id' value='None'/>
                 <input type='hidden' name='{{ task_type.name }}[]' value="{{ media.id }}"/>
-                <button type="submit" class="btn btn-default btn-xs" data-toggle="tooltip" data-placement="bottom" title="Submit task"><i class='fa fa-cogs'></i> <b>{{ task_type.name }}</b></button>
+                <button type="submit" class="btn btn-link"><i class='fa fa-caret-right'></i> <b>Submit task: </b>{{ task_type.name }}</button>
             </form>
         </li>
         {% endif %}
@@ -79,7 +85,7 @@
                             </td>
                             <td>
                                 {% if media.average_bitrate %}
-                                {{ media.average_bitrate }}
+                                {{ media.average_bitrate|human_bitrate }}
                                 {% else %}
                                 <i>Unknown</i>
                                 {% endif %}
@@ -106,35 +112,6 @@
             {% for assessment_reference in assessment_reference_list %}
             <a href="{% url 'webgui_assessment-read' assessment_reference.id %}">{{ assessment_reference.name }}</a><br>
             {% endfor %}
-            </td>
-        </tr>
-        {% endif %}
-
-        {% if media.get_bitrate_json or media.get_probe_html_table %}
-        <tr>
-            <td colspan="2">
-                {% if media.get_bitrate_json %}
-                <div class="panel panel-success">
-                    <div class="panel-heading" data-toggle="collapse" href="#collapseBitrate" aria-expanded="false" aria-controls="collapseBitrate" style="cursor: pointer;">
-                        <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Bitrate and frame analysis</h3>
-                    </div>
-                    <div class="panel-body collapse" id="collapseBitrate">
-                        <canvas id="bitrateChart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
-                    </div>
-                </div>
-                {% endif %}
-                {% if media.get_probe_html_table %}
-                <div class="panel panel-info">
-                    <div class="panel-heading" data-toggle="collapse" href="#collapseProbe" aria-expanded="false" aria-controls="collapseProbe" style="cursor: pointer;">
-                        <h3 class="panel-title"><i class='fa fa-flask'></i> Probe</h3>
-                    </div>
-                    <div class="panel-body collapse" id="collapseProbe">
-                    {% autoescape off %}
-                        {{ media.get_probe_html_table }}
-                    {% endautoescape %}
-                    </div>
-                </div>
-                {% endif %}
             </td>
         </tr>
         {% endif %}
@@ -208,9 +185,6 @@
 {% block js_requirements %}
     {{ block.super }}
     <script src="{% static 'bower_components/list.js/dist/list.min.js' %}"></script>
-    {% if media.get_bitrate_json %}
-    <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
-    {% endif %}
 {% endblock %}
 
 {% block javascript %}
@@ -221,41 +195,4 @@
         };
         var taskList = new List('tasks', options);
     </script>
-
-    {% if media.get_bitrate_json %}
-    <script>
-        var bitrateCtx = document.getElementById("bitrateChart");
-        var bitrateChart = new Chart(bitrateCtx, {
-            type: 'bar',
-            data: {% autoescape off %}{{ media.get_bitrate_json }}{% endautoescape %},
-            options: {
-                responsive:true,
-                maintainAspectRatio: false,
-                scales: {
-                    xAxes: [{
-                        display: true,
-                        ticks: {
-                            callback: function(dataLabel, index) {
-                                // Hide the label of every N dataset. return null to hide the grid line too
-                                return index % 2 === 0 ? dataLabel : '';
-                            }
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Frames'
-                        }
-                    }],
-                    yAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Size (bytes)'
-                        }
-                    }]
-                }
-            }
-        });
-    </script>
-    {% endif %}
-
 {% endblock %}

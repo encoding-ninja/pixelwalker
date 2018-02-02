@@ -23,7 +23,7 @@ class ProbeProvider(TaskProvider):
                 '-hide_banner',
                 '-i', self.input_file_path,
                 '-show_format', '-show_streams', 
-                '-print_format', 'json', '-pretty']
+                '-print_format', 'json']
         TaskProvider.execute(self, command)
 
         try:

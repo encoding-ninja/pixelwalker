@@ -63,7 +63,7 @@
                                 </td>
                                 <td class='text-center'>
                                     {% if  assessment.reference_media.average_bitrate %}
-                                    {{  assessment.reference_media.average_bitrate }}
+                                    {{  assessment.reference_media.average_bitrate|human_bitrate }}
                                     {% else %}
                                     <i>Unknown average bitrate</i>
                                     {% endif %}
@@ -112,7 +112,7 @@
                                 </td>
                                 <td class='text-center'>
                                     {% if encoded_media.average_bitrate %}
-                                    {{ encoded_media.average_bitrate }}
+                                    {{ encoded_media.average_bitrate|human_bitrate }}
                                     {% else %}
                                     <i>Unknown</i>
                                     {% endif %}
