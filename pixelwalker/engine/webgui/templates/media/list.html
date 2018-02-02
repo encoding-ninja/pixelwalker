@@ -66,6 +66,7 @@
         </li>
     {% endfor %}
     </ul>
+    <ul class="pagination"></ul>
 </div>
 {% else %}
     <p class='col-sm-7 danger'>No media item to display.</p>
@@ -81,7 +82,9 @@
     {{ block.super }}
     <script>
         var options = {
-            valueNames: [ 'name', 'id', 'provider', 'width', 'height', 'codec' ]
+            valueNames: [ 'name', 'id', 'provider', 'width', 'height', 'codec' ],
+            page: 10,
+            pagination: true
         };
         var mediaList = new List('medias', options);
     </script>

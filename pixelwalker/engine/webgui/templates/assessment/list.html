@@ -61,6 +61,7 @@
         </li>
     {% endfor %}
     </ul>
+    <ul class="pagination"></ul>
 </div>
 {% else %}
     <p class='col-sm-7 danger'>No assessment project to display.</p>
@@ -76,7 +77,9 @@
     {{ block.super }}
     <script>
         var options = {
-            valueNames: [ 'name', 'id', 'nb_of_media' ]
+            valueNames: [ 'name', 'id', 'nb_of_media' ],
+            page: 10,
+            pagination: true
         };
         var assessmentList = new List('assessments', options);
     </script>

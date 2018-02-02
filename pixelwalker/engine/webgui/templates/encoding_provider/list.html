@@ -54,6 +54,7 @@
                 </li>
             {% endfor %}
             </ul>
+            <ul class="pagination"></ul>
         </div>
     {% else %}
         <p class='col-sm-7 danger'>No encoding provider to display.</p>
@@ -69,7 +70,9 @@
     {{ block.super }}
     <script>
         var options = {
-            valueNames: [ 'name', 'id' ]
+            valueNames: [ 'name', 'id' ],
+            page: 10,
+            pagination: true
         };
         var encodingProviderList = new List('encoding_providers', options);
     </script>

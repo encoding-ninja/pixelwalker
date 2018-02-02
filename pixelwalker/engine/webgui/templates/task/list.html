@@ -39,7 +39,7 @@
                 <button class="sort btn btn-default" data-sort="state"><i class='fa fa-sort'></i> State</button>
                 <button class="sort btn btn-default" data-sort="media"><i class='fa fa-sort'></i> Media</button>
                 <button class="sort btn btn-default" data-sort="assessment"><i class='fa fa-sort'></i> Assessment</button>
-            </div>
+            </div>          
         
             <ul class="list col-xs-12">
             {% for task in task_list %}
@@ -82,6 +82,7 @@
                 </li>
             {% endfor %}
             </ul>
+            <ul class="pagination"></ul>
         </div>
     {% else %}
         <p class='col-sm-7 danger'>No task to display.</p>
@@ -114,7 +115,9 @@
         }); 
 
         var options = {
-            valueNames: [ 'id', 'type', 'state', 'media', 'assessment' ]
+            valueNames: [ 'id', 'type', 'state', 'media', 'assessment' ],
+            page: 10,
+            pagination: true
         };
         var taskList = new List('tasks', options);
     </script>

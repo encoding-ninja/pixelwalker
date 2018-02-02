@@ -175,6 +175,7 @@
     </li>
 {% endfor %}
 </ul>
+<ul class="pagination"></ul>
 </div>
 {% endblock %}
 
@@ -191,7 +192,9 @@
     {{ block.super }}
     <script>
         var options = {
-            valueNames: [ 'id', 'type', 'state', 'media', 'assessment' ]
+            valueNames: [ 'id', 'type', 'state', 'media', 'assessment' ],
+            page: 10,
+            pagination: true
         };
         var taskList = new List('tasks', options);
     </script>
