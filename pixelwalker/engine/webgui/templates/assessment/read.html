@@ -17,6 +17,7 @@
         <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
         <li><a href="{% url 'webgui_assessment-update' assessment.id %}"><i class='fa fa-pencil'></i> Edit</a></li>
         <li><a href="{% url 'webgui_assessment-delete' assessment.id %}" class='warning'><i class='fa fa-trash'></i> Delete</a></li>
+        <li><a href="{% url 'webgui_assessment-chart' assessment.id %}"><i class='fa fa-line-chart'></i> Charts</a></li>
     </ul>
 {% endblock %}
 

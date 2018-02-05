@@ -15,6 +15,7 @@ urlpatterns = [
     path('assessment/<int:assessment_id>', assessment.read, name='webgui_assessment-read'),   
     path('assessment/<int:assessment_id>/update', assessment.update, name='webgui_assessment-update'),   
     path('assessment/<int:assessment_id>/delete', assessment.delete, name='webgui_assessment-delete'),
+    path('assessment/<int:assessment_id>/chart', assessment.chart, name='webgui_assessment-chart'),
     # Media
     path('media', media.list, name='webgui_media-list'),  
     path('media/create', media.create, name='webgui_media-create'),  

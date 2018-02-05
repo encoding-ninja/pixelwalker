@@ -121,6 +121,9 @@ div#options ul li, ul.actions li{
 	padding-right:5px;
 	font-weight: 600;
 }
+div#options ul li .form-group .btn-xs{
+	margin-top:4px !important;
+}
 
 
 div#content{

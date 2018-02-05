@@ -103,6 +103,9 @@ class Media(models.Model):
         else:
             return None
 
+    def get_definition(self):
+        return str(self.width)+'x'+str(self.height)
+
     
 
 class Assessment(models.Model):
@@ -116,6 +119,14 @@ class Assessment(models.Model):
 
     class Meta:
         ordering = ('name',)
+
+    def get_definition_list(self):
+        definition_list = []
+        for media in self.encoded_media_list.all():
+            if media.get_definition() not in definition_list:
+                definition_list.append(media.get_definition())
+        return definition_list
+
 
 
 

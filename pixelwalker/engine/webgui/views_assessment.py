@@ -109,3 +109,29 @@ def delete(request, assessment_id):
     # Asking for the delete confirmation form
     else:
         return render(request, 'assessment/delete.html', {'assessment': assessment})
+
+# Chart details view
+def chart(request, assessment_id):
+    assessment = get_object_or_404(Assessment, pk=assessment_id)
+    metric_list = TaskType.objects.filter(is_video_metric=True).order_by('id')
+    chart_config = {}
+
+    # Get Request POST
+    if request.POST:
+        chart_config['metrics'] = [ int(x) for x in request.POST.getlist('metrics') ]
+        if len(chart_config['metrics']) == 0:
+            # Default print all metrics
+            for metric in metric_list:
+                chart_config['metrics'].append(int(metric.id))
+        
+        chart_config['value_type'] = request.POST.get('value_type', 'average')
+        chart_config['group_by'] = request.POST.get('group_by', 'metric')
+    else:
+        # Default config
+        chart_config['metrics'] = []
+        for metric in metric_list:
+            chart_config['metrics'].append(int(metric.id))
+        chart_config['value_type'] = 'average'
+        chart_config['group_by'] = 'metric'
+
+    return render(request, 'assessment/chart.html', {'assessment': assessment, 'metric_list': metric_list, 'chart_config':chart_config})

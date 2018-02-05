@@ -29,6 +29,14 @@ def is_worst_assessment_task(assessment, task):
     else:
         return False
 
+@register.simple_tag
+def get_assessment_media_metric_average(assessment, media, tasktype):
+    task = Task.objects.filter(assessment=assessment, media=media, type=tasktype, state=Task.SUCCESS).last()
+    if task:
+        return task.get_average_score()
+    else:
+        return None
+
 @register.filter
 def human_bitrate(bitrate):
     human_bitrate = str(bitrate)   
