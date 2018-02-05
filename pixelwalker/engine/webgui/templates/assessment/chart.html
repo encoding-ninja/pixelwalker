@@ -41,11 +41,8 @@
         <div class="form-group">
             <label for="group_by">Group by: </label>
             <select class="form-control selectpicker show-tick" name="group_by" id="group_by" data-container="body" data-width="150px" required>
-                <option value='metric' data-all-frames-available="False" {% if chart_config.group_by == 'metric' %} selected{% endif %}>Metric</option>
-                <option value='definition' data-all-frames-available="False" {% if chart_config.group_by == 'definition' %} selected{% endif %}>Definition</option>
-                <option value='codec' data-all-frames-available="False" {% if chart_config.group_by == 'codec' %} selected{% endif %}>Video codec</option>
-                <option value='encoding_provider' data-all-frames-available="False" {% if chart_config.group_by == 'encoding_provider' %} selected{% endif %}>Encoding provider</option>
                 <option value='encoded_variant' data-all-frames-available="True" {% if chart_config.group_by == 'encoded_variant' %} selected{% endif %}>Encoded variant</option>
+                <option value='definition' data-all-frames-available="False" {% if chart_config.group_by == 'definition' %} selected{% endif %}>Definition</option>
             </select>
         </div>
     </li>
@@ -178,10 +175,10 @@
 
     {% if chart_config.value_type == 'average' %}
     var chart = new Chart(chartCtx, {
+
+
+        {% if chart_config.group_by == 'encoded_variant' %} 
         type: 'bar',
-
-
-        {% if chart_config.group_by == 'metric' %} 
         data: {
             labels: [{% for encoded_media in assessment.encoded_media_list.all %}'{{ encoded_media.name }}',{% endfor %}],
             datasets: [
@@ -190,7 +187,7 @@
             {
                 label: '{{ metric.name }}',
                 yAxisID: "{{ metric.name }}",
-                backgroundColor: getcolor({{ metric.id }}),
+                backgroundColor: getcolor({{ metric.id|add:2 }}),
                 data: [
                 {% for encoded_media in assessment.encoded_media_list.all %}
                     {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
@@ -208,20 +205,25 @@
         },
 
 
-
         {% elif chart_config.group_by == 'definition' %} 
+        type: 'line',
         data: {
-            labels: [{% for definition in assessment.get_definition_list %}'{{ definition }}',{% endfor %}],
+            labels: [{% for bitrate in assessment.get_bitrate_list %}'{{ bitrate }}',{% endfor %}],
             datasets: [
             {% for metric in metric_list %}
             {% if metric.id in chart_config.metrics %}
             {
                 label: '{{ metric.name }}',
                 yAxisID: "{{ metric.name }}",
-                backgroundColor: getcolor({{ metric.id }}),
+                backgroundColor: getcolor({{ metric.id|add:2 }}),
                 data: [
-                {% for definition in assessment.get_definition_list %}
-                        2,
+                {% for encoded_media in assessment.encoded_media_list.all %}
+                    {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
+                    {% if average_score is None %}
+                        0,
+                    {% else %}
+                        {{ average_score }},
+                    {% endif %}
                 {% endfor %}
                 ]
             },
@@ -229,6 +231,7 @@
             {% endfor %}
             ]
         },
+
         {% endif %}
 
 
@@ -281,6 +284,86 @@
             responsiveAnimationDuration: 0, // animation duration after a resize
         }
     });
+
+
+    {% elif chart_config.value_type == 'all_frames' %}
+    var chart = new Chart(chartCtx, {
+
+
+        {% if chart_config.group_by == 'encoded_variant' %} 
+        type: 'line',
+        data: {
+            labels: {% autoescape off %}{{ assessment.get_all_frames_labels }}{% endautoescape %},
+            datasets: [
+            {% for metric in metric_list %}
+            {% if metric.id in chart_config.metrics %}
+            {% for encoded_media in assessment.encoded_media_list.all %}
+            {
+                label: '{{ encoded_media }} [{{ metric.name }}]',
+                yAxisID: "{{ metric.name }}",
+                borderColor: getcolor({{ encoded_media.id }}),
+                {% get_assessment_media_metric_data assessment encoded_media metric as chart_data %}
+                data: {% autoescape off %}{{ chart_data }}{% endautoescape %}
+            },
+            {% endfor %}
+            {% endif %}
+            {% endfor %}
+            ]
+        },
+
+        {% endif %}
+
+
+        options: {
+            responsive:true,
+            maintainAspectRatio: false,
+            tooltips: {
+                mode: 'index',
+                position: 'nearest',
+                intersect: false
+            },
+            scales: {
+                yAxes: [
+                    {% for metric in metric_list %}
+                    {% if metric.id in chart_config.metrics %}
+                    {
+                        type: "linear", 
+                        display: true,
+                        {% if metric.id|divisibleby:2 %}
+                        position: "left",
+                        {% else %}
+                        position: "right",
+                        {% endif %}
+                        id: "{{ metric.name }}",
+                        scaleLabel: {
+                            display: true,
+                            labelString: '{{ metric.name }}'
+                        },
+                        {% if metric.name == "SSIM" %}
+                        ticks: {
+                            max: 1,
+                            min: 0
+                        },
+                        {% elif metric.name == "PSNR" %}
+                        ticks: {
+                            min: 0
+                        },
+                        {% endif %}
+                    },
+                    {% endif %}
+                    {% endfor %}
+                ],
+            },
+            animation: {
+                duration: 0, // general animation time
+            },
+            hover: {
+                animationDuration: 100, // duration of animations when hovering an item
+            },
+            responsiveAnimationDuration: 0, // animation duration after a resize
+        }
+    });
+
     {% endif %}
 
     

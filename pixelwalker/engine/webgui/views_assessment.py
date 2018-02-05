@@ -125,13 +125,13 @@ def chart(request, assessment_id):
                 chart_config['metrics'].append(int(metric.id))
         
         chart_config['value_type'] = request.POST.get('value_type', 'average')
-        chart_config['group_by'] = request.POST.get('group_by', 'metric')
+        chart_config['group_by'] = request.POST.get('group_by', 'encoded_variant')
     else:
         # Default config
         chart_config['metrics'] = []
         for metric in metric_list:
             chart_config['metrics'].append(int(metric.id))
         chart_config['value_type'] = 'average'
-        chart_config['group_by'] = 'metric'
+        chart_config['group_by'] = 'encoded_variant'
 
     return render(request, 'assessment/chart.html', {'assessment': assessment, 'metric_list': metric_list, 'chart_config':chart_config})

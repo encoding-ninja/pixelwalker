@@ -127,6 +127,34 @@ class Assessment(models.Model):
                 definition_list.append(media.get_definition())
         return definition_list
 
+    def get_bitrate_list(self):
+        bitrate_list = []
+        for media in self.encoded_media_list.all().order_by('average_bitrate'):
+            if media.average_bitrate not in bitrate_list:
+                bitrate_list.append(media.average_bitrate)
+        return bitrate_list
+    
+    def get_min_bitrate(self):
+        return min(self.get_bitrate_list())
+    
+    def get_max_bitrate(self):
+        return max(self.get_bitrate_list())
+
+    def get_bitrate_labels(self):
+        bitrate_labels = None
+        for bitrate in range(int(self.get_min_bitrate()), int(self.get_min_bitrate()), 100000):
+            bitrate_labels.append(int(bitrate))
+        return bitrate_labels
+        
+
+    def get_all_frames_labels(self):
+        task = Task.objects.filter(assessment=self, state=Task.SUCCESS).last()
+        if task:
+            return task.get_output_labels()
+        else:
+            return '[]'
+        
+
 
 
 
@@ -182,6 +210,14 @@ class Task(models.Model):
     def get_average_score(self):
         output = TaskOutput.objects.filter(task=self, type=TaskOutput.CHART_DATA).last()
         return output.average
+    
+    def get_output_labels(self):
+        output = TaskOutput.objects.filter(task=self, type=TaskOutput.CHART_LABELS).last()
+        if output:
+            labels = json.load(open(output.file_path))
+            return json.dumps(labels)
+        else:
+            return '[]'
 
 
 class TaskOutput(models.Model):

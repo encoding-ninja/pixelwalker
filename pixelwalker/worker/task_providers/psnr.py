@@ -84,7 +84,7 @@ class PsnrProvider(TaskProvider):
 
             self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-psnr-chart.json")
             with open(self.output_file_path, "w") as f:
-                f.write(json.dumps(dataset))
+                f.write(json.dumps(dataset['data']))
             output = {}
             output['name'] = 'PSNR Data'
             output['file_path'] = self.output_file_path

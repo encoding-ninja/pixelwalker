@@ -1,6 +1,8 @@
 from django import template
 register = template.Library()
 
+import json
+
 from ..models import Assessment, Media, Task, TaskType, TaskOutput
 
 @register.simple_tag
@@ -36,6 +38,20 @@ def get_assessment_media_metric_average(assessment, media, tasktype):
         return task.get_average_score()
     else:
         return None
+
+@register.simple_tag
+def get_assessment_media_metric_data(assessment, media, tasktype):
+    task = Task.objects.filter(assessment=assessment, media=media, type=tasktype, state=Task.SUCCESS).last()
+    if task:
+        output = TaskOutput.objects.filter(task=task, type=TaskOutput.CHART_DATA).last()
+        labels = json.load(open(output.file_path))
+        return json.dumps(labels)
+    else:
+        return '[]'
+
+
+
+
 
 @register.filter
 def human_bitrate(bitrate):
