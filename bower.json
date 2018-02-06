@@ -25,6 +25,7 @@
     "chart.js": "^2.6.0",
     "bootstrap-select": "^1.12.4",
     "awesome-bootstrap-checkbox": "^1.0.0",
-    "list.js": "^1.5.0"
+    "list.js": "^1.5.0",
+    "plotly.js": "^1.33.1"
   }
 }

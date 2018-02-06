@@ -60,7 +60,7 @@
         <h3 class="panel-title"><i class='fa fa-line-chart'></i> Generated chart</h3>
     </div>
     <div class="panel-body">
-        <canvas id="chart" style='min-width:100%;max-width:100%;min-height:450px;max-height:450px;'></canvas>
+        <div id="chart"></div>
     </div>
 </div>
 {% endblock %}
@@ -74,6 +74,7 @@
     {{ block.super }}
     <script src="{% static 'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
     <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
+    <script src="{% static 'bower_components/plotly.js/dist/plotly.min.js' %}"></script>
     <script>
         $('.selectpicker').selectpicker({
           style: 'btn-xs',
@@ -123,6 +124,7 @@
 
 {% block javascript %}
 {{ block.super }}
+
 <script>
 
     var getcolor = function (num) {
@@ -168,205 +170,109 @@
             return "rgba(97,103,116,0.08)";
     };
 
+</script>
 
-    
-    var chartCtx = document.getElementById("chart");
-
-
+<script>
     {% if chart_config.value_type == 'average' %}
-    var chart = new Chart(chartCtx, {
 
+    {% if chart_config.group_by == 'encoded_variant' %} 
+    {% for metric in metric_list %}
+    {% if metric.id in chart_config.metrics %}
+    var dataset_{{ metric.name }} = {
+      x: [{% for encoded_media in assessment.encoded_media_list.all %}'{{ encoded_media.name }}',{% endfor %}], 
+      y: [
+        {%for encoded_media in assessment.encoded_media_list.all %}
+              {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
+              {% if average_score is None %}
+                  0,
+              {% else %}
+                  {{ average_score }},
+              {% endif %}
+          {% endfor %}
+        ], 
+      name: '{{ metric.name }}',
+      marker: {color: getcolor({{ metric.id|add:2 }})}, 
+      opacity: 0.8,
+      {% if metric.name == 'SSIM' %}
+        yaxis: 'y2',
+      {% endif %}  
+      type: 'bar'
+    };
+    
+    {% endif %}
+    {% endfor %}
 
-        {% if chart_config.group_by == 'encoded_variant' %} 
-        type: 'bar',
-        data: {
-            labels: [{% for encoded_media in assessment.encoded_media_list.all %}'{{ encoded_media.name }}',{% endfor %}],
-            datasets: [
-            {% for metric in metric_list %}
+    var data = [
+        {% for metric in metric_list %}
             {% if metric.id in chart_config.metrics %}
-            {
-                label: '{{ metric.name }}',
-                yAxisID: "{{ metric.name }}",
-                backgroundColor: getcolor({{ metric.id|add:2 }}),
-                data: [
-                {% for encoded_media in assessment.encoded_media_list.all %}
-                    {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
-                    {% if average_score is None %}
-                        0,
-                    {% else %}
-                        {{ average_score }},
-                    {% endif %}
-                {% endfor %}
-                ]
-            },
+                dataset_{{ metric.name }},
             {% endif %}
-            {% endfor %}
-            ]
+        {% endfor %} 
+    ];
+
+
+    {% elif chart_config.group_by == 'definition' %} 
+
+    {% for definition in assessment.get_definition_list %}
+    {% with forloop.counter as definition_id %}
+    {% for metric in metric_list %}
+    {% if metric.id in chart_config.metrics %}
+    var dataset_{{ definition }}_{{ metric.name }} = {
+      x: [{% for bitrate in assessment.get_bitrate_list %}'{{ bitrate }}',{% endfor %}], 
+      y: [
+        {% for bitrate in assessment.get_bitrate_list %}
+              {% get_assessment_definition_bitrate_metric_average assessment definition bitrate metric as average_score %}
+                {{ average_score }},
+          {% endfor %}
+        ], 
+      name: '[{{ metric.name }}] {{ definition }}', 
+      marker: {color: getcolor({{definition_id}})},
+      opacity: 0.8,
+      {% if metric.name == 'SSIM' %}
+        yaxis: 'y2',
+      {% endif %} 
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: {shape: 'spline'},
+      connectgaps: true,
+    };
+    {% endif %}
+    {% endfor %}
+    {% endwith %}
+    {% endfor %}
+
+    var data = [
+        {% for definition in assessment.get_definition_list %}
+        {% for metric in metric_list %}
+        {% if metric.id in chart_config.metrics %}
+            dataset_{{ definition }}_{{metric.name}},
+        {% endif %} 
+        {% endfor %} 
+        {% endfor %} 
+    ];
+
+    {% endif%}
+
+
+    var layout = {
+        barmode: 'group',
+        bargap: 0.1,
+        yaxis: {
+            title: 'PSNR',
+            side: 'left',
+            range: [0,100],
         },
-
-
-        {% elif chart_config.group_by == 'definition' %} 
-        type: 'line',
-        data: {
-            labels: [{% for bitrate in assessment.get_bitrate_list %}'{{ bitrate }}',{% endfor %}],
-            datasets: [
-            {% for metric in metric_list %}
-            {% if metric.id in chart_config.metrics %}
-            {
-                label: '{{ metric.name }}',
-                yAxisID: "{{ metric.name }}",
-                backgroundColor: getcolor({{ metric.id|add:2 }}),
-                data: [
-                {% for encoded_media in assessment.encoded_media_list.all %}
-                    {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
-                    {% if average_score is None %}
-                        0,
-                    {% else %}
-                        {{ average_score }},
-                    {% endif %}
-                {% endfor %}
-                ]
-            },
-            {% endif %}
-            {% endfor %}
-            ]
-        },
-
-        {% endif %}
-
-
-        options: {
-            responsive:true,
-            maintainAspectRatio: false,
-            tooltips: {
-                mode: 'index',
-                position: 'average',
-                intersect: false
-            },
-            scales: {
-                yAxes: [
-                    {% for metric in metric_list %}
-                    {% if metric.id in chart_config.metrics %}
-                    {
-                        type: "linear", 
-                        display: true,
-                        {% if metric.id|divisibleby:2 %}
-                        position: "left",
-                        {% else %}
-                        position: "right",
-                        {% endif %}
-                        id: "{{ metric.name }}",
-                        scaleLabel: {
-                            display: true,
-                            labelString: '{{ metric.name }}'
-                        },
-                        {% if metric.name == "SSIM" %}
-                        ticks: {
-                            max: 1,
-                            min: 0
-                        },
-                        {% elif metric.name == "PSNR" %}
-                        ticks: {
-                            min: 0
-                        },
-                        {% endif %}
-                    },
-                    {% endif %}
-                    {% endfor %}
-                ],
-            },
-            animation: {
-                duration: 0, // general animation time
-            },
-            hover: {
-                animationDuration: 250, // duration of animations when hovering an item
-            },
-            responsiveAnimationDuration: 0, // animation duration after a resize
-        }
-    });
-
-
-    {% elif chart_config.value_type == 'all_frames' %}
-    var chart = new Chart(chartCtx, {
-
-
-        {% if chart_config.group_by == 'encoded_variant' %} 
-        type: 'line',
-        data: {
-            labels: {% autoescape off %}{{ assessment.get_all_frames_labels }}{% endautoescape %},
-            datasets: [
-            {% for metric in metric_list %}
-            {% if metric.id in chart_config.metrics %}
-            {% for encoded_media in assessment.encoded_media_list.all %}
-            {
-                label: '{{ encoded_media }} [{{ metric.name }}]',
-                yAxisID: "{{ metric.name }}",
-                borderColor: getcolor({{ encoded_media.id }}),
-                {% get_assessment_media_metric_data assessment encoded_media metric as chart_data %}
-                data: {% autoescape off %}{{ chart_data }}{% endautoescape %}
-            },
-            {% endfor %}
-            {% endif %}
-            {% endfor %}
-            ]
-        },
-
-        {% endif %}
-
-
-        options: {
-            responsive:true,
-            maintainAspectRatio: false,
-            tooltips: {
-                mode: 'index',
-                position: 'nearest',
-                intersect: false
-            },
-            scales: {
-                yAxes: [
-                    {% for metric in metric_list %}
-                    {% if metric.id in chart_config.metrics %}
-                    {
-                        type: "linear", 
-                        display: true,
-                        {% if metric.id|divisibleby:2 %}
-                        position: "left",
-                        {% else %}
-                        position: "right",
-                        {% endif %}
-                        id: "{{ metric.name }}",
-                        scaleLabel: {
-                            display: true,
-                            labelString: '{{ metric.name }}'
-                        },
-                        {% if metric.name == "SSIM" %}
-                        ticks: {
-                            max: 1,
-                            min: 0
-                        },
-                        {% elif metric.name == "PSNR" %}
-                        ticks: {
-                            min: 0
-                        },
-                        {% endif %}
-                    },
-                    {% endif %}
-                    {% endfor %}
-                ],
-            },
-            animation: {
-                duration: 0, // general animation time
-            },
-            hover: {
-                animationDuration: 100, // duration of animations when hovering an item
-            },
-            responsiveAnimationDuration: 0, // animation duration after a resize
-        }
-    });
+        yaxis2: {
+          title: 'SSIM',
+          overlaying: 'y',
+          side: 'right',
+          range: [0,1],
+        } 
+    };
+    Plotly.newPlot('chart', data, layout);
 
     {% endif %}
-
-    
 </script>
+
 {% endblock %}
 

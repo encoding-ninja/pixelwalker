@@ -49,6 +49,16 @@ def get_assessment_media_metric_data(assessment, media, tasktype):
     else:
         return '[]'
 
+@register.simple_tag
+def get_assessment_definition_bitrate_metric_average(assessment, definition, bitrate, tasktype):
+    width = int(definition.split("x")[0])
+    height = int(definition.split("x")[1])
+    media = Media.objects.filter(width=width, height=height, average_bitrate=bitrate).last()
+    task = Task.objects.filter(assessment=assessment, media=media, type=tasktype, state=Task.SUCCESS).last()
+    if task:
+        return task.get_average_score()
+    else:
+        return 'null'
 
 
 
