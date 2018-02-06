@@ -1,10 +1,8 @@
-[![Build Status](https://travis-ci.org/antoinehng/pixelwalker.svg?branch=django_2.0)](https://travis-ci.org/antoinehng/pixelwalker 'Travis CI') [![Coverage Status](https://coveralls.io/repos/github/antoinehng/pixelwalker/badge.svg?branch=django_2.0)](https://coveralls.io/github/antoinehng/pixelwalker?branch=django_2.0 'Coveralls') [![](https://img.shields.io/docker/stars/antoinehng/pixelwalker.svg)](https://hub.docker.com/r/antoinehng/pixelwalker 'DockerHub') [![](https://img.shields.io/docker/pulls/antoinehng/pixelwalker.svg)](https://hub.docker.com/r/antoinehng/pixelwalker 'DockerHub')
+[![Build Status](https://travis-ci.org/antoinehng/pixelwalker.svg?branch=django_2.0)](https://travis-ci.org/antoinehng/pixelwalker 'Travis CI') [![Coverage Status](https://coveralls.io/repos/github/antoinehng/pixelwalker/badge.svg?branch=django_2.0)](https://coveralls.io/github/antoinehng/pixelwalker?branch=django_2.0 'Coveralls')
 
-__Warning:__ This project is not yet ready for prodcution purposes.
+__Warning:__ _This project is not yet ready for production purposes._
 
-## How to launch and try?
-
-_Note: the standalone Dockerfile is currently not working, please use docker-compose_ 
+## How to try?
 
 Using [docker-compose](https://docs.docker.com/compose/install/)
 
