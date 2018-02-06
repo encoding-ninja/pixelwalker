@@ -61,7 +61,7 @@ class Media(models.Model):
         task = Task.objects.filter(media=self, type=TaskType.objects.get(name='THUMBNAIL')).last()
         output = TaskOutput.objects.filter(task=task, type=TaskOutput.MEDIA).last()
         if output is not None:
-            return output.get_url()
+            return output.get_url().replace("%05d","00001")
         else:
             return None
     

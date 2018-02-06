@@ -18,16 +18,21 @@ class ThumbnailProvider(TaskProvider):
         TaskProvider.__init__(self, task_id, input_file_path)
 
     def execute(self):
-        """Using FFmpeg to generate a thumbnail"""
-        self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-thumbnail.jpg")
+        """Using FFmpeg to generate thumbnails"""
+        
+        output_directory = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"thumbnails")
+        if not os.path.exists(output_directory):
+            os.makedirs(output_directory)
+
+        self.output_file_path = os.path.join(output_directory, "thumb%05d.jpg")
         command = ['ffmpeg',
-                '-ss', '1',
                 '-i', self.input_file_path,
-                '-vf', 'scale=320:-1',
-                '-frames:v', '1', '-y', self.output_file_path]
+                '-vf', 'scale=250:-1,fps=1',
+                '-f', 'image2',
+                '-y', self.output_file_path]
         TaskProvider.execute(self, command)
 
-        if os.path.isfile(self.output_file_path) is True:
+        if os.path.isfile(self.output_file_path.replace("%05d", "00001")) is True:
             data = {}
             data['outputs'] = []
             output = {}
@@ -39,3 +44,5 @@ class ThumbnailProvider(TaskProvider):
             self.acknowledge_success(data)
         else:
             self.acknowledge_error() 
+        
+        
