@@ -43,9 +43,7 @@ def get_assessment_media_metric_average(assessment, media, tasktype):
 def get_assessment_media_metric_data(assessment, media, tasktype):
     task = Task.objects.filter(assessment=assessment, media=media, type=tasktype, state=Task.SUCCESS).last()
     if task:
-        output = TaskOutput.objects.filter(task=task, type=TaskOutput.CHART_DATA).last()
-        labels = json.load(open(output.file_path))
-        return json.dumps(labels)
+        return task.get_output_data()
     else:
         return '[]'
 

@@ -145,7 +145,6 @@ class Assessment(models.Model):
         for bitrate in range(int(self.get_min_bitrate()), int(self.get_min_bitrate()), 100000):
             bitrate_labels.append(int(bitrate))
         return bitrate_labels
-        
 
     def get_all_frames_labels(self):
         task = Task.objects.filter(assessment=self, state=Task.SUCCESS).last()
@@ -216,6 +215,14 @@ class Task(models.Model):
         if output:
             labels = json.load(open(output.file_path))
             return json.dumps(labels)
+        else:
+            return '[]'
+
+    def get_output_data(self):
+        output = TaskOutput.objects.filter(task=self, type=TaskOutput.CHART_DATA).last()
+        if output:
+            data = json.load(open(output.file_path))
+            return json.dumps(data)
         else:
             return '[]'
 

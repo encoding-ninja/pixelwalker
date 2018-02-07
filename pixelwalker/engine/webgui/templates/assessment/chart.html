@@ -42,7 +42,7 @@
             <label for="group_by">Group by: </label>
             <select class="form-control selectpicker show-tick" name="group_by" id="group_by" data-container="body" data-width="150px" required>
                 <option value='encoded_variant' data-all-frames-available="True" {% if chart_config.group_by == 'encoded_variant' %} selected{% endif %}>Encoded variant</option>
-                <option value='definition' data-all-frames-available="False" {% if chart_config.group_by == 'definition' %} selected{% endif %}>Definition</option>
+                <!-- <option value='definition' data-all-frames-available="False" {% if chart_config.group_by == 'definition' %} selected{% endif %}>Definition</option> -->
             </select>
         </div>
     </li>
@@ -60,7 +60,7 @@
         <h3 class="panel-title"><i class='fa fa-line-chart'></i> Generated chart</h3>
     </div>
     <div class="panel-body">
-        <div id="chart"></div>
+        <div id="chart" style='min-height:600px;'></div>
     </div>
 </div>
 {% endblock %}
@@ -73,8 +73,7 @@
 {% block js_requirements %}
     {{ block.super }}
     <script src="{% static 'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
-    <script src="{% static 'bower_components/chart.js/dist/Chart.min.js' %}"></script>
-    <script src="{% static 'bower_components/plotly.js/dist/plotly.min.js' %}"></script>
+    <script src="{% static 'bower_components/highcharts/highcharts.js' %}"></script>
     <script>
         $('.selectpicker').selectpicker({
           style: 'btn-xs',
@@ -176,100 +175,156 @@
     {% if chart_config.value_type == 'average' %}
 
     {% if chart_config.group_by == 'encoded_variant' %} 
-    {% for metric in metric_list %}
-    {% if metric.id in chart_config.metrics %}
-    var dataset_{{ metric.name }} = {
-      x: [{% for encoded_media in assessment.encoded_media_list.all %}'{{ encoded_media.name }}',{% endfor %}], 
-      y: [
-        {%for encoded_media in assessment.encoded_media_list.all %}
-              {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
-              {% if average_score is None %}
-                  0,
-              {% else %}
-                  {{ average_score }},
-              {% endif %}
-          {% endfor %}
-        ], 
-      name: '{{ metric.name }}',
-      marker: {color: getcolor({{ metric.id|add:2 }})}, 
-      opacity: 0.8,
-      {% if metric.name == 'SSIM' %}
-        yaxis: 'y2',
-      {% endif %}  
-      type: 'bar'
-    };
-    
-    {% endif %}
-    {% endfor %}
-
-    var data = [
-        {% for metric in metric_list %}
-            {% if metric.id in chart_config.metrics %}
-                dataset_{{ metric.name }},
-            {% endif %}
-        {% endfor %} 
-    ];
-
-
-    {% elif chart_config.group_by == 'definition' %} 
-
-    {% for definition in assessment.get_definition_list %}
-    {% with forloop.counter as definition_id %}
-    {% for metric in metric_list %}
-    {% if metric.id in chart_config.metrics %}
-    var dataset_{{ definition }}_{{ metric.name }} = {
-      x: [{% for bitrate in assessment.get_bitrate_list %}'{{ bitrate }}',{% endfor %}], 
-      y: [
-        {% for bitrate in assessment.get_bitrate_list %}
-              {% get_assessment_definition_bitrate_metric_average assessment definition bitrate metric as average_score %}
-                {{ average_score }},
-          {% endfor %}
-        ], 
-      name: '[{{ metric.name }}] {{ definition }}', 
-      marker: {color: getcolor({{definition_id}})},
-      opacity: 0.8,
-      {% if metric.name == 'SSIM' %}
-        yaxis: 'y2',
-      {% endif %} 
-      type: 'scatter',
-      mode: 'lines+markers',
-      line: {shape: 'spline'},
-      connectgaps: true,
-    };
-    {% endif %}
-    {% endfor %}
-    {% endwith %}
-    {% endfor %}
-
-    var data = [
-        {% for definition in assessment.get_definition_list %}
+    Highcharts.chart('chart', {
+        chart: {
+            type: 'column',
+        },
+        title: {
+            text: null
+        },
+        xAxis: {
+            categories: [{% for encoded_media in assessment.encoded_media_list.all %}'{{ encoded_media.name }}',{% endfor %}],
+            crosshair: true
+        },
+        yAxis: [
         {% for metric in metric_list %}
         {% if metric.id in chart_config.metrics %}
-            dataset_{{ definition }}_{{metric.name}},
-        {% endif %} 
-        {% endfor %} 
-        {% endfor %} 
-    ];
-
+        {
+            title: {
+                text: '{{ metric.name }}'
+            },
+            min:0,
+            {% if metric.name == 'SSIM' %}
+            max:1,
+            opposite: true
+            {% endif %}
+        },
+        {% endif %}
+        {% endfor %}
+        ],
+        tooltip: {
+            headerFormat: '<span style="font-size:14px"><b>{point.key}</b></span><table>',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        series: [
+        {% for metric in metric_list %}
+        {% if metric.id in chart_config.metrics %}   
+        {
+            name: '{{metric.name}}',
+            color: getcolor({{metric.id|add:2}}),
+            yAxis: {{ forloop.counter0 }},
+            data: [
+                {% for encoded_media in assessment.encoded_media_list.all %}
+                    {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
+                    {% if average_score is None %}
+                        null,
+                    {% else %}
+                        {{ average_score }},
+                    {% endif %}
+                {% endfor %}
+            ]
+        },
+        {% endif %}
+        {% endfor %}
+        ]
+    });
     {% endif%}
 
 
-    var layout = {
-        barmode: 'group',
-        bargap: 0.1,
-        yaxis: {
-            title: 'PSNR',
-            side: 'left',
-            range: [0,100],
+    {% elif chart_config.value_type == 'all_frames' %}
+
+    {% if chart_config.group_by == 'encoded_variant' %} 
+
+    function convertTimeCodeToSeconds(timeString)
+    {
+      var timeArray = timeString.split(":");
+      var hours   = parseInt(timeArray[0]) * 60 * 60;
+      var minutes = parseInt(timeArray[1]) * 60;
+      var seconds = parseInt(timeArray[2].split(".")[0]);
+      var totalTime = hours + minutes + seconds;
+      return totalTime;
+    }
+
+    var get_thumbnail = function (timecode) {
+        return '{{ assessment.reference_media.get_thumbnail_url }}'.replace("00001.jpg", ("00000" + convertTimeCodeToSeconds(timecode)).slice(-5)+".jpg").replace("00000.jpg", "00001.jpg");
+    }
+
+    Highcharts.chart('chart', {
+        chart: {
+            type: 'line',
+            zoomType: 'x',
         },
-        yaxis2: {
-          title: 'SSIM',
-          overlaying: 'y',
-          side: 'right',
-          range: [0,1],
-        } 
-    };
-    Plotly.newPlot('chart', data, layout);
+        title: {
+            text: null
+        },
+        xAxis: {
+            categories: {% autoescape off %}{{ assessment.get_all_frames_labels }}{% endautoescape %},
+        },
+        yAxis: [
+        {% for metric in metric_list %}
+        {% if metric.id in chart_config.metrics %}
+        {
+            title: {
+                text: '{{ metric.name }}'
+            },
+            min:0,
+            {% if metric.name == 'SSIM' %}
+            max:1,
+            opposite: true
+            {% endif %}
+        },
+        {% endif %}
+        {% endfor %}
+        ],
+        tooltip: {
+            formatter: function () {
+                var s = '<img src="' + get_thumbnail(this.x) + '" style="background-color:#ccc;width:100%;min-width:300px;min-height:176px;"/><br><span style="font-size:14px"><b>'+this.x+'</b></span><table>';
+
+                $.each(this.points, function () {
+                    s += '<tr style="color:' + this.series.color + ';"><td style="padding:0;">' + this.series.name.split("]")[1] + '</td><td style="padding:0">&nbsp;&nbsp;&nbsp;&nbsp;'+this.series.yAxis.axisTitle.textStr+'&nbsp;&nbsp;&nbsp;&nbsp;<b>' + this.y + '</b></td></tr>';
+                });
+                s += '</table>'
+                return s;
+            },
+            shared: true,
+            useHTML: true
+        },
+        plotOptions: {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        },
+        legend: {
+            layout: 'vertical',
+        },
+        series: [
+        {% for encoded_media in assessment.encoded_media_list.all %}
+        {% for metric in metric_list %}
+        {% if metric.id in chart_config.metrics %}   
+        {
+            name: '[{{metric.name}}] {{encoded_media.name}}',
+            color: getcolor({{encoded_media.id}}),
+            yAxis: {{ forloop.counter0 }},
+            {% get_assessment_media_metric_data assessment encoded_media metric as chart_data %}
+            data: {% autoescape off %}{{ chart_data }}{% endautoescape %}
+        },
+        {% endif %}
+        {% endfor%}
+        {% endfor %}
+        ]
+    });
+    {% endif %}
 
     {% endif %}
 </script>
