@@ -77,3 +77,6 @@ def human_bitrate(bitrate):
 
     return human_bitrate
 
+@register.simple_tag
+def increment(iter):
+    return int(iter)+1

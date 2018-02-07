@@ -125,7 +125,6 @@
 {{ block.super }}
 
 <script>
-
     var getcolor = function (num) {
         if (num%6 == 0)
             return "#F7464A";
@@ -140,35 +139,6 @@
         else if (num%6 == 5)
             return "#4D5360";
     };
-    var gethighlight = function (num) {
-        if (num%6 == 0)
-            return "#FF5A5E";
-        else if (num%6 == 1)
-            return "#5AD3D1";
-        else if (num%6 == 2)
-            return "#FFC870";
-        else if (num%6 == 3)
-            return "#5a79d3";
-        else if (num%6 == 4)
-            return "#A8B3C5";
-        else if (num%6 == 5)
-            return "#616774";
-    };
-    var getfill = function (num) {
-        if (num%6 == 0)
-            return "rgba(255,90,94,0.08)";
-        else if (num%6 == 1)
-            return "rgba(90,211,209,0.08)";
-        else if (num%6 == 2)
-            return "rgba(255,200,112,0.08)";
-        else if (num%6 == 3)
-            return "rgba(90,121,211,0.08)";
-        else if (num%6 == 4)
-            return "rgba(168,179,197,0.08)";
-        else if (num%6 == 5)
-            return "rgba(97,103,116,0.08)";
-    };
-
 </script>
 
 <script>
@@ -256,7 +226,13 @@
     }
 
     var get_thumbnail = function (timecode) {
-        return '{{ assessment.reference_media.get_thumbnail_url }}'.replace("00001.jpg", ("00000" + convertTimeCodeToSeconds(timecode)).slice(-5)+".jpg").replace("00000.jpg", "00001.jpg");
+        var base_url = '{{ assessment.reference_media.get_thumbnail_url }}';
+        if(base_url != 'None'){
+            var thumb_url = base_url.replace("00001.jpg", ("00000" + convertTimeCodeToSeconds(timecode)).slice(-5)+".jpg").replace("00000.jpg", "00001.jpg");
+            return '<img src="' + thumb_url + '" style="background-color:#ccc;width:100%;min-width:300px;min-height:176px;"/><br>';
+        } else {
+            return '';
+        }
     }
 
     Highcharts.chart('chart', {
@@ -288,7 +264,7 @@
         ],
         tooltip: {
             formatter: function () {
-                var s = '<img src="' + get_thumbnail(this.x) + '" style="background-color:#ccc;width:100%;min-width:300px;min-height:176px;"/><br><span style="font-size:14px"><b>'+this.x+'</b></span><table>';
+                var s = get_thumbnail(this.x) + '<span style="font-size:14px"><b>'+this.x+'</b></span><table>';
 
                 $.each(this.points, function () {
                     s += '<tr style="color:' + this.series.color + ';"><td style="padding:0;">' + this.series.name.split("]")[1] + '</td><td style="padding:0">&nbsp;&nbsp;&nbsp;&nbsp;'+this.series.yAxis.axisTitle.textStr+'&nbsp;&nbsp;&nbsp;&nbsp;<b>' + this.y + '</b></td></tr>';
@@ -310,17 +286,20 @@
         },
         series: [
         {% for encoded_media in assessment.encoded_media_list.all %}
+        {% with 0 as metric_count %}
         {% for metric in metric_list %}
         {% if metric.id in chart_config.metrics %}   
         {
             name: '[{{metric.name}}] {{encoded_media.name}}',
             color: getcolor({{encoded_media.id}}),
-            yAxis: {{ forloop.counter0 }},
+            yAxis: {{ metric_count }},
             {% get_assessment_media_metric_data assessment encoded_media metric as chart_data %}
             data: {% autoescape off %}{{ chart_data }}{% endautoescape %}
         },
+        {% increment metric_count as metric_count %}
         {% endif %}
         {% endfor%}
+        {% endwith %}
         {% endfor %}
         ]
     });
