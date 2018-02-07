@@ -37,6 +37,7 @@
 {% block js_requirements %}
     {{ block.super }}
     <script src="{% static 'bower_components/highcharts/highcharts.js' %}"></script>
+    <script src="{% static 'bower_components/highcharts/modules/exporting.js' %}"></script>
 {% endblock %}
 
 {% block javascript %}
@@ -50,10 +51,20 @@
             title: {
                 text: null
             },
-            xAxis: {
-                categories: {% autoescape off %}{{ media.get_frames_labels }}{% endautoescape %},
-                crosshair: true
-            },
+            xAxis: [{
+                    categories: {% autoescape off %}{{ media.get_frames_labels }}{% endautoescape %},
+                    title: {
+                        text: 'Coded picture number'
+                    },
+                },
+                {
+                    categories: {% autoescape off %}{{ media.get_frames_PTS }}{% endautoescape %},
+                    title: {
+                        text: 'PTS Time'
+                    },
+                    opposite: true
+                },
+            ],
             yAxis: {
                 title: {
                     text: 'Frame size (bytes)'
@@ -62,9 +73,9 @@
             },
             tooltip: {
                 formatter: function () {
-                    var s = '<span style="font-size:14px">Coded picture number: <b>'+this.x+'</b></span><table>';
+                    var s = '<span style="font-size:11px">Coded picture number: <b>'+this.x+'</b></span><table>';
                     $.each(this.points, function () {
-                        s += '<tr style="color:' + this.series.color + ';"><td style="padding:0;">' + this.series.name + '</td><td style="padding:0">&nbsp;&nbsp;&nbsp;&nbsp;<b>' + this.y + '</b> bytes</td></tr>';
+                        s += '<tr style="color:' + this.series.color + ';font-size:14px;"><td style="padding:0;">' + this.series.name.split("s")[0] + '</td><td style="padding:0">&nbsp;&nbsp;&nbsp;&nbsp;<b>' + this.y + '</b> bytes</td></tr>';
                     });
                     s += '</table>'
                     return s;
@@ -80,21 +91,24 @@
             },
             series: [
             {
-                name: 'I Frames',
+                name: 'I Frames ({{ media.get_frames_I_count }})',
                 color: '#F7464A',
                 data: {% autoescape off %}{{ media.get_frames_I }}{% endautoescape %}
             },
             {
-                name: 'P Frames',
+                name: 'P Frames ({{ media.get_frames_P_count }})',
                 color: '#46BFBD',
                 data: {% autoescape off %}{{ media.get_frames_P }}{% endautoescape %}
             },
             {
-                name: 'B Frames',
+                name: 'B Frames ({{ media.get_frames_B_count }})',
                 color: '#4674bf',
                 data: {% autoescape off %}{{ media.get_frames_B }}{% endautoescape %}
             },
             ]
+        }, function(chart) {
+        var extremes = chart.xAxis[0].getExtremes();
+        chart.xAxis[1].setExtremes(extremes.min-0.5,extremes.max+0.5);
         });
     </script>
 {% endblock %}

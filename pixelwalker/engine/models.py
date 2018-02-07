@@ -58,7 +58,7 @@ class Media(models.Model):
         return settings.MEDIA_URL+self.file.path.replace(settings.MEDIA_ROOT+'\\','').replace(settings.MEDIA_ROOT+'/','').replace('\\','/')
 
     def get_thumbnail_url(self):
-        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='THUMBNAIL'), state=Task.SUCCESS).last()
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='GENERATE THUMBNAILS'), state=Task.SUCCESS).last()
         output = TaskOutput.objects.filter(task=task, type=TaskOutput.MEDIA).last()
         if output is not None:
             return output.get_url().replace("%05d","00001")
@@ -74,32 +74,60 @@ class Media(models.Model):
             return None
     
     def get_frames_labels(self):
-        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE'), state=Task.SUCCESS).last()
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='FRAMES ANALYSIS'), state=Task.SUCCESS).last()
         if task:
             return task.get_output_labels()
         else:
             return None
+
+    def get_frames_PTS(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='FRAMES ANALYSIS'), state=Task.SUCCESS).last()
+        if task:
+            return task.get_output_data_by_name('PTS Time')
+        else:
+            return '[]'
     
     def get_frames_I(self):
-        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE'), state=Task.SUCCESS).last()
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='FRAMES ANALYSIS'), state=Task.SUCCESS).last()
         if task:
             return task.get_output_data_by_name('I Frames')
         else:
             return '[]'
+
+    def get_frames_I_count(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='FRAMES ANALYSIS'), state=Task.SUCCESS).last()
+        if task:
+            return int(task.get_output_average_by_name('I Frames'))
+        else:
+            return 0
     
     def get_frames_P(self):
-        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE'), state=Task.SUCCESS).last()
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='FRAMES ANALYSIS'), state=Task.SUCCESS).last()
         if task:
             return task.get_output_data_by_name('P Frames')
         else:
             return '[]'
 
+    def get_frames_P_count(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='FRAMES ANALYSIS'), state=Task.SUCCESS).last()
+        if task:
+            return int(task.get_output_average_by_name('P Frames'))
+        else:
+            return 0
+
     def get_frames_B(self):
-        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE'), state=Task.SUCCESS).last()
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='FRAMES ANALYSIS'), state=Task.SUCCESS).last()
         if task:
             return task.get_output_data_by_name('B Frames')
         else:
             return '[]'
+    
+    def get_frames_B_count(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='FRAMES ANALYSIS'), state=Task.SUCCESS).last()
+        if task:
+            return int(task.get_output_average_by_name('B Frames'))
+        else:
+            return 0
 
     def get_definition(self):
         return str(self.width)+'x'+str(self.height)
@@ -225,6 +253,13 @@ class Task(models.Model):
             return json.dumps(data)
         else:
             return '[]'
+    
+    def get_output_average_by_name(self, ouput_name):
+        output = TaskOutput.objects.filter(task=self, type=TaskOutput.CHART_DATA, name=ouput_name).last()
+        if output:
+            return output.average
+        else:
+            return 0
 
 
 class TaskOutput(models.Model):

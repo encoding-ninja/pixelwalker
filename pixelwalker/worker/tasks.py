@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 
 import threading
-from .task_providers import thumbnail, probe, bitrate, ssim, psnr
+from .task_providers import thumbnail, probe, frame, ssim, psnr
 
 @shared_task
 def add(data):
@@ -20,12 +20,12 @@ def add(data):
         pass
 
     # new job for the task
-    if task_type == 'THUMBNAIL':
+    if task_type == 'GENERATE THUMBNAILS':
         task_provider = thumbnail.ThumbnailProvider(task_id, task_media_file_path)
     elif task_type == 'PROBE':
         task_provider = probe.ProbeProvider(task_id, task_media_file_path)
-    elif task_type == 'BITRATE':
-        task_provider = bitrate.BitrateProvider(task_id, task_media_file_path)
+    elif task_type == 'FRAMES ANALYSIS':
+        task_provider = frame.FrameProvider(task_id, task_media_file_path)
     elif task_type == 'SSIM':
         task_provider = ssim.SsimProvider(task_id, task_media_file_path, task_media_framerate, 
                                           task_reference_file_path, task_reference_width, task_reference_height)

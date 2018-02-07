@@ -2,13 +2,13 @@
 
 from .generic import TaskProvider
 
-import os, json
+import os, json, datetime
 
-class BitrateProvider(TaskProvider):
-    """This class defines a Bitrate analysis task"""
+class FrameProvider(TaskProvider):
+    """This class defines a frame analysis task"""
 
     def __init__(self, task_id, input_file_path):
-        """Bitrate analysis initialization
+        """Frame analysis initialization
         
         :param task_id: The task identifier
         :type task_id: int
@@ -18,7 +18,7 @@ class BitrateProvider(TaskProvider):
         TaskProvider.__init__(self, task_id, input_file_path)
 
     def execute(self):
-        """Using FFprobe for Bitrate analysis"""
+        """Using FFprobe for Frame analysis"""
         command = ['ffprobe',
                 '-hide_banner',
                 '-i', self.input_file_path,
@@ -28,15 +28,17 @@ class BitrateProvider(TaskProvider):
         TaskProvider.execute(self, command)
 
         try:
-            bitrate_data = json.loads(self.subprocess_out.decode('utf-8').strip())
+            frames_data = json.loads(self.subprocess_out.decode('utf-8').strip())
 
-            chart_labels = []
+            chart_labels= []
+            chart_time = []
             dataset_I = []
             dataset_P = []
             dataset_B = []
 
-            for frame in bitrate_data['frames']:
+            for frame in frames_data['frames']:
         	    chart_labels.append(int(frame['coded_picture_number']))
+        	    chart_time.append(str(datetime.timedelta(seconds=float(frame['pkt_pts_time']))))
         	    if frame['pict_type'] == 'I':
         		    dataset_I.append(int(frame['pkt_size']))
         		    dataset_P.append(None)
@@ -60,7 +62,7 @@ class BitrateProvider(TaskProvider):
             output = {}
             output['name'] = 'I Frames'
             output['file_path'] = self.output_file_path
-            output['average'] = None
+            output['average'] = int(len(dataset_I) - dataset_I.count(None))
             output['type'] = 'ChartData'
             data['outputs'].append(output)
 
@@ -71,7 +73,7 @@ class BitrateProvider(TaskProvider):
             output = {}
             output['name'] = 'P Frames'
             output['file_path'] = self.output_file_path
-            output['average'] = None
+            output['average'] = int(len(dataset_P) - dataset_P.count(None))
             output['type'] = 'ChartData'
             data['outputs'].append(output)
 
@@ -81,6 +83,17 @@ class BitrateProvider(TaskProvider):
                 f.write(json.dumps(dataset_B))
             output = {}
             output['name'] = 'B Frames'
+            output['file_path'] = self.output_file_path
+            output['average'] = int(len(dataset_B) - dataset_B.count(None))
+            output['type'] = 'ChartData'
+            data['outputs'].append(output)
+
+            # PTS Time
+            self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-PTSTime.json")
+            with open(self.output_file_path, "w") as f:
+                f.write(json.dumps(chart_time))
+            output = {}
+            output['name'] = 'PTS Time'
             output['file_path'] = self.output_file_path
             output['average'] = None
             output['type'] = 'ChartData'

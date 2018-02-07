@@ -12,7 +12,7 @@
         "model": "engine.TaskType",
         "pk": 2,
         "fields": {
-          "name": "BITRATE",
+          "name": "FRAMES ANALYSIS",
           "is_video_metric": "False",
           "auto_submit_on_new_media" : "True"
         }
@@ -21,7 +21,7 @@
         "model": "engine.TaskType",
         "pk": 3,
         "fields": {
-          "name": "THUMBNAIL",
+          "name": "GENERATE THUMBNAILS",
           "is_video_metric": "False",
           "auto_submit_on_new_media" : "True"
         }
