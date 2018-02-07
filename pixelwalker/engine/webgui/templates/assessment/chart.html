@@ -153,7 +153,9 @@
             text: null
         },
         xAxis: {
-            categories: [{% for encoded_media in assessment.encoded_media_list.all %}'{{ encoded_media.name }}',{% endfor %}],
+            categories: [{% for encoded_media in assessment.encoded_media_list.all %}
+            '<b><a href="{% url 'webgui_media-read' encoded_media.id %}">{{ encoded_media.name }}</a></b><br>{{ encoded_media.encoding_provider.name }}<br>{{encoded_media.video_codec}}<br>{{encoded_media.get_definition}}<br>{{encoded_media.average_bitrate|human_bitrate}}<br>',
+            {% endfor %}],
             crosshair: true
         },
         yAxis: [
@@ -173,10 +175,14 @@
         {% endfor %}
         ],
         tooltip: {
-            headerFormat: '<span style="font-size:14px"><b>{point.key}</b></span><table>',
-            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
-                '<td style="padding:0"><b>{point.y:.1f}</b></td></tr>',
-            footerFormat: '</table>',
+            formatter: function () {
+                var s = '<span style="font-size:14px"><b>'+this.x.split("<br>")[0]+'</b></span><table>';
+                $.each(this.points, function () {
+                    s += '<tr style="color:' + this.series.color + ';"><td style="padding:0;">' + this.series.name + '</td><td style="padding:0">&nbsp;&nbsp;&nbsp;&nbsp;<b>' + this.y + '</b></td></tr>';
+                });
+                s += '</table>'
+                return s;
+            },
             shared: true,
             useHTML: true
         },
@@ -265,7 +271,6 @@
         tooltip: {
             formatter: function () {
                 var s = get_thumbnail(this.x) + '<span style="font-size:14px"><b>'+this.x+'</b></span><table>';
-
                 $.each(this.points, function () {
                     s += '<tr style="color:' + this.series.color + ';"><td style="padding:0;">' + this.series.name.split("]")[1] + '</td><td style="padding:0">&nbsp;&nbsp;&nbsp;&nbsp;'+this.series.yAxis.axisTitle.textStr+'&nbsp;&nbsp;&nbsp;&nbsp;<b>' + this.y + '</b></td></tr>';
                 });
