@@ -19,7 +19,7 @@ class ThumbnailProvider(TaskProvider):
 
     def execute(self):
         """Using FFmpeg to generate thumbnails"""
-        
+
         output_directory = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"thumbnails")
         if not os.path.exists(output_directory):
             os.makedirs(output_directory)
@@ -27,7 +27,8 @@ class ThumbnailProvider(TaskProvider):
         self.output_file_path = os.path.join(output_directory, "thumb%05d.jpg")
         command = ['ffmpeg',
                 '-i', self.input_file_path,
-                '-vf', 'scale=250:-1,fps=1',
+                '-vf', 'scale=250:-1',
+                '-r', '1',
                 '-f', 'image2',
                 '-y', self.output_file_path]
         TaskProvider.execute(self, command)
