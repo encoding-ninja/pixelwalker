@@ -16,7 +16,7 @@
     <ul>
         <li>
             <label class="checkbox-inline">
-                <input type="checkbox" id="autorefresh" name='autorefresh' checked data-toggle="toggle" data-size="mini" data-on="<i class='fa fa-refresh'></i>" data-off="<i class='fa fa-times'></i>">
+                <input type="checkbox" id="autorefresh" name='autorefresh' checked data-toggle="toggle" data-size="mini" data-on="<i class='fa fa-refresh'></i>" data-off="<i class='fa fa-ban'></i>">
                 Auto-refresh
             </label>
         </li>
@@ -54,13 +54,13 @@
         
                         <ul class='infos'>
                             {% if task.state == 1 %}
-                            <li><span class="state label label-default label-primary">{{ task.get_state_display }}</span></li>
+                            <li><span class="state label label-primary">{{ task.get_state_display }}</span></li>
                             {% elif task.state == 2 %}
-                            <li><span class="state label label-default label-success">{{ task.get_state_display }}</span></li>
+                            <li><span class="state label label-success">{{ task.get_state_display }}</span></li>
                             {% elif task.state == 3 %}
-                            <li><span class="state label label-default label-danger">{{ task.get_state_display }}</span></li>
+                            <li><span class="state label label-danger">{{ task.get_state_display }}</span></li>
                             {% elif task.state == 4 %}
-                            <li><span class="state label label-default label-warning">{{ task.get_state_display }}</span></li>
+                            <li><span class="state label label-warning">{{ task.get_state_display }}</span></li>
                             {% else %}
                             <li><span class="state label label-default">{{ task.get_state_display }}</span></li>
                             {% endif %}

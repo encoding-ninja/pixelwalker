@@ -48,10 +48,12 @@
                     <p class='desc'>{{ assessment.description }}</p>
                 </div>
 
+                {% if assessment.reference_media != None or assessment.encoded_media_list.count > 0 %}
                 <ul class='infos'>
                     {% if assessment.reference_media != None %}Reference: <a href="{% url 'webgui_media-read' assessment.reference_media.id %}" class="reference">{{ assessment.reference_media.name }}</a>{% endif %}</li>
                     {% if assessment.encoded_media_list.count > 0 %}<li><span class="nb_of_media">{{ assessment.encoded_media_list.count }}</span> encoded variant{% if assessment.encoded_media_list.count > 1 %}s{% endif%}</li>{% endif%}
                 </ul>
+                {% endif %}
 
                 <ul class='actions'>
                     <li><a href="{% url 'webgui_assessment-read'  assessment.id %}"><i class='fa fa-eye'></i> View</a></li>

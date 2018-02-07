@@ -194,12 +194,13 @@
             }
         },
         series: [
+        {% with 0 as metric_count %}
         {% for metric in metric_list %}
         {% if metric.id in chart_config.metrics %}   
         {
             name: '{{metric.name}}',
             color: getcolor({{metric.id|add:2}}),
-            yAxis: {{ forloop.counter0 }},
+            yAxis: {{ metric_count }},
             data: [
                 {% for encoded_media in assessment.encoded_media_list.all %}
                     {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
@@ -211,8 +212,10 @@
                 {% endfor %}
             ]
         },
+        {% increment metric_count as metric_count %}
         {% endif %}
         {% endfor %}
+        {% endwith %}
         ]
     });
     {% endif%}
