@@ -20,8 +20,8 @@
         {% if media.get_probe_html_table %}
         <li><a href="{% url 'webgui_media-display-probe' media.id %}"><i class='fa fa-flask'></i> Probe info</a></li>
         {% endif %}
-        {% if media.get_bitrate_json %}
-        <li><a href="{% url 'webgui_media-chart-bitrate' media.id %}"><i class='fa fa-bar-chart'></i> Bitrate and frame analysis</a></li>
+        {% if media.get_frames_labels %}
+        <li><a href="{% url 'webgui_media-chart-frames' media.id %}"><i class='fa fa-bar-chart'></i> Frames analysis</a></li>
         {% endif %}
         {% for task_type in not_auto_task_list %}
         {% media_tasktype_exists media task_type as task_exists %} 

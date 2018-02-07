@@ -26,8 +26,6 @@ def add(data):
         task_provider = probe.ProbeProvider(task_id, task_media_file_path)
     elif task_type == 'BITRATE':
         task_provider = bitrate.BitrateProvider(task_id, task_media_file_path)
-    elif task_type == 'BITRATE':
-        task_provider = bitrate.BitrateProvider(task_id, task_media_file_path)
     elif task_type == 'SSIM':
         task_provider = ssim.SsimProvider(task_id, task_media_file_path, task_media_framerate, 
                                           task_reference_file_path, task_reference_width, task_reference_height)

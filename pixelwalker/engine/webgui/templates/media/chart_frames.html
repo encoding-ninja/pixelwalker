@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block tab_title %}{{ block.super }}: {{ media.name }}{% endblock %}
+
+{% block nav %}
+    <ul>
+        <li><a href="{% url 'webgui_assessment-list' %}">Assessments</a></li>
+        <li><a href="{% url 'webgui_media-list' %}" class='active'>Media</a></li>
+        <li><a href="{% url 'webgui_encoding-provider-list' %}">Encoding providers</a></li>
+        <li><a href="{% url 'webgui_task-list' %}">Tasks</a></li>
+    </ul>
+{% endblock %}
+
+{% block options %}
+    <ul>
+        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}       
+<h4><span class='info'>Media:</span> {{ media.name }}</h4>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><i class='fa fa-bar-chart'></i> Frames analysis</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="chart" style='min-height:600px;'></div>
+                    </div>
+                </div>
+{% endblock %}
+
+{% block css_requirements %}
+    {{ block.super }}
+{% endblock %}
+
+{% block js_requirements %}
+    {{ block.super }}
+    <script src="{% static 'bower_components/highcharts/highcharts.js' %}"></script>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    <script>
+        Highcharts.chart('chart', {
+            chart: {
+                type: 'column',
+                zoomType: 'x',
+            },
+            title: {
+                text: null
+            },
+            xAxis: {
+                categories: {% autoescape off %}{{ media.get_frames_labels }}{% endautoescape %},
+                crosshair: true
+            },
+            yAxis: {
+                title: {
+                    text: 'Frame size (bytes)'
+                },
+                min:0,
+            },
+            tooltip: {
+                formatter: function () {
+                    var s = '<span style="font-size:14px">Coded picture number: <b>'+this.x+'</b></span><table>';
+                    $.each(this.points, function () {
+                        s += '<tr style="color:' + this.series.color + ';"><td style="padding:0;">' + this.series.name + '</td><td style="padding:0">&nbsp;&nbsp;&nbsp;&nbsp;<b>' + this.y + '</b> bytes</td></tr>';
+                    });
+                    s += '</table>'
+                    return s;
+                },
+                shared: true,
+                useHTML: true
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            series: [
+            {
+                name: 'I Frames',
+                color: '#F7464A',
+                data: {% autoescape off %}{{ media.get_frames_I }}{% endautoescape %}
+            },
+            {
+                name: 'P Frames',
+                color: '#46BFBD',
+                data: {% autoescape off %}{{ media.get_frames_P }}{% endautoescape %}
+            },
+            {
+                name: 'B Frames',
+                color: '#4674bf',
+                data: {% autoescape off %}{{ media.get_frames_B }}{% endautoescape %}
+            },
+            ]
+        });
+    </script>
+{% endblock %}

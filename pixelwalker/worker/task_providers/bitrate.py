@@ -30,57 +30,73 @@ class BitrateProvider(TaskProvider):
         try:
             bitrate_data = json.loads(self.subprocess_out.decode('utf-8').strip())
 
-            # create json file Chart.js compatible
-            chart_data = {}
-            chart_data['labels'] = []
-            chart_data['datasets'] = []
-
-            dataset_I = {}
-            dataset_I['label'] = 'I Frames'
-            dataset_I['backgroundColor'] = 'red'
-            dataset_I['data'] = []
-
-            dataset_P = {}
-            dataset_P['label'] = 'P Frames'
-            dataset_P['backgroundColor'] = 'orange'
-            dataset_P['data'] = []
-
-            dataset_B = {}
-            dataset_B['label'] = 'B Frames'
-            dataset_B['backgroundColor'] = 'blue'
-            dataset_B['data'] = []
+            chart_labels = []
+            dataset_I = []
+            dataset_P = []
+            dataset_B = []
 
             for frame in bitrate_data['frames']:
-        	    chart_data['labels'].append(int(frame['coded_picture_number']))
+        	    chart_labels.append(int(frame['coded_picture_number']))
         	    if frame['pict_type'] == 'I':
-        		    dataset_I['data'].append(int(frame['pkt_size']))
-        		    dataset_P['data'].append(0)
-        		    dataset_B['data'].append(0)
+        		    dataset_I.append(int(frame['pkt_size']))
+        		    dataset_P.append(None)
+        		    dataset_B.append(None)
         	    elif frame['pict_type'] == 'P':
-        		    dataset_I['data'].append(0)
-        		    dataset_P['data'].append(int(frame['pkt_size']))
-        		    dataset_B['data'].append(0)
+        		    dataset_I.append(None)
+        		    dataset_P.append(int(frame['pkt_size']))
+        		    dataset_B.append(None)
         	    elif frame['pict_type'] == 'B':
-        		    dataset_I['data'].append(0)
-        		    dataset_P['data'].append(0)
-        		    dataset_B['data'].append(int(frame['pkt_size']))
+        		    dataset_I.append(None)
+        		    dataset_P.append(None)
+        		    dataset_B.append(int(frame['pkt_size']))
 
-            chart_data['datasets'].append(dataset_I)
-            chart_data['datasets'].append(dataset_P)
-            chart_data['datasets'].append(dataset_B)
-
-            self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-bitrate-chart.json")
-            with open(self.output_file_path, "w") as f:
-                f.write(json.dumps(chart_data))
-        
             data = {}
             data['outputs'] = []
+
+            # I Frames
+            self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-IFrames.json")
+            with open(self.output_file_path, "w") as f:
+                f.write(json.dumps(dataset_I))
             output = {}
-            output['name'] = 'Bitrate'
+            output['name'] = 'I Frames'
             output['file_path'] = self.output_file_path
             output['average'] = None
             output['type'] = 'ChartData'
             data['outputs'].append(output)
+
+            # P Frames
+            self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-PFrames.json")
+            with open(self.output_file_path, "w") as f:
+                f.write(json.dumps(dataset_P))
+            output = {}
+            output['name'] = 'P Frames'
+            output['file_path'] = self.output_file_path
+            output['average'] = None
+            output['type'] = 'ChartData'
+            data['outputs'].append(output)
+
+            # B Frames
+            self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-BFrames.json")
+            with open(self.output_file_path, "w") as f:
+                f.write(json.dumps(dataset_B))
+            output = {}
+            output['name'] = 'B Frames'
+            output['file_path'] = self.output_file_path
+            output['average'] = None
+            output['type'] = 'ChartData'
+            data['outputs'].append(output)
+
+            # Labels
+            self.output_file_path = os.path.join(os.path.dirname(self.input_file_path), self.input_file_name+"_task-"+str(self.task_id)+"-Labels.json")
+            with open(self.output_file_path, "w") as f:
+                f.write(json.dumps(chart_labels))
+            output = {}
+            output['name'] = 'Frames Labels'
+            output['file_path'] = self.output_file_path
+            output['average'] = None
+            output['type'] = 'ChartLabels'
+            data['outputs'].append(output)
+
             self.acknowledge_success(data)
 
         except:

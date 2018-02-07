@@ -58,7 +58,7 @@ class Media(models.Model):
         return settings.MEDIA_URL+self.file.path.replace(settings.MEDIA_ROOT+'\\','').replace(settings.MEDIA_ROOT+'/','').replace('\\','/')
 
     def get_thumbnail_url(self):
-        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='THUMBNAIL')).last()
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='THUMBNAIL'), state=Task.SUCCESS).last()
         output = TaskOutput.objects.filter(task=task, type=TaskOutput.MEDIA).last()
         if output is not None:
             return output.get_url().replace("%05d","00001")
@@ -66,42 +66,40 @@ class Media(models.Model):
             return None
     
     def get_probe_html_table(self):
-        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='PROBE')).last()
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='PROBE'), state=Task.SUCCESS).last()
         output = TaskOutput.objects.filter(task=task, type=TaskOutput.JSON).last()
         if output is not None:
             return json2table.convert(json.load(open(output.file_path)), build_direction="LEFT_TO_RIGHT", table_attributes={"class" : "table table-bordered table-hover table-condensed"})
         else:
             return None
     
-    def get_bitrate_json(self):
-        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE')).last()
-        output = TaskOutput.objects.filter(task=task, type=TaskOutput.CHART_DATA).last()
-        if output is not None:
-            with open(output.file_path) as f:
-                bitrate_chart_data = f.readlines()[0]
-                
-            if self.average_bitrate is not None:
-                try:
-                    int(self.average_bitrate)
-                    chart_data = json.loads(bitrate_chart_data)
-                    for dataset in chart_data['datasets']:
-                        dataset['yAxisID'] = "packet",
-                    average_dataset = {}
-                    average_dataset['type'] = 'line'
-                    average_dataset['label'] = 'Average Bitrate'
-                    average_dataset['borderColor'] = 'green' 
-                    average_dataset['borderWidth'] = 1
-                    average_dataset['fill'] = False 
-                    average_dataset['data'] = [self.average_bitrate] * len(chart_data['labels'])
-                    average_dataset['yAxisID'] = "average"
-                    chart_data['datasets'].append(average_dataset)
-                    #bitrate_chart_data = json.dumps(chart_data)
-                except:
-                    pass
-
-            return bitrate_chart_data
+    def get_frames_labels(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE'), state=Task.SUCCESS).last()
+        if task:
+            return task.get_output_labels()
         else:
             return None
+    
+    def get_frames_I(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE'), state=Task.SUCCESS).last()
+        if task:
+            return task.get_output_data_by_name('I Frames')
+        else:
+            return '[]'
+    
+    def get_frames_P(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE'), state=Task.SUCCESS).last()
+        if task:
+            return task.get_output_data_by_name('P Frames')
+        else:
+            return '[]'
+
+    def get_frames_B(self):
+        task = Task.objects.filter(media=self, type=TaskType.objects.get(name='BITRATE'), state=Task.SUCCESS).last()
+        if task:
+            return task.get_output_data_by_name('B Frames')
+        else:
+            return '[]'
 
     def get_definition(self):
         return str(self.width)+'x'+str(self.height)
@@ -139,12 +137,6 @@ class Assessment(models.Model):
     
     def get_max_bitrate(self):
         return max(self.get_bitrate_list())
-
-    def get_bitrate_labels(self):
-        bitrate_labels = None
-        for bitrate in range(int(self.get_min_bitrate()), int(self.get_min_bitrate()), 100000):
-            bitrate_labels.append(int(bitrate))
-        return bitrate_labels
 
     def get_all_frames_labels(self):
         task = Task.objects.filter(assessment=self, state=Task.SUCCESS).last()
@@ -220,6 +212,14 @@ class Task(models.Model):
 
     def get_output_data(self):
         output = TaskOutput.objects.filter(task=self, type=TaskOutput.CHART_DATA).last()
+        if output:
+            data = json.load(open(output.file_path))
+            return json.dumps(data)
+        else:
+            return '[]'
+
+    def get_output_data_by_name(self, ouput_name):
+        output = TaskOutput.objects.filter(task=self, type=TaskOutput.CHART_DATA, name=ouput_name).last()
         if output:
             data = json.load(open(output.file_path))
             return json.dumps(data)
