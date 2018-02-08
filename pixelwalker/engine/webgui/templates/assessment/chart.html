@@ -42,7 +42,7 @@
             <label for="group_by">Group by: </label>
             <select class="form-control selectpicker show-tick" name="group_by" id="group_by" data-container="body" data-width="150px" required>
                 <option value='encoded_variant' data-all-frames-available="True" {% if chart_config.group_by == 'encoded_variant' %} selected{% endif %}>Encoded variant</option>
-                <!-- <option value='definition' data-all-frames-available="False" {% if chart_config.group_by == 'definition' %} selected{% endif %}>Definition</option> -->
+                <option value='definition' data-all-frames-available="False" {% if chart_config.group_by == 'definition' %} selected{% endif %}>Definition</option>
             </select>
         </div>
     </li>
@@ -218,6 +218,90 @@
         {% endwith %}
         ]
     });
+    
+    {% elif chart_config.group_by == 'definition' %} 
+    Highcharts.chart('chart', {
+        chart: {
+            type: 'spline',
+            zoomType: 'x',
+            panning: true,
+            panKey: 'shift'
+        },
+        title: {
+            text: null
+        },
+        xAxis: {
+            title: {
+                text: 'Bitrate (bps)'
+            },
+        },
+        yAxis: [
+        {% for metric in metric_list %}
+        {% if metric.id in chart_config.metrics %}
+        {
+            title: {
+                text: '{{ metric.name }}'
+            },
+            min:0,
+            {% if metric.name == 'SSIM' %}
+            max:1,
+            opposite: true
+            {% endif %}
+        },
+        {% endif %}
+        {% endfor %}
+        ],
+        tooltip: {
+            formatter: function () {
+                var s = '<span style="font-size:11px"><b>'+this.point.name+'</b></span><table>';
+                s += '<tr style="color:' + this.series.color + ';font-size:12px;"><td style="padding:0;">' + this.series.name.split("]")[1] + '</td><td style="padding:0">&nbsp;&nbsp;&nbsp;&nbsp;'+this.series.yAxis.axisTitle.textStr+'&nbsp;&nbsp;&nbsp;&nbsp;<b>' + this.y + '</b></td></tr>';
+                s += '</table>'
+                return s;
+            },
+            shared: false,
+            useHTML: true
+        },
+        legend: {
+            layout: 'vertical',
+        },
+        series: [
+        {% for definition in assessment.get_definition_list %}  
+        {% with 0 as metric_count %}
+        {% for metric in metric_list %}
+        {% if metric.id in chart_config.metrics %} 
+        {
+            name: '[{{metric.name}}] {{ definition }}',
+            color: getcolor({{ definition|slice:':2' }}),
+            yAxis: {{ metric_count }},
+            {% if metric.name == 'PSNR' %}
+            marker:{
+                symbol: 'square'
+            },
+            {% elif metric.name == 'SSIM' %}
+            marker:{
+                symbol: 'circle'
+            },
+            {% endif %}
+            data: [
+                {% for encoded_media in assessment.encoded_media_list.all %}
+                    {% if encoded_media.get_definition == definition %}
+                        {% get_assessment_media_metric_average assessment encoded_media metric as average_score %}
+                        {% if average_score is None %}
+                            null,
+                        {% else %}
+                        {x:{{encoded_media.average_bitrate}}, y:{{ average_score }}, name:'{{encoded_media.name}}{% if encoded_media.encoding_provider %} ({{encoded_media.encoding_provider.name}}){% endif %} - {{encoded_media.average_bitrate|human_bitrate}}'},
+                        {% endif%}
+                    {% endif %}
+                {% endfor %}
+            ]
+        },
+        {% increment metric_count as metric_count %}
+        {% endif %}
+        {% endfor %}
+        {% endwith %}
+        {% endfor %}
+        ]
+    });
     {% endif%}
 
 
@@ -249,6 +333,8 @@
         chart: {
             type: 'line',
             zoomType: 'x',
+            panning: true,
+            panKey: 'shift'
         },
         title: {
             text: null
@@ -284,12 +370,6 @@
             shared: true,
             useHTML: true
         },
-        plotOptions: {
-            column: {
-                pointPadding: 0.2,
-                borderWidth: 0
-            }
-        },
         legend: {
             layout: 'vertical',
         },
@@ -302,6 +382,15 @@
             name: '[{{metric.name}}] {{encoded_media.name}}',
             color: getcolor({{encoded_media.id}}),
             yAxis: {{ metric_count }},
+            {% if metric.name == 'PSNR' %}
+            marker:{
+                symbol: 'square'
+            },
+            {% elif metric.name == 'SSIM' %}
+            marker:{
+                symbol: 'circle'
+            },
+            {% endif %}
             {% get_assessment_media_metric_data assessment encoded_media metric as chart_data %}
             data: {% autoescape off %}{{ chart_data }}{% endautoescape %}
         },
