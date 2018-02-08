@@ -14,12 +14,15 @@
 
 {% block options %}
     <ul>
+        {% is_task_list_auto_refresh_enabled as refresh_enabled %}
+        {% if refresh_enabled %} 
         <li>
             <label class="checkbox-inline">
                 <input type="checkbox" id="autorefresh" name='autorefresh' checked data-toggle="toggle" data-size="mini" data-on="<i class='fa fa-refresh'></i>" data-off="<i class='fa fa-ban'></i>">
                 Auto-refresh
             </label>
         </li>
+        {% endif %}
     </ul>
 {% endblock %}
 
@@ -105,6 +108,8 @@
     {{ block.super }}
     <script>
         $(document).ready(function(){
+            {% is_task_list_auto_refresh_enabled as refresh_enabled %}
+            {% if refresh_enabled %} 
             setInterval(function(){
                 console.log($("#autorefresh").prop('checked'))
                 if($("#autorefresh").prop('checked'))
@@ -112,6 +117,7 @@
                     window.location.reload(1);
                 }
             }, 5000);
+            {% endif %}
         }); 
 
         var options = {

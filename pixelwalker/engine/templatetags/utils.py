@@ -3,7 +3,7 @@ register = template.Library()
 
 import json
 
-from ..models import Assessment, Media, Task, TaskType, TaskOutput
+from ..models import AppSetting, Assessment, Media, Task, TaskType, TaskOutput
 
 @register.simple_tag
 def assessment_media_tasktype_exists(assessment, media, tasktype):
@@ -58,7 +58,13 @@ def get_assessment_definition_bitrate_metric_average(assessment, definition, bit
     else:
         return 'null'
 
-
+@register.simple_tag
+def is_task_list_auto_refresh_enabled():
+    setting = AppSetting.objects.filter(pk=1, key='Tasks list auto refresh page enabled', is_bool=True).first()
+    if setting.value=="True":
+        return True
+    else:
+        return False
 
 
 @register.filter

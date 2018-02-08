@@ -8,10 +8,11 @@ from celery.execute import send_task
 from . import utils
 
 
-class AppSettings(models.Model):
-    media_library_path = models.CharField(max_length=200, null=True)
-    max_parallel_tasks = models.IntegerField(default=1, null=False)
-    worker_pulling_interval = models.IntegerField(default=10, null=False)
+class AppSetting(models.Model):
+    key = models.CharField(max_length=32, null=False, default='unnamed parameter')
+    value = models.CharField(max_length=32, null=True)
+    is_bool = models.BooleanField(default=False)
+    description = models.CharField(max_length=280, null=True)
     
 
 class EncodingProvider(models.Model):

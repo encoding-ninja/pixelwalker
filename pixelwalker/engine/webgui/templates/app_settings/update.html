@@ -19,12 +19,12 @@
 {% endblock %}
 
 {% block content %}       
-<h4><span class='info'>Edit:</span> Settings</h4>
+<h4><span class='info'>Settings:</span> Edit</h4>
 
 <form action="{% url 'webgui_app-settings-update' %}" method="post" class="form-horizontal">
 {% csrf_token %}
 
-<table class='table table-striped table-condensed table-bordered table-hover'>
+<table class='table table-condensed table-hover'>
 	<thead>
         <tr>
             <th>Parameter</th>
@@ -33,11 +33,24 @@
         </tr>
     </thead>
     <tbody>
+        {% for setting in app_settings %}
+        <tr>
+            <td>{{ setting.key }}</td>
+            {% if setting.is_bool %}
+            <td class='text-center'>
+                <input type="checkbox" name='{{ setting.id }}' {% ifequal setting.value "True" %} checked {% endifequal %} data-size="mini" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>">
+            </td>
+            {% else %}
+                #TO DO
+            {% endif %}
+            <td>{{ setting.description }}</td>
+        </tr>
+        {% endfor %}
         {% for metric in metric_list %}
         <tr>
             <td>Auto submit on new media <b>{{ metric.name }}</b></td>
             <td class='text-center'>
-                    <input type="checkbox" name='{{ metric.id }}_auto_submit_on_new_media' {% if metric.auto_submit_on_new_media %} checked {% endif %} data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>"></td>
+                    <input type="checkbox" name='{{ metric.id }}_auto_submit_on_new_media' {% if metric.auto_submit_on_new_media %} checked {% endif %} data-size="mini" data-toggle="toggle" data-on="<i class='fa fa-check'></i>" data-off="<i class='fa fa-times'></i>"></td>
             <td>Queue a new task on new media creation</td>
         </tr>
         {% endfor %}

@@ -150,7 +150,7 @@ ul.actions li{
 a#settings_link{
 	display:block;
 	position: absolute;
-	right:0;
+	right:-50px;
 	top:15px;
 }
 
