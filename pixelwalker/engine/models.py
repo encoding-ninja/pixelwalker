@@ -154,6 +154,13 @@ class Assessment(models.Model):
                 definition_list.append(media.get_definition())
         return definition_list
 
+    def get_encoding_provider_list(self):
+        encoding_provider_list = []
+        for media in self.encoded_media_list.all():
+            if media.encoding_provider not in encoding_provider_list:
+                encoding_provider_list.append(media.encoding_provider)
+        return encoding_provider_list
+
     def get_bitrate_list(self):
         bitrate_list = []
         for media in self.encoded_media_list.all().order_by('average_bitrate'):
