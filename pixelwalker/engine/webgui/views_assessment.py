@@ -5,7 +5,7 @@ from django.urls import reverse
 
 import json
 
-from ..models import Assessment, Media, EncodingProvider, Task, TaskType
+from ..models import Assessment, Media, EncodingProvider, Task, TaskType, ChartAnnotation
 
 # List all assessments
 def list(request):
@@ -134,4 +134,6 @@ def chart(request, assessment_id):
         chart_config['value_type'] = 'average'
         chart_config['group_by'] = 'encoded_variant'
 
-    return render(request, 'assessment/chart.html', {'assessment': assessment, 'metric_list': metric_list, 'chart_config':chart_config})
+    annotation_list = ChartAnnotation.objects.filter(assessment=assessment)
+
+    return render(request, 'assessment/chart.html', {'assessment': assessment, 'metric_list': metric_list, 'chart_config':chart_config, 'annotation_list':annotation_list})

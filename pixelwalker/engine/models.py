@@ -292,3 +292,29 @@ class TaskOutput(models.Model):
 
     def get_url(self):
         return settings.MEDIA_URL+self.file_path.replace(settings.MEDIA_ROOT+'\\','').replace(settings.MEDIA_ROOT+'/','').replace('\\','/')
+
+
+class ChartAnnotation(models.Model):
+    label = models.CharField(max_length=280, null=False, default='Empty annotation')
+    x = models.FloatField(null=True)
+    y = models.FloatField(null=True)
+    assessment = models.ForeignKey(Assessment, null=True, on_delete=models.CASCADE)
+    metric_list = models.ManyToManyField(TaskType, related_name='metric_list')
+
+    AVERAGE = 0
+    ALL_FRAMES = 1
+    DISPLAY_CHOICES = (
+        (AVERAGE, 'average'),
+        (ALL_FRAMES, 'all_frames'),
+    )
+    display_type = models.IntegerField(default=AVERAGE, choices=DISPLAY_CHOICES)
+
+    ENCODED_VARIANT = 0
+    DEFINITION =1
+    ENCODING_PROVIDER = 2
+    GROUP_CHOICES = (
+        (ENCODED_VARIANT, 'encoded_variant'),
+        (DEFINITION, 'definition'),
+        (ENCODING_PROVIDER, 'encoding_provider'),
+    )
+    group_by = models.IntegerField(default=ENCODED_VARIANT, choices=GROUP_CHOICES)

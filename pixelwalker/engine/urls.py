@@ -5,6 +5,7 @@ from .webgui import views_media as media
 from .webgui import views_encoding_provider as encoding_provider
 from .webgui import views_task as task
 from .webgui import views_app_settings as app_settings
+from .webgui import views_chart_annotation as chart_annotation
 
 urlpatterns = [
     # WEBGUI
@@ -38,5 +39,8 @@ urlpatterns = [
     path('task/<int:task_id>/abort', task.abort, name='webgui_task-abort'), 
     # AppSettings
     path('app_settings', app_settings.read, name='webgui_app-settings-read'),   
-    path('app_settings/update', app_settings.update, name='webgui_app-settings-update'), 
+    path('app_settings/update', app_settings.update, name='webgui_app-settings-update'),
+    # Chart Annotations
+    path('chart_annotation/create', chart_annotation.create, name='webgui_chart-annotation-create'),  
+    path('chart_annotation/<int:annotation_id>/delete', chart_annotation.delete, name='webgui_chart-annotation-delete'), 
 ]

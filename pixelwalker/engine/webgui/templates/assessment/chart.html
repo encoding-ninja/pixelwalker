@@ -54,7 +54,9 @@
     </ul>
 {% endblock %}
 
-{% block content %}       
+{% block content %}
+
+
 <h4><span class='info'>Project:</span> {{ assessment.name }}</h4>
 <div class="panel panel-default">
     <div class="panel-heading">
@@ -76,6 +78,7 @@
     <script src="{% static 'bower_components/bootstrap-select/dist/js/bootstrap-select.min.js' %}"></script>
     <script src="{% static 'bower_components/highcharts/highcharts.js' %}"></script>
     <script src="{% static 'bower_components/highcharts/modules/exporting.js' %}"></script>
+    <script src="{% static 'bower_components/highcharts/modules/annotations.js' %}"></script>
     <script>
         $('.selectpicker').selectpicker({
           style: 'btn-xs',
@@ -144,16 +147,99 @@
 </script>
 
 <script>
+    var doubleClicker= {
+        clickedOnce: false,
+        timer:null,
+        timeBetweenClicks:400
+    };
+    // call to reset double click timer
+    var resetDoubleClick = function() {
+        clearTimeout(doubleClicker.timer);
+        doubleClicker.timer = null;
+        doubleClicker.clickedOnce = false;
+      };
+    var delete_last_annotation = function(){
+        chart.annotations[chart.annotations.length-1].destroy()
+    };
+    $(document).on('click', 'a.cancel_annotation', delete_last_annotation);
+    var pop_new_annotation = function(x,y){
+        if($("input#new_annotation").length)
+        {
+            // New annotation window exists
+            // Remove it before pop the new one
+            delete_last_annotation()
+        }
+        var new_annotation_body = "<form action='{% url 'webgui_chart-annotation-create' %}' method='post'>{% csrf_token %}"
+        new_annotation_body += "<input type='hidden' name='assessment_id' value='{{ assessment.id }}'/>"
+        new_annotation_body += "<input type='hidden' name='display_type' value='{{ chart_config.value_type }}'/>"
+        new_annotation_body += "<input type='hidden' name='group_by' value='{{ chart_config.group_by }}'/>"
+        new_annotation_body += "<input type='hidden' name='metric_list' value='{{ chart_config.metrics }}'/>"
+        new_annotation_body += "<input type='hidden' name='x' value='"+x+"'/>"
+        new_annotation_body += "<input type='hidden' name='y' value='"+y+"'/>"
+        new_annotation_body += "<table style='width:300px;z-index:10;'><tr>"; 
+        new_annotation_body += "<td><input id='new_annotation' name='label' class='form-control' type='text' placeholder='New annotation' required/></td>";
+        new_annotation_body += "<td><button type='submit' class='btn btn-default'><i class='fa fa-thumb-tack'></i></button></td>";
+        new_annotation_body += "<td><a href='#' class='btn btn-default warning cancel_annotation'><i class='fa fa-times'></i></a></td>";
+        new_annotation_body += "</tr></table></form>";
+        
+        chart.addAnnotation({
+            labels:[{
+                useHTML:true,
+                point: {
+                    xAxis:0,
+                    yAxis:0,
+                    x:x,
+                    y:y
+                },
+                text: new_annotation_body
+            }]
+        });
+        $("input#new_annotation").focus()
+    };
+
     {% if chart_config.value_type == 'average' %}
 
     {% if chart_config.group_by == 'encoded_variant' %} 
-    Highcharts.chart('chart', {
+    var chart = new Highcharts.chart('chart', {
         chart: {
             type: 'column',
+            events:{
+                click: function(event){
+                    if (doubleClicker.clickedOnce === true && doubleClicker.timer) {
+                      resetDoubleClick();
+                      pop_new_annotation(event.xAxis[0].value, event.yAxis[0].value);
+                    } else {
+                      doubleClicker.clickedOnce = true;
+                      doubleClicker.timer = setTimeout(function(){
+                        resetDoubleClick();
+                      }, doubleClicker.timeBetweenClicks);
+                    }
+                }
+            }
         },
         title: {
             text: null
         },
+        annotations:[{
+            labels:[
+            {% for annotation in annotation_list %}
+            {% for metric in annotation.metric_list.all %}
+            {% if metric.id in chart_config.metrics %}
+            {
+                useHTML:true,
+                point: {
+                    xAxis:0,
+                    yAxis:0,
+                    x:{%if annotation.x %}{{annotation.x}}{% else %}0{% endif %},
+                    y:{%if annotation.y %}{{annotation.y}}{% else %}0{% endif %}
+                },
+                text:'{{annotation.label}} <a href="{% url 'webgui_chart-annotation-delete' annotation.id %}" class="warning"><i class="fa fa-times"></i></a>'   
+            },
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+            ]
+        }],
         xAxis: {
             categories: [{% for encoded_media in assessment.encoded_media_list.all %}
             '<b><a href="{% url 'webgui_media-read' encoded_media.id %}">{{ encoded_media.name }}</a></b><br>{{ encoded_media.encoding_provider.name }}<br>{{encoded_media.video_codec}}<br>{{encoded_media.get_definition}}<br>{{encoded_media.average_bitrate|human_bitrate}}<br>',
@@ -221,16 +307,49 @@
     });
     
     {% elif chart_config.group_by == 'definition' %} 
-    Highcharts.chart('chart', {
+    var chart = new Highcharts.chart('chart', {
         chart: {
             type: 'spline',
             zoomType: 'x',
             panning: true,
-            panKey: 'shift'
+            panKey: 'shift',
+            events:{
+                click: function(event){
+                    if (doubleClicker.clickedOnce === true && doubleClicker.timer) {
+                      resetDoubleClick();
+                      pop_new_annotation(event.xAxis[0].value, event.yAxis[0].value);
+                    } else {
+                      doubleClicker.clickedOnce = true;
+                      doubleClicker.timer = setTimeout(function(){
+                        resetDoubleClick();
+                      }, doubleClicker.timeBetweenClicks);
+                    }
+                }
+            }
         },
         title: {
             text: null
         },
+        annotations:[{
+            labels:[
+            {% for annotation in annotation_list %}
+            {% for metric in annotation.metric_list.all %}
+            {% if metric.id in chart_config.metrics %}
+            {
+                useHTML:true,
+                point: {
+                    xAxis:0,
+                    yAxis:0,
+                    x:{%if annotation.x %}{{annotation.x}}{% else %}0{% endif %},
+                    y:{%if annotation.y %}{{annotation.y}}{% else %}0{% endif %}
+                },
+                text:'{{annotation.label}} <a href="{% url 'webgui_chart-annotation-delete' annotation.id %}" class="warning"><i class="fa fa-times"></i></a>'   
+            },
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+            ]
+        }],
         xAxis: {
             title: {
                 text: 'Bitrate (bps)'
@@ -305,9 +424,22 @@
     });
 
     {% elif chart_config.group_by == 'encoding_provider' %} 
-    Highcharts.chart('chart', {
+    var chart = new Highcharts.chart('chart', {
         chart: {
             type: 'column',
+            events:{
+                click: function(event){
+                    if (doubleClicker.clickedOnce === true && doubleClicker.timer) {
+                      resetDoubleClick();
+                      pop_new_annotation(event.xAxis[0].value, event.yAxis[0].value);
+                    } else {
+                      doubleClicker.clickedOnce = true;
+                      doubleClicker.timer = setTimeout(function(){
+                        resetDoubleClick();
+                      }, doubleClicker.timeBetweenClicks);
+                    }
+                }
+            }
         },
         title: {
             text: null
@@ -412,12 +544,25 @@
         }
     }
 
-    Highcharts.chart('chart', {
+    var chart = new Highcharts.chart('chart', {
         chart: {
             type: 'line',
             zoomType: 'x',
             panning: true,
-            panKey: 'shift'
+            panKey: 'shift',
+            events:{
+                click: function(event){
+                    if (doubleClicker.clickedOnce === true && doubleClicker.timer) {
+                      resetDoubleClick();
+                      pop_new_annotation(event.xAxis[0].value, event.yAxis[0].value);
+                    } else {
+                      doubleClicker.clickedOnce = true;
+                      doubleClicker.timer = setTimeout(function(){
+                        resetDoubleClick();
+                      }, doubleClicker.timeBetweenClicks);
+                    }
+                }
+            }
         },
         title: {
             text: null
