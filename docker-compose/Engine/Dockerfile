@@ -20,7 +20,8 @@ WORKDIR /pixelwalker
 RUN pip3 install -r requirements.txt
 
 # Bower JS+CSS dependencies
-RUN npm install -g bower && ln -s /usr/bin/nodejs /usr/bin/node
+RUN npm install -g bower
+RUN ln -s /usr/bin/nodejs /usr/bin/node
 RUN bower --allow-root install
 
 # Get settings
