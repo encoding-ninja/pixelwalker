@@ -1,11 +1,4 @@
-language: python
-python:
-  - "3.4"
-  - "3.5"
-  - "3.6"
 before_install:
-  # Need to set a timezone
-  - export TZ=Europe/Paris
   # Need to have at docker-compose v1.10.0+ to support compose file format v2
   - docker-compose --version
 install:

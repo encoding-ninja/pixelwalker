@@ -3,6 +3,8 @@ LABEL maintainer="github.com/antoinehng"
 
 # Set Timezone
 ENV TZ=Europe/Paris
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
 
 # Various dependencies
 RUN apt-get update -yqq && apt-get install -yqq \
