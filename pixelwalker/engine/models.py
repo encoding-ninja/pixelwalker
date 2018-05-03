@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 import os, json, json2table
+from natsort import natsorted, ns
 from celery.execute import send_task
 
 from . import utils
@@ -152,7 +153,7 @@ class Assessment(models.Model):
         for media in self.encoded_media_list.all():
             if media.get_definition() not in definition_list:
                 definition_list.append(media.get_definition())
-        return definition_list
+        return natsorted(definition_list)
 
     def get_encoding_provider_list(self):
         encoding_provider_list = []

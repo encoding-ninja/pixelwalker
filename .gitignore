@@ -103,3 +103,4 @@ dev.local/
 media_library/
 .DS_Store
 *.sqlite
+.vscode/settings.json

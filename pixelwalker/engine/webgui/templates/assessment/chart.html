@@ -14,7 +14,7 @@
 
 {% block options %}
     <ul>
-        <li><a href='#' onclick='goBack()'><i class='fa fa-caret-left'></i> Back</a></li>
+        <li><a href='{% url 'webgui_assessment-read'  assessment.id %}'><i class='fa fa-caret-left'></i> Back</a></li>
 
         <form action="{% url 'webgui_assessment-chart' assessment.id %}" method="post">
             {% csrf_token %}
@@ -63,7 +63,7 @@
         <h3 class="panel-title"><i class='fa fa-line-chart'></i> Generated chart</h3>
     </div>
     <div class="panel-body">
-        <div id="chart" style='min-height:600px;'></div>
+        <div id="chart" style='min-height:600px;height:100%;'></div>
     </div>
 </div>
 {% endblock %}
@@ -131,17 +131,57 @@
 
 <script>
     var getcolor = function (num) {
-        if (num%6 == 0)
+        if (num%26 == 0)
             return "#F7464A";
-        else if (num%6 == 1)
+        else if (num%26 == 1)
             return "#46BFBD";
-        else if (num%6 == 2)
+        else if (num%26 == 2)
             return "#FDB45C";
-        else if (num%6 == 3)
+        else if (num%26 == 3)
             return "#4674bf";
-        else if (num%6 == 4)
+        else if (num%26 == 4)
+            return "#3366CC";
+        else if (num%26 == 5)
+            return "#DC3912";
+        else if (num%26 == 6)
+            return "#FF9900";
+        else if (num%26 == 7)
+            return "#109618";
+        else if (num%26 == 8)
+            return "#990099";
+        else if (num%26 == 9)
+            return "#3B3EAC";
+        else if (num%26 == 10)
+            return "#0099C6";
+        else if (num%26 == 11)
+            return "#DD4477";
+        else if (num%26 == 12)
+            return "#66AA00";
+        else if (num%26 == 13)
+            return "#B82E2E";
+        else if (num%26 == 14)
+            return "#316395";
+        else if (num%26 == 15)
+            return "#994499";
+        else if (num%26 == 16)
+            return "#22AA99";
+        else if (num%26 == 17)
+            return "#AAAA11";
+        else if (num%26 == 18)
+            return "#6633CC";
+        else if (num%26 == 19)
+            return "#E67300";
+        else if (num%26 == 20)
+            return "#8B0707";
+        else if (num%26 == 21)
+            return "#329262";
+        else if (num%26 == 22)
+            return "#5574A6";
+        else if (num%26 == 23)
+            return "#3B3EAC";
+        else if (num%26 == 24)
             return "#949FB1";
-        else if (num%6 == 5)
+        else if (num%26 == 25)
             return "#4D5360";
     };
 </script>
@@ -253,10 +293,12 @@
             title: {
                 text: '{{ metric.name }}'
             },
-            min:0,
             {% if metric.name == 'SSIM' %}
+            min:0.8,
             max:1,
             opposite: true
+            {% else %}
+            min:0,
             {% endif %}
         },
         {% endif %}
@@ -362,10 +404,12 @@
             title: {
                 text: '{{ metric.name }}'
             },
-            min:0,
             {% if metric.name == 'SSIM' %}
+            min:0.8,
             max:1,
             opposite: true
+            {% else %}
+            min:0,
             {% endif %}
         },
         {% endif %}
@@ -383,6 +427,7 @@
         },
         legend: {
             layout: 'vertical',
+            maxHeight:100
         },
         series: [
         {% for definition in assessment.get_definition_list %}  
@@ -457,10 +502,12 @@
             title: {
                 text: '{{ metric.name }}'
             },
-            min:0,
             {% if metric.name == 'SSIM' %}
+            min:0.8,
             max:1,
             opposite: true
+            {% else %}
+            min:0,
             {% endif %}
         },
         {% endif %}
@@ -486,6 +533,7 @@
         },
         legend: {
             layout: 'vertical',
+            maxHeight:100
         },
         series: [
         {% for encoded_media in assessment.encoded_media_list.all %}
@@ -577,10 +625,12 @@
             title: {
                 text: '{{ metric.name }}'
             },
-            min:0,
             {% if metric.name == 'SSIM' %}
+            min:0.8,
             max:1,
             opposite: true
+            {% else %}
+            min:0,
             {% endif %}
         },
         {% endif %}
@@ -600,6 +650,7 @@
         },
         legend: {
             layout: 'vertical',
+            maxHeight:100
         },
         series: [
         {% for encoded_media in assessment.encoded_media_list.all %}

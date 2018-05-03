@@ -25,7 +25,13 @@ def create(request):
 
         for metric_id in json.loads(str(request.POST.get('metric_list'))):
             new_annotation.metric_list.add(TaskType.objects.get(pk=int(metric_id)))
+        
+        if request.POST.get('display_type') is 'average':
+            new_annotation.display_type = ChartAnnotation.AVERAGE
+        elif request.POST.get('display_type') is 'all_frames':
+            new_annotation.display_type = ChartAnnotation.ALL_FRAMES
             
+
         new_annotation.save()
 
     return HttpResponseRedirect(request.META['HTTP_REFERER'])

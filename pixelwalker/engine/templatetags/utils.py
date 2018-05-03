@@ -60,7 +60,7 @@ def get_assessment_definition_bitrate_metric_average(assessment, definition, bit
 
 @register.simple_tag
 def is_task_list_auto_refresh_enabled():
-    setting = AppSetting.objects.filter(pk=1, key='Tasks list auto refresh page enabled', is_bool=True).first()
+    setting = AppSetting.objects.filter(pk=1, key='Tasks list auto refresh', is_bool=True).first()
     if setting.value=="True":
         return True
     else:
