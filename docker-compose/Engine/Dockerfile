@@ -2,7 +2,7 @@ FROM ubuntu:latest
 LABEL maintainer="github.com/antoinehng"
 
 # Set Timezone
-RUN export TZ=Europe/Paris
+ENV TZ=Europe/Paris
 
 # Various dependencies
 RUN apt-get update -yqq && apt-get install -yqq \
