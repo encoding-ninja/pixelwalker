@@ -3,6 +3,8 @@ python:
   - "3.4"
   - "3.5"
   - "3.6"
+before_install:
+  - docker-compose --version
 install:
   - pip install -r requirements.txt
 before_script:
