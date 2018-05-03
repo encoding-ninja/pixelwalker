@@ -6,3 +6,4 @@ pytz==2017.2
 coveralls
 psycopg2
 redis==2.10.5
+natsort==5.1.1
