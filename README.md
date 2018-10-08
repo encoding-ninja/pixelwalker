@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/antoinehng/pixelwalker.svg?branch=django_2.0)](https://travis-ci.org/antoinehng/pixelwalker 'Travis CI') [![Coverage Status](https://coveralls.io/repos/github/antoinehng/pixelwalker/badge.svg?branch=django_2.0)](https://coveralls.io/github/antoinehng/pixelwalker?branch=django_2.0 'Coveralls')
-
 __Warning:__ _This project is not yet ready for production purposes._
 
 ## How to try?
